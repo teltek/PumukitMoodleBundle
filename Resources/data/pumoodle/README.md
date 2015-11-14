@@ -6,7 +6,7 @@ The following files are used to install PuMoodle into Moodle:
 * [install/repository.zip](install/repository.zip?raw=true)
 * [install/filter.zip](install/filter.zip?raw=true)
 
-Follow the steps at [PuMoodle Installation Guide](Resources/doc/PuMoodleInstallationGuide.md).
+Follow the steps at [PuMoodle Installation Guide](../../doc/PuMoodleInstallationGuide.md).
 
 
 Admin Guide
