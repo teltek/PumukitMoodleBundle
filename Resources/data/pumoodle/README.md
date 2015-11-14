@@ -25,4 +25,6 @@ $ cd ../filter
 $ zip -r ../install/filter.zip pumukit/
 ```
 
-NOTE: `/path/to/pumoodle` could be, in a PuMuKIT2 installation, on `/path/to/pumukit2/vendor/teltek/pmk2-moodle-bundle/Resources/data/pumoodle/`
+NOTE: `/path/to/pumoodle` location:
+* In this Bundle: `Resources/data/pumoodle/`
+* In a PuMuKIT2 installation: `/path/to/pumukit2/vendor/teltek/pmk2-moodle-bundle/Resources/data/pumoodle/`
