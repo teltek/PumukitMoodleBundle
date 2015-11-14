@@ -4,21 +4,21 @@
 
 ## Contents
 
-1. Introduction
+1. [Introduction](#introduction)
 
-2. Module installation
+2. [Module installation](#module-installation)
 
-    2.1. Installation
+    2.1. [Installation](#installation)
 
-    2.2. Installation check
+    2.2. [Installation check](#installation-check)
 
-3. Repository and Filter installation
+3. [Repository and Filter installation](#repository-and-filter-installation)
 
-    3.1. Repository installation and configuration
+    3.1. [Repository installation and configuration](#repository-installation-and-configuration)
 
-    3.2. Filter installation and configuration
+    3.2. [Filter installation and configuration](#filter-installation-and-configuration)
 
-    3.3. Installation check
+    3.3. [Installation check](#installation-check)
 
 ## Introduction
 
