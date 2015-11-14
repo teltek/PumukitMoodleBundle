@@ -18,7 +18,7 @@
 
     3.2. [Filter installation and configuration](#filter-installation-and-configuration)
 
-    3.3. [Installation check](#installation-check)
+    3.3. [Installation check](#installation-check-1)
 
 ## Introduction
 
