@@ -13,9 +13,6 @@ PuMoodle tool is available at this same bundle in [Resources/data/pumoodle/READM
 Documentation
 -------------
 
-For contribution to the documentation you can find it on [Resources/doc](Resources/doc).
-
-
 1. [Installation Guide](Resources/doc/InstallationGuide.md)
 2. [PuMoodle Installation Guide](Resources/doc/PuMoodleInstallationGuide.md)
 3. [PuMoodle User Guide](Resources/doc/PuMoodleUserGuide.md)
