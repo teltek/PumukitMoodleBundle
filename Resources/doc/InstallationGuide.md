@@ -57,7 +57,8 @@ pumukit_moodle:
 * `role` defines the role code the professor should be added with in a video. For example: actor.
 * `password` defines the secret password between Pumukit and Moodle. It's the same password Moodle uses to install PuMoodle.
 
-Step 5: Install the PuMoodle extension into your Moodle instance
-----------------------------------------------------------------
+Step 5: Install PuMoodle extension into Moodle
+----------------------------------------------
 
 Follow the steps at [PuMoodleInstallationGuide.md](PuMoodleInstallationGuide.md)
+to install the PuMoodle extension into your Moodle instance.
