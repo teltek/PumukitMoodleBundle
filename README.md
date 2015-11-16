@@ -26,9 +26,9 @@ With thanks to
 --------------
 
 We would like to thank to the [University of the Basque Country](http://www.ehu.eus/en/en-home)
-for their initial contributions.
+for their contribution to the initial development of the bundle.
 
-We would also like to thank to [Campus do Mar](http://campusdomar.es/en/), to
+We would also like to thank to [Campus do Mar](http://campusdomar.es/en/)/[Universidade de Vigo](http://uvigo.es/uvigo_en/index.html), to
 the [London College of Fashion](http://www.arts.ac.uk/fashion/) and to the
 [University of Granada](http://www.ugr.es/en/) for all the improvements
 contributed into this bundle.
