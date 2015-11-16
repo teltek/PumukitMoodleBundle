@@ -19,3 +19,15 @@ For contribution to the documentation you can find it on [Resources/doc](Resourc
 1. [Installation Guide](Resources/doc/InstallationGuide.md)
 2. [PuMoodle Installation Guide](Resources/doc/PuMoodleInstallationGuide.md)
 3. [PuMoodle User Guide](Resources/doc/PuMoodleUserGuide.md)
+
+
+With thanks to
+--------------
+
+We would like to thank to the [University of the Basque Country](http://www.ehu.eus/en/en-home)
+for their initial contributions.
+
+We would also like to thank to [Campus do Mar](http://campusdomar.es/en/), to
+the [London College of Fashion](http://www.arts.ac.uk/fashion/) and to the
+[University of Granada](http://www.ugr.es/en/) for all the improvements
+contributed into this project.
