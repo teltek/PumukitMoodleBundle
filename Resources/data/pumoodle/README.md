@@ -2,11 +2,11 @@ Installation Guide
 ==================
 
 The following files are used to install PuMoodle into Moodle:
-* install/mod.zip
-* install/repository.zip
-* install/filter.zip
+* [install/mod.zip](install/mod.zip?raw=true)
+* [install/repository.zip](install/repository.zip?raw=true)
+* [install/filter.zip](install/filter.zip?raw=true)
 
-Follow the steps at [PuMoodle Installation Guide](Resources/doc/PuMoodleInstallationGuide.md).
+Follow the steps at [PuMoodle Installation Guide](../../doc/PuMoodleInstallationGuide.md).
 
 
 Admin Guide
@@ -25,4 +25,6 @@ $ cd ../filter
 $ zip -r ../install/filter.zip pumukit/
 ```
 
-NOTE: /path/to/pumoodle could be, in a PuMuKIT2 installation, on /path/to/pumukit2/vendor/teltek/pmk2-moodle-bundle/Resources/data/pumoodle/
+NOTE: `/path/to/pumoodle` location:
+* In this Bundle: `Resources/data/pumoodle/`
+* In a PuMuKIT2 installation: `/path/to/pumukit2/vendor/teltek/pmk2-moodle-bundle/Resources/data/pumoodle/`
