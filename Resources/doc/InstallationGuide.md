@@ -3,8 +3,6 @@ Installation Guide
 
 *This page is updated to the PuMuKIT 2.1.0*
 
-Steps to install and configure this bundle:
-
 Requirements
 ------------
 
@@ -20,33 +18,35 @@ Open a command console, enter your project directory and execute the
 following command to add this repo:
 
 ```bash
+$ cd /path/to/pumukit2
 $ composer config repositories.pumukitmoodlebundle vcs https://github.com/teltek/PuMuKIT2-moodle-bundle
 ```
 
 Step 2: Download the Bundle
 ---------------------------
 
-Open a command console, enter your project directory and execute the
-following command to download the latest stable version of this bundle:
+From your project directory, execute the following command to download
+the latest stable version of this bundle:
 
 ```bash
 $ composer require teltek/pmk2-moodle-bundle dev-master
 ```
 
-Step 3: Install the bundle into your Pumukit2 root project
-----------------------------------------------------------
+Step 3: Install the bundle
+--------------------------
 
 Install the bundle by executing the following line command. This command updates
 the Kernel to enable the bundle (app/AppKernel.php) and loads the routing
 (app/config/routing.yml) to add the bundle routes.
 
 ```bash
-$ cd /path/to/pumukit2/
 $ php app/console pumukit:install:bundle Pumukit/MoodleBundle/PumukitMoodleBundle
 ```
 
-Step 4: Configure the parameters in your `app/config/parameters.yml` file
--------------------------------------------------------------------------
+Step 4: Configure the bundle
+----------------------------
+
+Add the configuration to the `app/config/parameters.yml` file of your PuMuKIT2 directory.
 
 ```
 pumukit_moodle:
