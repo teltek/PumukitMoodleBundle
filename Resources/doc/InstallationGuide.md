@@ -29,7 +29,7 @@ From your project directory, execute the following command to download
 the latest stable version of this bundle:
 
 ```bash
-$ composer require teltek/pmk2-moodle-bundle 1.0.x-dev
+$ composer require teltek/pmk2-moodle-bundle 1.0.0
 ```
 
 Step 3: Install the bundle
