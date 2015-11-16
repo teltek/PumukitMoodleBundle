@@ -1,0 +1,31 @@
+{
+    "name": "teltek/pmk2-moodle-bundle",
+    "type": "symfony-bundle",
+    "description": "Moodle bundle for Symfony2 to upload videos to Moodle and other features",
+    "keywords": [
+        "moodle",
+        "uploader",
+        "upload",
+        "videos",
+        "symfony2",
+        "bundle",
+        "pumukit",
+        "teltek"
+    ],
+    "homepage": "https://github.com/teltek/PuMuKIT2-moodle-bundle",
+    "license": "Copyright",
+    "authors": [
+        {
+            "name": "Teltek Team",
+            "homepage": "http://teltek.es"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pumukit\\MoodleBundle\\": ""
+        }
+    }
+}
