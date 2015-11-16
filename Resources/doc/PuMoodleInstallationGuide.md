@@ -1,6 +1,6 @@
 # PuMoodle Installation Guide
 
-*This page is updated to the PuMuKIT2-moodle-bundle 1.0.0 and to the PuMuKIT 2.1.0*
+*This page is updated to the PuMuKIT2-moodle-bundle master and to the PuMuKIT 2.1.0*
 
 ## Contents
 
