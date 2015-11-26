@@ -84,10 +84,43 @@ function pumukit_curl_action_parameters($action, $parameters = null, $absoluteur
     $sal["error"]  = curl_error($ch);
     $sal["status"] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    if ($sal["status"] !== 200 && !isset($sal["var"])){
-        var_dump($sal);
-        die ("\nError - review http status\n"); // to do excepcion
-    }
     
-    return $sal["var"];
+    return $sal;
+}
+
+/**
+ *  Parses the embed_url field to return a proper embedded_url.
+ */
+function pumukit_parse_embed_url($url) {
+    global $CFG;
+
+    // If the teacher does not change the course language, session->lang is not set.
+    if (isset($SESSION->lang)) {
+        $lang = $SESSION->lang;
+    } else if (isset($USER->lang)) {
+        $lang = $USER->lang;
+    } else {
+        $lang = 'en';
+    }
+
+    $embed_url= $CFG->pumukiturl_pumukiturl;
+    
+    //Parses the 'embed_url' field in case it is an url that contains an id.
+    if (preg_match('~^http*://~', $url)) {
+        preg_match('/id\=(\w*)\&|id\=(\w*)$/i', $url, $result);
+        $pmk_id = isset($result)?  $result[1] : null;
+        if($pmk_id == null) {
+            preg_match('~video/(\w*)$~i', $url, $result);
+            $pmk_id = isset($result)?  $result[1] : null;
+        }
+        if($pmk_id != null) {
+            $url= $embed_url .'embed?id=' . $pmk_id . "&lang=" . $lang ;
+        }
+        //If an id can't be found, we will just copy the url 'as is'.
+    }
+    else {
+        //If preg match fails, we assume the embed_url contains an id
+        $url = $embed_url.'embed?id=' . $url;
+    }
+    return $url;
 }

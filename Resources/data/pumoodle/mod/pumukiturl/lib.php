@@ -48,7 +48,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function pumukiturl_supports($feature) {
     switch($feature) {
-// To make this module a resource instead of an activity
+            // To make this module a resource instead of an activity
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_GRADE_HAS_GRADE:         return false;
@@ -74,6 +74,8 @@ function pumukiturl_add_instance(stdClass $pumukit, mod_pumukiturl_mod_form $mfo
 
     $pumukit->timecreated = time();
 
+    $pumukit->embed_url = pumukit_parse_embed_url($pumukit->embed_url);
+
     # You may have to add extra stuff in here #
 
     return $DB->insert_record('pumukiturl', $pumukit);
@@ -95,6 +97,8 @@ function pumukiturl_update_instance(stdClass $pumukit, mod_pumukiturl_mod_form $
 
     $pumukit->timemodified = time();
     $pumukit->id = $pumukit->instance;
+
+    $pumukit->embed_url = pumukit_parse_embed_url($pumukit->embed_url);
 
     # You may have to add extra stuff in here #
 
@@ -381,3 +385,4 @@ function pumukiturl_extend_navigation(navigation_node $navref, stdclass $course,
  */
 function pumukiturl_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $pumukitnode=null) {
 }
+
