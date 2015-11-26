@@ -48,3 +48,8 @@ $string['pumukiturl'] = 'URL del servidor Pumukit';
 $string['configpumukiturl'] = 'Moodle se conectará a este endpoint para consultar al servidor Pumukit';
 $string['pumukitsecret'] = 'Secreto compartido con Pumukit';
 $string['configpumukitsecret'] = 'Moodle usará este secreto compartido para cifrar las consultas al servidor Pumukit';
+$string['pumukitidorurl'] = 'ID de PuMuKIT o URL';
+$string['form_rule_insert_idorurl'] = 'Inserta el ID o la URL de PuMuKIT';
+$string['pumukitidorurl_help'] = 'Inserta el ID del Objeto Multimedia de PuMuKIT o su URL. </br>Este ID puede ser obtenido fácilmente en el back office de PuMuKIT, en la sección \'Info\' que aparece tras seleccionar un Objeto Multimedia.';
+$string['embed_url_notvalid'] = 'Error. El ID/URL dado no es válido.';
+
