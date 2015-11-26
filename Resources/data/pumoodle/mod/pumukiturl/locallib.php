@@ -16,13 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Internal library of functions for module pumukit
+ * Internal library of functions for module pumukiturl
  *
- * All the pumukit specific functions, needed to implement the module
+ * All the pumukiturl specific functions, needed to implement the module
  * logic, should go here. Never include this file from your lib.php!
  *
  * @package    mod
- * @subpackage pumukit
+ * @subpackage pumukiturl
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,7 +42,7 @@ define ('SECRET', 'This is a PuMoodle secret!¡!');
 function pumukit_create_ticket($id, $email) {
     global $CFG;
 
-    $pumukitsecret = empty($CFG->pumukit_secret) ? SECRET : $CFG->pumukit_secret;
+    $pumukitsecret = empty($CFG->pumukiturl_secret) ? SECRET : $CFG->pumukiturl_secret;
     $date   = date("Y-m-d");
     // At the moment, the IP is not checked on PuMuKit's side
     $ip     = $_SERVER["REMOTE_ADDR"];  
@@ -51,10 +51,10 @@ function pumukit_create_ticket($id, $email) {
 }
 
 /**
- * Gets curl output for the pumukit host and the given url.
+ * Gets curl output for the pumukiturl host and the given url.
  * if $absoluteurl = true, it takes $action as final url and doesn't parse $parameters.
  *
- * @param string $action from pumukit module.
+ * @param string $action from pumukiturl module.
  * @param array $parameters (key => value)
  * @return string $output
  */
@@ -62,10 +62,10 @@ function pumukit_curl_action_parameters($action, $parameters = null, $absoluteur
     global $CFG;
     if ($absoluteurl) {
         $url = $action;
-    } elseif (empty($CFG->pumukit_pumukiturl)){
+    } elseif (empty($CFG->pumukiturl_pumukiturl)){
         $url = PUMUKITURL . $action . '?' . http_build_query($parameters, '', '&');
     } else{       
-        $url = trim($CFG->pumukit_pumukiturl);
+        $url = trim($CFG->pumukiturl_pumukiturl);
         // Add the final slash if needed
         $url .= (substr($url, -1) == '/') ? '' : '/';
         $url .=  $action . '?' . http_build_query($parameters, '', '&');

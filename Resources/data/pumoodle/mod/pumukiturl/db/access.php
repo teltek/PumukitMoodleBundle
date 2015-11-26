@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for the pumukit module
+ * Capability definitions for the pumukiturl module
  *
  * The capabilities are loaded into the database table when the module is
  * installed or updated. Whenever the capability definitions are updated,
@@ -41,7 +41,7 @@
  * The variable name for the capability definitions array is $capabilities
  *
  * @package    mod
- * @subpackage pumukit
+ * @subpackage pumukiturl
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,7 +50,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
-    'mod/pumukit:view' => array(
+    'mod/pumukiturl:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -62,7 +62,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/pumukit:addinstance' => array(
+    'mod/pumukiturl:addinstance' => array(
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
@@ -72,7 +72,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW // former admin is now manager
         )
 /*        
-    'mod/pumukit:submit' => array(
+    'mod/pumukiturl:submit' => array(
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

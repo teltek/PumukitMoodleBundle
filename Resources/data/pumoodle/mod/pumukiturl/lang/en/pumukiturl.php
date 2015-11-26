@@ -17,13 +17,13 @@
 
 
 /**
- * English strings for pumukit
+ * English strings for pumukiturl
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
  * @package    mod
- * @subpackage pumukit
+ * @subpackage pumukiturl
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

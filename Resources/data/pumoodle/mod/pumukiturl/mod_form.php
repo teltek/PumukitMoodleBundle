@@ -16,13 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The main pumukit configuration form
+ * The main pumukiturl configuration form
  *
  * It uses the standard core Moodle formslib. For more info about them, please
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package    mod
- * @subpackage pumukit
+ * @subpackage pumukiturl
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 /**
  * Module instance settings form
  */
-class mod_pumukit_mod_form extends moodleform_mod {
+class mod_pumukiturl_mod_form extends moodleform_mod {
 
     /**
      * Defines forms elements
@@ -60,7 +60,7 @@ class mod_pumukit_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('pumukitname_', 'pumukit'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('pumukitname_', 'pumukiturl'), array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -68,7 +68,7 @@ class mod_pumukit_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'pumukitname', 'pumukit');
+        $mform->addHelpButton('name', 'pumukitname', 'pumukiturl');
 
 /*        // Adding a js function to update the name element when a video is selected
         $mform->addElement('static', null, '', 
@@ -84,10 +84,10 @@ class mod_pumukit_mod_form extends moodleform_mod {
         // Adding the standard "intro" and "introformat" fields (the intro description).
         $this->add_intro_editor();
 
-        $mform->addElement('text', 'embed_url', get_string('pumukitidorurl', 'pumukit'), array('size'=>'64'));
-        $mform->addHelpButton('embed_url', 'pumukitidorurl', 'pumukit');
+        $mform->addElement('text', 'embed_url', get_string('pumukitidorurl', 'pumukiturl'), array('size'=>'64'));
+        $mform->addHelpButton('embed_url', 'pumukitidorurl', 'pumukiturl');
 
-        $mform->addRule( 'embed_url', get_string('form_rule_insert_idorurl','pumukit'), 'required' );
+        $mform->addRule( 'embed_url', get_string('form_rule_insert_idorurl','pumukiturl'), 'required' );
         $mform->addElement('hidden', 'professor_email', $USER->email);
 
         //-------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ class mod_pumukit_mod_form extends moodleform_mod {
             }
         }*/
 
-        $label = get_string('select_a_video','pumukit');
+        $label = get_string('select_a_video','pumukiturl');
         $select->setLabel($label);
 /*        if (1 == $rows) $rows = 2; // A select with 1 row is unreadable
         $select->setSize(min($rows,$maxrows));*/

@@ -27,6 +27,6 @@
 /**
  * Custom uninstallation procedure
  */
-function xmldb_pumukit_uninstall() {
+function xmldb_pumukiturl_uninstall() {
     return true;
 }

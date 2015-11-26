@@ -17,13 +17,13 @@
 
 
 /**
- * Defines the version of pumukit
+ * Defines the version of pumukiturl
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
  * @package    mod
- * @subpackage pumukit
+ * @subpackage pumukiturl
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     rubenrua@uvigo.es aperez@teltek.es
@@ -35,4 +35,4 @@ $module->version   = 0;             // If version == 0 then module will not be i
 $module->version   = 2015112500;    // The current module version (Date: YYYYMMDDXX)
 $module->requires  = 2011051000;    // Requires this Moodle version
 $module->cron      = 0;             // Period for cron to check this module (secs)
-$module->component = 'mod_pumukit'; // To check on upgrade, that module sits in correct place
+$module->component = 'mod_pumukiturl'; // To check on upgrade, that module sits in correct place
