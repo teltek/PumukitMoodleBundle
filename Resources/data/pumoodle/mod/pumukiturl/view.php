@@ -32,27 +32,24 @@ require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php'); 
 
 global $USER;
-defined('MOODLE_INTERNAL') || die();
-//define ('PUMUKITURL', 'http://cmarautopub/pumoodle/');
-$CFG->pumukiturl_pumukiturl;
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // pumukit instance ID - it should be named as the first character of the module
 
 if ($id) {
-    $cm      = get_coursemodule_from_id('pumukiturl', $id, 0, false, MUST_EXIST);
-    $course  = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $pumukit = $DB->get_record('pumukiturl', array('id' => $cm->instance), '*', MUST_EXIST);
+	$cm      = get_coursemodule_from_id('pumukiturl', $id, 0, false, MUST_EXIST);
+	$course  = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+	$pumukit = $DB->get_record('pumukiturl', array('id' => $cm->instance), '*', MUST_EXIST);
 } elseif ($n) {
-    $pumukit = $DB->get_record('pumukiturl', array('id' => $n), '*', MUST_EXIST);
-    $course  = $DB->get_record('course', array('id' => $pumukit->course), '*', MUST_EXIST);
-    $cm      = get_coursemodule_from_instance('pumukiturl', $pumukit->id, $course->id, false, MUST_EXIST);
+	$pumukit = $DB->get_record('pumukiturl', array('id' => $n), '*', MUST_EXIST);
+	$course  = $DB->get_record('course', array('id' => $pumukit->course), '*', MUST_EXIST);
+	$cm      = get_coursemodule_from_instance('pumukiturl', $pumukit->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
 }
 
 require_login($course, true, $cm);
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 
 add_to_log($course->id, 'pumukiturl', 'view', "view.php?id={$cm->id}", $pumukit->name, $cm->id);
 
@@ -65,7 +62,7 @@ $PAGE->set_context($context);
 // other things you may want to set - remove if not needed
 //$PAGE->set_cacheable(false);
 //$PAGE->set_focuscontrol('some-html-id');
-//$PAGE->add_body_class('pumukit-'.$somevar);
+//$PAGE->add_body_class('pumukiturl-'.$somevar);
 
 // Output starts here
 echo $OUTPUT->header();
@@ -80,28 +77,21 @@ if ($pumukit->intro) { // Conditions to show the intro can change to look for ow
 // as Pumukit requires it for the non-public broadcast profiles.
 $url_temp_array = explode('/', $pumukit->embed_url); // Strict standards: Only variables should be passed by reference
 
-var_dump($pumukit->embed_url);
-preg_match('/id\=(\w*)\&|id\=(\w*)$/i', $pumukit->embed_url, $result);
-$mm_id = isset($result)?  $result[1] : null;
-if(!isset($mm_id)) {
-    preg_match('/video\/(\w*)\&|video\/(\w*)$/i', $pumukit->embed_url, $result);
-    $mm_id = isset($result)?  $result[1] : null;
-}
-preg_match('/lang\=(\w*)\&|id\=(\w*)$/i', $pumukit->embed_url, $result);
-$lang = isset($result)?  $result[1] : null;
 
+preg_match('/id\=(\w*)/i', $pumukit->embed_url, $result);
+$mm_id = isset($result[1])?  $result[1] : null;
+preg_match('/lang\=(\w*)/i', $pumukit->embed_url, $result);
+$lang = isset($result[1])?  $result[1] : null;
+$concatChar = ($mm_id || $lang) ? '&': '?';
+$parameters = array(
+              'professor_email' => $pumukit->professor_email,
+              'ticket' => pumukit_create_ticket($mm_id, $pumukit->professor_email)
+              );
+$url = $pumukit->embed_url . $concatChar . http_build_query($parameters, '', '&');
 
-$concatChar = '?';
-$parameters = array('id' => $mm_id,
-                    'lang' => $lang,
-                    'professor_email' => $pumukit->professor_email,
-                    'ticket' => pumukit_create_ticket($mm_id, $pumukit->professor_email)
-);
-
-$url = $CFG->pumukiturl_pumukiturl . 'embed'.$concatChar . http_build_query($parameters, '', '&');
 // TO DO - test an iframe instead of direct curl echo.
-var_dump($url);
-echo pumukit_curl_action_parameters($url , null, true);
+$sal = pumukit_curl_action_parameters($url , null, true);
+echo $sal['var'];
 
 // Finish the page
 echo $OUTPUT->footer();
