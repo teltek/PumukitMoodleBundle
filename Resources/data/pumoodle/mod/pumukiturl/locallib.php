@@ -108,10 +108,10 @@ function pumukit_parse_embed_url($url) {
     //Parses the 'embed_url' field in case it is an url that contains an id.
     if (preg_match('~^http*://~', $url)) {
         preg_match('/id\=(\w*)\&|id\=(\w*)$/i', $url, $result);
-        $pmk_id = isset($result)?  $result[1] : null;
+        $pmk_id = isset($result[1])?  $result[1] : null;
         if($pmk_id == null) {
             preg_match('~video/(\w*)$~i', $url, $result);
-            $pmk_id = isset($result)?  $result[1] : null;
+            $pmk_id = isset($result[1])?  $result[1] : null;
         }
         if($pmk_id != null) {
             $url= $embed_url .'embed?id=' . $pmk_id . "&lang=" . $lang ;
@@ -122,5 +122,34 @@ function pumukit_parse_embed_url($url) {
         //If preg match fails, we assume the embed_url contains an id
         $url = $embed_url.'embed?id=' . $url;
     }
+    return $url;
+}
+
+/**
+ *  Checks wether the embedded url is valid and can be used to watch the video.
+ */
+function pumukit_is_embed_url_correct ($embed_url, $prof_email) {
+    $correct = false;
+    $url = pumukit_parse_embed_url($embed_url);
+    $url = pumukit_get_playable_embed_url($url, $prof_email);
+    $sal = pumukit_curl_action_parameters($url , null, true);
+
+    $correct = ($sal['status'] == '200');
+    return $correct;
+}
+
+
+function pumukit_get_playable_embed_url($embed_url, $prof_email) {
+    preg_match('/id\=(\w*)/i', $embed_url, $result);
+    $mm_id = isset($result[1])?  $result[1] : null;
+    preg_match('/lang\=(\w*)/i', $embed_url, $result);
+    $lang = isset($result[1])?  $result[1] : null;
+    $concatChar = ($mm_id || $lang) ? '&': '?';
+    $parameters = array(
+        'professor_email' => $prof_email,
+        'ticket' => pumukit_create_ticket($mm_id, $prof_email)
+    );
+    $url = $embed_url . $concatChar . http_build_query($parameters, '', '&');
+
     return $url;
 }
