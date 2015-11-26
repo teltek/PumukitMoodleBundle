@@ -43,14 +43,6 @@ class mod_pumukiturl_mod_form extends moodleform_mod {
     public function definition() {
         global $USER;       // to obtain email
         global $SESSION;    // to obtain page language
-        // If the teacher does not change the course language, session->lang is not set.
-        if (isset($SESSION->lang)) {
-            $lang = $SESSION->lang;
-        } else if (isset($USER->lang)) {
-            $lang = $USER->lang;
-        } else {
-            $lang = 'en';
-        }
 
         $this->standard_coursemodule_elements();
         $mform = $this->_form;
@@ -61,11 +53,7 @@ class mod_pumukiturl_mod_form extends moodleform_mod {
 
         // Adding the standard "name" field
         $mform->addElement('text', 'name', get_string('pumukitname_', 'pumukiturl'), array('size'=>'64'));
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
-        } else {
-            $mform->setType('name', PARAM_CLEAN);
-        }
+
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'pumukitname', 'pumukiturl');
@@ -82,13 +70,22 @@ class mod_pumukiturl_mod_form extends moodleform_mod {
             </script>');
 */
         // Adding the standard "intro" and "introformat" fields (the intro description).
-        $this->add_intro_editor();
+        $this->standard_intro_elements();
 
         $mform->addElement('text', 'embed_url', get_string('pumukitidorurl', 'pumukiturl'), array('size'=>'64'));
         $mform->addHelpButton('embed_url', 'pumukitidorurl', 'pumukiturl');
 
         $mform->addRule( 'embed_url', get_string('form_rule_insert_idorurl','pumukiturl'), 'required' );
         $mform->addElement('hidden', 'professor_email', $USER->email);
+
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_RAW);
+        }
+        $mform->setType('embed_url', PARAM_RAW);
+        $mform->setType('professor_email', PARAM_RAW);
+
 
         //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
