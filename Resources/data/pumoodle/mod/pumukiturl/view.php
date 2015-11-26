@@ -73,21 +73,7 @@ if ($pumukit->intro) { // Conditions to show the intro can change to look for ow
     echo $OUTPUT->box(format_module_intro('pumukiturl', $pumukit, $cm->id), 'generalbox mod_introbox', 'pumukiturlintro');
 }
 
-// Creates a ticket to view the file to ensure that the video is displayed.
-// as Pumukit requires it for the non-public broadcast profiles.
-$url_temp_array = explode('/', $pumukit->embed_url); // Strict standards: Only variables should be passed by reference
-
-
-preg_match('/id\=(\w*)/i', $pumukit->embed_url, $result);
-$mm_id = isset($result[1])?  $result[1] : null;
-preg_match('/lang\=(\w*)/i', $pumukit->embed_url, $result);
-$lang = isset($result[1])?  $result[1] : null;
-$concatChar = ($mm_id || $lang) ? '&': '?';
-$parameters = array(
-              'professor_email' => $pumukit->professor_email,
-              'ticket' => pumukit_create_ticket($mm_id, $pumukit->professor_email)
-              );
-$url = $pumukit->embed_url . $concatChar . http_build_query($parameters, '', '&');
+$url = pumukit_get_playable_embed_url($pumukit->embed_url, $pumukit->professor_email);
 
 // TO DO - test an iframe instead of direct curl echo.
 $sal = pumukit_curl_action_parameters($url , null, true);
