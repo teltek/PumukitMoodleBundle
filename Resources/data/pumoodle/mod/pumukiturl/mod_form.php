@@ -76,6 +76,7 @@ class mod_pumukiturl_mod_form extends moodleform_mod {
         $mform->addHelpButton('embed_url', 'pumukitidorurl', 'pumukiturl');
 
         $mform->addRule( 'embed_url', get_string('form_rule_insert_idorurl','pumukiturl'), 'required' );
+        
         $mform->addElement('hidden', 'professor_email', $USER->email);
 
         if (!empty($CFG->formatstringstriptags)) {
@@ -90,6 +91,14 @@ class mod_pumukiturl_mod_form extends moodleform_mod {
         //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();
+    }
+
+    public function validation($data, $files) {
+        $errors = array();
+        if(!pumukit_is_embed_url_correct($data['embed_url'], $data['professor_email'])) {
+            $errors['embed_url'] = ' Error. The URL/ID given is not valid.';
+        }
+        return $errors;
     }
 
     /**
