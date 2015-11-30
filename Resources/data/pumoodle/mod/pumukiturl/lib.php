@@ -53,6 +53,7 @@ function pumukiturl_supports($feature) {
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         default:                              return null;
     }
 }
