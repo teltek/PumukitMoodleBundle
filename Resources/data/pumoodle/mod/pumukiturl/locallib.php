@@ -107,7 +107,7 @@ function pumukit_parse_embed_url($url) {
     
     //Parses the 'embed_url' field in case it is an url that contains an id.
     if (preg_match('~^http*://~', $url)) {
-        preg_match('/id\=(\w*)\&|id\=(\w*)$/i', $url, $result);
+        preg_match('/id\=(\w*)/i', $url, $result);
         $pmk_id = isset($result[1])?  $result[1] : null;
         if($pmk_id == null) {
             preg_match('~video/(\w*)$~i', $url, $result);
@@ -122,6 +122,28 @@ function pumukit_parse_embed_url($url) {
         //If preg match fails, we assume the embed_url contains an id
         $url = $embed_url.'embed?id=' . $url;
     }
+    return $url;
+}
+
+/**
+ *  Parses the embed_url field to return a proper embedded_url.
+ */
+function pumukit_parse_id($url) {
+    global $CFG;
+
+    //Parses the 'embed_url' field in case it is an url that contains an id.
+    if (preg_match('~^http*://~', $url)) {
+        preg_match('/id\=(\w*)/i', $url, $result);
+        $pmk_id = isset($result[1])?  $result[1] : null;
+        if($pmk_id == null) {
+            preg_match('~video/(\w*)$~i', $url, $result);
+            $pmk_id = isset($result[1])?  $result[1] : null;
+        }
+        if($pmk_id != null) {
+            $url= $pmk_id;
+        }
+    }
+    //If an id can't be found, we will just copy the url 'as is'.
     return $url;
 }
 
