@@ -93,6 +93,16 @@ class mod_pumukiturl_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+
+    public function definition_after_data() {
+        global $CFG, $COURSE;
+        $mform =& $this->_form;
+        
+        $embed_url =& $mform->getElement('embed_url');
+        $embed_url->setValue(pumukit_parse_id($embed_url->getValue()));
+    }
+
+
     public function validation($data, $files) {
         $errors = array();
         if(!pumukit_is_embed_url_correct($data['embed_url'], $data['professor_email'])) {
