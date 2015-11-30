@@ -17,13 +17,13 @@
 
 
 /**
- * English strings for pumukiturl
+ * English strings for videospumukit
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
  * @package    mod
- * @subpackage pumukiturl
+ * @subpackage videospumukit
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,8 +44,8 @@ $string['select_a_video'] = 'Seleccione un vídeo';
 $string['error_no_pumukit_output'] = 'Error en la respuesta del servidor Pumukit';
 $string['form_rule_select_a_lecture'] = 'Debe seleccionar una clase grabada';
 $string['description'] = 'Descripción opcional para la clase grabada';
-$string['pumukiturl'] = 'URL del servidor Pumukit';
-$string['configpumukiturl'] = 'Moodle se conectará a este endpoint para consultar al servidor Pumukit';
+$string['videospumukit'] = 'URL del servidor Pumukit';
+$string['configvideospumukit'] = 'Moodle se conectará a este endpoint para consultar al servidor Pumukit';
 $string['pumukitsecret'] = 'Secreto compartido con Pumukit';
 $string['configpumukitsecret'] = 'Moodle usará este secreto compartido para cifrar las consultas al servidor Pumukit';
 $string['pumukitidorurl'] = 'ID de PuMuKIT o URL';

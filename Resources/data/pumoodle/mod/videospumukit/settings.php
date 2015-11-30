@@ -21,7 +21,7 @@
  * This form stores general settings into the site wide $CFG object
  *
  * @package    mod
- * @subpackage pumukiturl
+ * @subpackage videospumukit
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,11 +30,11 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
 
-    $settings->add(new admin_setting_configtext('pumukiturl_pumukiturl', 
-    	get_string('pumukiturl', 'pumukiturl'),
-    	get_string('configpumukiturl', 'pumukiturl'), 'http://cmarautopub/pumoodle/'));
+    $settings->add(new admin_setting_configtext('videospumukit_videospumukit', 
+    	get_string('videospumukit', 'videospumukit'),
+    	get_string('configvideospumukit', 'videospumukit'), 'http://cmarautopub/pumoodle/'));
 
-    $settings->add(new admin_setting_configtext('pumukiturl_secret', 
-    	get_string('pumukitsecret', 'pumukiturl'),
-        get_string('configpumukitsecret', 'pumukiturl'), 'This is a PuMoodle secret!¡!'));	
+    $settings->add(new admin_setting_configtext('videospumukit_secret', 
+    	get_string('pumukitsecret', 'videospumukit'),
+        get_string('configpumukitsecret', 'videospumukit'), 'This is a PuMoodle secret!¡!'));	
 }

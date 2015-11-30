@@ -30,7 +30,7 @@
  *
  * @see upgrade_plugins_modules()
  */
-function xmldb_pumukiturl_install() {
+function xmldb_videospumukit_install() {
 }
 
 /**
@@ -38,5 +38,5 @@ function xmldb_pumukiturl_install() {
  *
  * @see upgrade_plugins_modules()
  */
-function xmldb_pumukiturl_install_recovery() {
+function xmldb_videospumukit_install_recovery() {
 }

@@ -17,13 +17,13 @@
 
 
 /**
- * Defines the version of pumukiturl
+ * Defines the version of videospumukit
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
  * @package    mod
- * @subpackage pumukiturl
+ * @subpackage videospumukit
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     rubenrua@uvigo.es aperez@teltek.es
@@ -32,7 +32,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $module->version   = 0;             // If version == 0 then module will not be installed
-$module->version   = 2015112501;    // The current module version (Date: YYYYMMDDXX)
+$module->version   = 2015113000;    // The current module version (Date: YYYYMMDDXX)
 $module->requires  = 2011051000;    // Requires this Moodle version
 $module->cron      = 0;             // Period for cron to check this module (secs)
-$module->component = 'mod_pumukiturl'; // To check on upgrade, that module sits in correct place
+$module->component = 'mod_videospumukit'; // To check on upgrade, that module sits in correct place

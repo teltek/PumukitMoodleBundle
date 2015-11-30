@@ -23,7 +23,7 @@
  * in the previous 1.9 NEWMODULE.
  *
  * @package    mod
- * @subpackage pumukiturl
+ * @subpackage videospumukit
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,8 +33,8 @@ defined('MOODLE_INTERNAL') || die();
 global $DB;
 
 $logs = array(
-    array('module'=>'pumukiturl', 'action'=>'add', 'mtable'=>'pumukit', 'field'=>'name'),
-    array('module'=>'pumukiturl', 'action'=>'update', 'mtable'=>'pumukit', 'field'=>'name'),
-    array('module'=>'pumukiturl', 'action'=>'view', 'mtable'=>'pumukit', 'field'=>'name'),
-    array('module'=>'pumukiturl', 'action'=>'view all', 'mtable'=>'pumukit', 'field'=>'name')
+    array('module'=>'videospumukit', 'action'=>'add', 'mtable'=>'pumukit', 'field'=>'name'),
+    array('module'=>'videospumukit', 'action'=>'update', 'mtable'=>'pumukit', 'field'=>'name'),
+    array('module'=>'videospumukit', 'action'=>'view', 'mtable'=>'pumukit', 'field'=>'name'),
+    array('module'=>'videospumukit', 'action'=>'view all', 'mtable'=>'pumukit', 'field'=>'name')
 );

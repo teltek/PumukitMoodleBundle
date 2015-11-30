@@ -27,6 +27,6 @@
 /**
  * Custom uninstallation procedure
  */
-function xmldb_pumukiturl_uninstall() {
+function xmldb_videospumukit_uninstall() {
     return true;
 }

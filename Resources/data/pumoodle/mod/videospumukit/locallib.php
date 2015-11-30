@@ -16,13 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Internal library of functions for module pumukiturl
+ * Internal library of functions for module videospumukit
  *
- * All the pumukiturl specific functions, needed to implement the module
+ * All the videospumukit specific functions, needed to implement the module
  * logic, should go here. Never include this file from your lib.php!
  *
  * @package    mod
- * @subpackage pumukiturl
+ * @subpackage videospumukit
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 // These should be customized at Site Administration block -> Plugins -> Activity modules -> Recorded lecture
-define ('PUMUKITURL', 'http://cmarautopub/pumoodle/');
+define ('VIDEOSPUMUKIT', 'http://cmarautopub/pumoodle/');
 define ('SECRET', 'This is a PuMoodle secret!¡!');
 
 /**
@@ -42,7 +42,7 @@ define ('SECRET', 'This is a PuMoodle secret!¡!');
 function pumukit_create_ticket($id, $email) {
     global $CFG;
 
-    $pumukitsecret = empty($CFG->pumukiturl_secret) ? SECRET : $CFG->pumukiturl_secret;
+    $pumukitsecret = empty($CFG->videospumukit_secret) ? SECRET : $CFG->videospumukit_secret;
     $date   = date("Y-m-d");
     // At the moment, the IP is not checked on PuMuKit's side
     $ip     = $_SERVER["REMOTE_ADDR"];  
@@ -51,10 +51,10 @@ function pumukit_create_ticket($id, $email) {
 }
 
 /**
- * Gets curl output for the pumukiturl host and the given url.
+ * Gets curl output for the videospumukit host and the given url.
  * if $absoluteurl = true, it takes $action as final url and doesn't parse $parameters.
  *
- * @param string $action from pumukiturl module.
+ * @param string $action from videospumukit module.
  * @param array $parameters (key => value)
  * @return string $output
  */
@@ -62,10 +62,10 @@ function pumukit_curl_action_parameters($action, $parameters = null, $absoluteur
     global $CFG;
     if ($absoluteurl) {
         $url = $action;
-    } elseif (empty($CFG->pumukiturl_pumukiturl)){
-        $url = PUMUKITURL . $action . '?' . http_build_query($parameters, '', '&');
+    } elseif (empty($CFG->videospumukit_videospumukit)){
+        $url = VIDEOSPUMUKIT . $action . '?' . http_build_query($parameters, '', '&');
     } else{       
-        $url = trim($CFG->pumukiturl_pumukiturl);
+        $url = trim($CFG->videospumukit_videospumukit);
         // Add the final slash if needed
         $url .= (substr($url, -1) == '/') ? '' : '/';
         $url .=  $action . '?' . http_build_query($parameters, '', '&');
@@ -103,7 +103,7 @@ function pumukit_parse_embed_url($url) {
         $lang = 'en';
     }
 
-    $embed_url= $CFG->pumukiturl_pumukiturl;
+    $embed_url= $CFG->videospumukit_videospumukit;
     
     //Parses the 'embed_url' field in case it is an url that contains an id.
     if (preg_match('~^http*://~', $url)) {

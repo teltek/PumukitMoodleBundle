@@ -1,4 +1,4 @@
-Pumukit resource module
+Videos PuMuKIT module.
 
 This module allows to create a new resource with an embedded video
 brought by the pumukit server.

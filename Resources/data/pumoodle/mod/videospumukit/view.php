@@ -16,13 +16,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints a particular instance of pumukiturl
+ * Prints a particular instance of videospumukit
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
  * @package    mod
- * @subpackage pumukiturl
+ * @subpackage videospumukit
  * @copyright  2012 Andres Perez aperez@teltek.es
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,13 +37,13 @@ $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // pumukit instance ID - it should be named as the first character of the module
 
 if ($id) {
-	$cm      = get_coursemodule_from_id('pumukiturl', $id, 0, false, MUST_EXIST);
+	$cm      = get_coursemodule_from_id('videospumukit', $id, 0, false, MUST_EXIST);
 	$course  = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-	$pumukit = $DB->get_record('pumukiturl', array('id' => $cm->instance), '*', MUST_EXIST);
+	$pumukit = $DB->get_record('videospumukit', array('id' => $cm->instance), '*', MUST_EXIST);
 } elseif ($n) {
-	$pumukit = $DB->get_record('pumukiturl', array('id' => $n), '*', MUST_EXIST);
+	$pumukit = $DB->get_record('videospumukit', array('id' => $n), '*', MUST_EXIST);
 	$course  = $DB->get_record('course', array('id' => $pumukit->course), '*', MUST_EXIST);
-	$cm      = get_coursemodule_from_instance('pumukiturl', $pumukit->id, $course->id, false, MUST_EXIST);
+	$cm      = get_coursemodule_from_instance('videospumukit', $pumukit->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
 }
@@ -51,10 +51,10 @@ if ($id) {
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-add_to_log($course->id, 'pumukiturl', 'view', "view.php?id={$cm->id}", $pumukit->name, $cm->id);
+add_to_log($course->id, 'videospumukit', 'view', "view.php?id={$cm->id}", $pumukit->name, $cm->id);
 
 /// Print the page header
-$PAGE->set_url('/mod/pumukiturl/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/videospumukit/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($pumukit->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
@@ -62,7 +62,7 @@ $PAGE->set_context($context);
 // other things you may want to set - remove if not needed
 //$PAGE->set_cacheable(false);
 //$PAGE->set_focuscontrol('some-html-id');
-//$PAGE->add_body_class('pumukiturl-'.$somevar);
+//$PAGE->add_body_class('videospumukit-'.$somevar);
 
 // Output starts here
 echo $OUTPUT->header();
@@ -70,7 +70,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($pumukit->name);
 
 if ($pumukit->intro) { // Conditions to show the intro can change to look for own settings or whatever
-    echo $OUTPUT->box(format_module_intro('pumukiturl', $pumukit, $cm->id), 'generalbox mod_introbox', 'pumukiturlintro');
+    echo $OUTPUT->box(format_module_intro('videospumukit', $pumukit, $cm->id), 'generalbox mod_introbox', 'videospumukitintro');
 }
 
 $url = pumukit_get_playable_embed_url($pumukit->embed_url, $pumukit->professor_email);

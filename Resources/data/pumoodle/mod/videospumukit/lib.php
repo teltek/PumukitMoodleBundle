@@ -16,16 +16,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library of interface functions and constants for module pumukiturl
+ * Library of interface functions and constants for module videospumukit
  *
  * All the core Moodle functions, neeeded to allow the module to work
  * integrated in Moodle should be placed here.
- * All the pumukiturl specific functions, needed to implement all the module
+ * All the videospumukit specific functions, needed to implement all the module
  * logic, should go to locallib.php. This will help to save some memory when
  * Moodle is performing actions across all modules.
  *
  * @package    mod
- * @subpackage pumukiturl
+ * @subpackage videospumukit
  * @copyright  2012 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,7 +46,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed true if the feature is supported, null if unknown
  */
-function pumukiturl_supports($feature) {
+function videospumukit_supports($feature) {
     switch($feature) {
             // To make this module a resource instead of an activity
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
@@ -59,7 +59,7 @@ function pumukiturl_supports($feature) {
 }
 
 /**
- * Saves a new instance of the pumukiturl into the database
+ * Saves a new instance of the videospumukit into the database
  *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
@@ -67,10 +67,10 @@ function pumukiturl_supports($feature) {
  * of the new instance.
  *
  * @param object $pumukit An object from the form in mod_form.php
- * @param mod_pumukiturl_mod_form $mform
- * @return int The id of the newly inserted pumukiturl record
+ * @param mod_videospumukit_mod_form $mform
+ * @return int The id of the newly inserted videospumukit record
  */
-function pumukiturl_add_instance(stdClass $pumukit, mod_pumukiturl_mod_form $mform = null) {
+function videospumukit_add_instance(stdClass $pumukit, mod_videospumukit_mod_form $mform = null) {
     global $DB;
 
     $pumukit->timecreated = time();
@@ -79,21 +79,21 @@ function pumukiturl_add_instance(stdClass $pumukit, mod_pumukiturl_mod_form $mfo
 
     # You may have to add extra stuff in here #
 
-    return $DB->insert_record('pumukiturl', $pumukit);
+    return $DB->insert_record('videospumukit', $pumukit);
 }
 
 /**
- * Updates an instance of the pumukiturl in the database
+ * Updates an instance of the videospumukit in the database
  *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
  * @param object $pumukit An object from the form in mod_form.php
- * @param mod_pumukiturl_mod_form $mform
+ * @param mod_videospumukit_mod_form $mform
  * @return boolean Success/Fail
  */
-function pumukiturl_update_instance(stdClass $pumukit, mod_pumukiturl_mod_form $mform = null) {
+function videospumukit_update_instance(stdClass $pumukit, mod_videospumukit_mod_form $mform = null) {
     global $DB;
 
     $pumukit->timemodified = time();
@@ -103,11 +103,11 @@ function pumukiturl_update_instance(stdClass $pumukit, mod_pumukiturl_mod_form $
 
     # You may have to add extra stuff in here #
 
-    return $DB->update_record('pumukiturl', $pumukit);
+    return $DB->update_record('videospumukit', $pumukit);
 }
 
 /**
- * Removes an instance of the pumukiturl from the database
+ * Removes an instance of the videospumukit from the database
  *
  * Given an ID of an instance of this module,
  * this function will permanently delete the instance
@@ -116,16 +116,16 @@ function pumukiturl_update_instance(stdClass $pumukit, mod_pumukiturl_mod_form $
  * @param int $id Id of the module instance
  * @return boolean Success/Failure
  */
-function pumukiturl_delete_instance($id) {
+function videospumukit_delete_instance($id) {
     global $DB;
 
-    if (! $pumukit = $DB->get_record('pumukiturl', array('id' => $id))) {
+    if (! $pumukit = $DB->get_record('videospumukit', array('id' => $id))) {
         return false;
     }
 
     # Delete any dependent records here #
 
-    $DB->delete_records('pumukiturl', array('id' => $pumukit->id));
+    $DB->delete_records('videospumukit', array('id' => $pumukit->id));
 
     return true;
 }
@@ -139,7 +139,7 @@ function pumukiturl_delete_instance($id) {
  *
  * @return stdClass|null
  */
-function pumukiturl_user_outline($course, $user, $mod, $pumukiturl) {
+function videospumukit_user_outline($course, $user, $mod, $videospumukit) {
 
     $return = new stdClass();
     $return->time = 0;
@@ -157,17 +157,17 @@ function pumukiturl_user_outline($course, $user, $mod, $pumukiturl) {
  * @param stdClass $pumukit the module instance record
  * @return void, is supposed to echp directly
  */
-function pumukiturl_user_complete($course, $user, $mod, $pumukit) {
+function videospumukit_user_complete($course, $user, $mod, $pumukit) {
 }
 
 /**
  * Given a course and a time, this module should find recent activity
- * that has occurred in pumukiturl activities and print it out.
+ * that has occurred in videospumukit activities and print it out.
  * Return true if there was output, or false is there was none.
  *
  * @return boolean
  */
-function pumukiturl_print_recent_activity($course, $viewfullnames, $timestart) {
+function videospumukit_print_recent_activity($course, $viewfullnames, $timestart) {
     return false;  //  True if anything was printed, otherwise false
 }
 
@@ -176,7 +176,7 @@ function pumukiturl_print_recent_activity($course, $viewfullnames, $timestart) {
  *
  * This callback function is supposed to populate the passed array with
  * custom activity records. These records are then rendered into HTML via
- * {@link pumukiturl_print_recent_mod_activity()}.
+ * {@link videospumukit_print_recent_mod_activity()}.
  *
  * @param array $activities sequentially indexed array of objects with the 'cmid' property
  * @param int $index the index in the $activities to use for the next record
@@ -187,15 +187,15 @@ function pumukiturl_print_recent_activity($course, $viewfullnames, $timestart) {
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function pumukiturl_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+function videospumukit_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
 }
 
 /**
- * Prints single activity item prepared by {@see pumukiturl_get_recent_mod_activity()}
+ * Prints single activity item prepared by {@see videospumukit_get_recent_mod_activity()}
  *
  * @return void
  */
-function pumukiturl_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
+function videospumukit_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
 }
 
 /**
@@ -206,7 +206,7 @@ function pumukiturl_print_recent_mod_activity($activity, $courseid, $detail, $mo
  * @return boolean
  * @todo Finish documenting this function
  **/
-function pumukiturl_cron () {
+function videospumukit_cron () {
     return true;
 }
 
@@ -216,7 +216,7 @@ function pumukiturl_cron () {
  * @example return array('moodle/site:accessallgroups');
  * @return array
  */
-function pumukiturl_get_extra_capabilities() {
+function videospumukit_get_extra_capabilities() {
     return array();
 }
 
@@ -225,41 +225,41 @@ function pumukiturl_get_extra_capabilities() {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Is a given scale used by the instance of pumukiturl?
+ * Is a given scale used by the instance of videospumukit?
  *
- * This function returns if a scale is being used by one pumukiturl
+ * This function returns if a scale is being used by one videospumukit
  * if it has support for grading and scales. Commented code should be
  * modified if necessary. See forum, glossary or journal modules
  * as reference.
  *
  * @param int $pumukitid ID of an instance of this module
- * @return bool true if the scale is used by the given pumukiturl instance
+ * @return bool true if the scale is used by the given videospumukit instance
  */
-function pumukiturl_scale_used($pumukitid, $scaleid) {
+function videospumukit_scale_used($pumukitid, $scaleid) {
     return false;
 }
 
 /**
- * Checks if scale is being used by any instance of pumukiturl.
+ * Checks if scale is being used by any instance of videospumukit.
  *
  * This is used to find out if scale used anywhere.
  *
  * @param $scaleid int
- * @return boolean true if the scale is used by any pumukiturl instance
+ * @return boolean true if the scale is used by any videospumukit instance
  */
-function pumukiturl_scale_used_anywhere($scaleid) {
+function videospumukit_scale_used_anywhere($scaleid) {
     return false;
 }
 
 /**
- * Creates or updates grade item for the give pumukiturl instance
+ * Creates or updates grade item for the give videospumukit instance
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
  * @param stdClass $pumukit instance object with extra cmidnumber and modname property
  * @return void
  */
-function pumukiturl_grade_item_update(stdClass $pumukit) {
+function videospumukit_grade_item_update(stdClass $pumukit) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
@@ -270,11 +270,11 @@ function pumukiturl_grade_item_update(stdClass $pumukit) {
     $item['grademax']  = 10;
     $item['grademin']  = 0;
 
-    grade_update('mod/pumukiturl', $pumukit->course, 'mod', 'pumukiturl', $pumukit->id, 0, null, $item);
+    grade_update('mod/videospumukit', $pumukit->course, 'mod', 'videospumukit', $pumukit->id, 0, null, $item);
 }
 
 /**
- * Update pumukiturl grades in the gradebook
+ * Update videospumukit grades in the gradebook
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
@@ -282,14 +282,14 @@ function pumukiturl_grade_item_update(stdClass $pumukit) {
  * @param int $userid update grade of specific user only, 0 means all participants
  * @return void
  */
-function pumukiturl_update_grades(stdClass $pumukit, $userid = 0) {
+function videospumukit_update_grades(stdClass $pumukit, $userid = 0) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
     /** @example */
     $grades = array(); // populate array of grade objects indexed by userid
 
-    grade_update('mod/pumukiturl', $pumukit->course, 'mod', 'pumukiturl', $pumukit->id, 0, $grades);
+    grade_update('mod/videospumukit', $pumukit->course, 'mod', 'videospumukit', $pumukit->id, 0, $grades);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -307,14 +307,14 @@ function pumukiturl_update_grades(stdClass $pumukit, $userid = 0) {
  * @param stdClass $context
  * @return array of [(string)filearea] => (string)description
  */
-function pumukiturl_get_file_areas($course, $cm, $context) {
+function videospumukit_get_file_areas($course, $cm, $context) {
     return array();
 }
 
 /**
- * File browsing support for pumukiturl file areas
+ * File browsing support for videospumukit file areas
  *
- * @package mod_pumukiturl
+ * @package mod_videospumukit
  * @category files
  *
  * @param file_browser $browser
@@ -328,25 +328,25 @@ function pumukiturl_get_file_areas($course, $cm, $context) {
  * @param string $filename
  * @return file_info instance or null if not found
  */
-function pumukiturl_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function videospumukit_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     return null;
 }
 
 /**
- * Serves the files from the pumukiturl file areas
+ * Serves the files from the videospumukit file areas
  *
- * @package mod_pumukiturl
+ * @package mod_videospumukit
  * @category files
  *
  * @param stdClass $course the course object
  * @param stdClass $cm the course module object
- * @param stdClass $context the pumukiturl's context
+ * @param stdClass $context the videospumukit's context
  * @param string $filearea the name of the file area
  * @param array $args extra arguments (itemid, path)
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  */
-function pumukiturl_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
+function videospumukit_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
     global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -363,27 +363,27 @@ function pumukiturl_pluginfile($course, $cm, $context, $filearea, array $args, $
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Extends the global navigation tree by adding pumukiturl nodes if there is a relevant content
+ * Extends the global navigation tree by adding videospumukit nodes if there is a relevant content
  *
  * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
  *
- * @param navigation_node $navref An object representing the navigation tree node of the pumukiturl module instance
+ * @param navigation_node $navref An object representing the navigation tree node of the videospumukit module instance
  * @param stdClass $course
  * @param stdClass $module
  * @param cm_info $cm
  */
-function pumukiturl_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
+function videospumukit_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
 }
 
 /**
- * Extends the settings navigation with the pumukiturl settings
+ * Extends the settings navigation with the videospumukit settings
  *
- * This function is called when the context for the page is a pumukiturl module. This is not called by AJAX
+ * This function is called when the context for the page is a videospumukit module. This is not called by AJAX
  * so it is safe to rely on the $PAGE.
  *
  * @param settings_navigation $settingsnav {@link settings_navigation}
  * @param navigation_node $pumukitnode {@link navigation_node}
  */
-function pumukiturl_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $pumukitnode=null) {
+function videospumukit_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $pumukitnode=null) {
 }
 

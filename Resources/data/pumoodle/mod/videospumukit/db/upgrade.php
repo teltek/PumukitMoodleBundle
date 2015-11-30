@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the pumukiturl module
+ * This file keeps track of upgrades to the videospumukit module
  *
  * Sometimes, changes between versions involve alterations to database
  * structures and other major things that may break installations. The upgrade
@@ -26,7 +26,7 @@
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
  * @package    mod
- * @subpackage pumukiturl
+ * @subpackage videospumukit
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,12 +34,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Execute pumukiturl upgrade from the given old version
+ * Execute videospumukit upgrade from the given old version
  *
  * @param int $oldversion
  * @return bool
  */
-function xmldb_pumukiturl_upgrade($oldversion) {
+function xmldb_videospumukit_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
@@ -55,10 +55,10 @@ function xmldb_pumukiturl_upgrade($oldversion) {
 
     // Lines below (this included)  MUST BE DELETED once you get the first version
     // of your module ready to be installed. They are here only
-    // for demonstrative purposes and to show how the pumukiturl
+    // for demonstrative purposes and to show how the videospumukit
     // iself has been upgraded.
 
-    // For each upgrade block, the file pumukiturl/version.php
+    // For each upgrade block, the file videospumukit/version.php
     // needs to be updated . Such change allows Moodle to know
     // that this file has to be processed.
 
@@ -72,8 +72,8 @@ function xmldb_pumukiturl_upgrade($oldversion) {
     // First example, some fields were added to install.xml on 2007/04/01
     if ($oldversion < 2007040100) {
 
-        // Define field course to be added to pumukiturl
-        $table = new xmldb_table('pumukiturl');
+        // Define field course to be added to videospumukit
+        $table = new xmldb_table('videospumukit');
         $field = new xmldb_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
 
         // Add field course
@@ -81,8 +81,8 @@ function xmldb_pumukiturl_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // // Define field intro to be added to pumukiturl
-        // $table = new xmldb_table('pumukiturl');
+        // // Define field intro to be added to videospumukit
+        // $table = new xmldb_table('videospumukit');
         // $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null,'name');
 
         // // Add field intro
@@ -90,8 +90,8 @@ function xmldb_pumukiturl_upgrade($oldversion) {
         //     $dbman->add_field($table, $field);
         // }
 
-        // // Define field introformat to be added to pumukiturl
-        // $table = new xmldb_table('pumukiturl');
+        // // Define field introformat to be added to videospumukit
+        // $table = new xmldb_table('videospumukit');
         // $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
         //     'intro');
 
@@ -102,7 +102,7 @@ function xmldb_pumukiturl_upgrade($oldversion) {
 
         // Once we reach this point, we can store the new version and consider the module
         // upgraded to the version 2007040100 so the next time this block is skipped
-        upgrade_mod_savepoint(true, 2007040100, 'pumukiturl');
+        upgrade_mod_savepoint(true, 2007040100, 'videospumukit');
     }
 
     // Second example, some hours later, the same day 2007/04/01
@@ -110,8 +110,8 @@ function xmldb_pumukiturl_upgrade($oldversion) {
     // "01" in the last two digits of the version
     if ($oldversion < 2007040101) {
 
-        // Define field timecreated to be added to pumukiturl
-        $table = new xmldb_table('pumukiturl');
+        // Define field timecreated to be added to videospumukit
+        $table = new xmldb_table('videospumukit');
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
             'name');
 
@@ -120,8 +120,8 @@ function xmldb_pumukiturl_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Define field timemodified to be added to pumukiturl
-        $table = new xmldb_table('pumukiturl');
+        // Define field timemodified to be added to videospumukit
+        $table = new xmldb_table('videospumukit');
         $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
             'timecreated');
 
@@ -130,8 +130,8 @@ function xmldb_pumukiturl_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Define index course (not unique) to be added to pumukiturl
-        $table = new xmldb_table('pumukiturl');
+        // Define index course (not unique) to be added to videospumukit
+        $table = new xmldb_table('videospumukit');
         $index = new xmldb_index('courseindex', XMLDB_INDEX_NOTUNIQUE, array('course'));
 
         // Add index to course field
@@ -140,7 +140,7 @@ function xmldb_pumukiturl_upgrade($oldversion) {
         }
 
         // Another save point reached
-        upgrade_mod_savepoint(true, 2007040101, 'pumukiturl');
+        upgrade_mod_savepoint(true, 2007040101, 'videospumukit');
     }
 
     // Third example, the next day, 2007/04/02 (with the trailing 00), some actions were performed to install.php,
@@ -149,15 +149,15 @@ function xmldb_pumukiturl_upgrade($oldversion) {
 
         // insert here code to perform some actions (same as in install.php)
 
-        upgrade_mod_savepoint(true, 2007040200, 'pumukiturl');
+        upgrade_mod_savepoint(true, 2007040200, 'videospumukit');
     }
 
 //------------------------------------------------------------
 
     if ($oldversion < 2012090500) {
 
-        // Define field embed_url to be added to pumukiturl
-        $table = new xmldb_table('pumukiturl');
+        // Define field embed_url to be added to videospumukit
+        $table = new xmldb_table('videospumukit');
         $field = new xmldb_field('embed_url', XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, 'name');
 
         // Conditionally launch add field embed_url
@@ -165,14 +165,14 @@ function xmldb_pumukiturl_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // pumukiturl savepoint reached
-        upgrade_mod_savepoint(true, 2012090500, 'pumukiturl');
+        // videospumukit savepoint reached
+        upgrade_mod_savepoint(true, 2012090500, 'videospumukit');
     }
 
         if ($oldversion < 2012091700) {
 
-        // Define field intro to be added to pumukiturl
-        $table = new xmldb_table('pumukiturl');
+        // Define field intro to be added to videospumukit
+        $table = new xmldb_table('videospumukit');
         $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'name');
 
         // Conditionally launch add field intro
@@ -180,14 +180,14 @@ function xmldb_pumukiturl_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        $table = new xmldb_table('pumukiturl');
+        $table = new xmldb_table('videospumukit');
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'intro');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // pumukiturl savepoint reached
-        upgrade_mod_savepoint(true, 2012091700, 'pumukiturl');
+        // videospumukit savepoint reached
+        upgrade_mod_savepoint(true, 2012091700, 'videospumukit');
     }
 
 

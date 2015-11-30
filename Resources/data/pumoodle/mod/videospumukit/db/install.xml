@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/pumukiturl/db" VERSION="20120905" COMMENT="XMLDB file for Moodle mod/pumukiturl"
+<XMLDB PATH="mod/videospumukit/db" VERSION="20120905" COMMENT="XMLDB file for Moodle mod/videospumukit"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="pumukiturl" COMMENT="Database for pumukiturl activity module">
+    <TABLE NAME="videospumukit" COMMENT="Database for videospumukit activity module">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course pumukit activity belongs to" PREVIOUS="id" NEXT="name"/>
