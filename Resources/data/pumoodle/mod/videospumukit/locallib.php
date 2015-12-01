@@ -71,9 +71,8 @@ function pumukit_curl_action_parameters($action, $parameters = null, $absoluteur
         $url .=  $action . '?' . http_build_query($parameters, '', '&');
     }
 
-// Debug - comment the next line.
-// echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
-
+    // Debug - comment the next line.
+    //  echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
     $ch   = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
@@ -126,7 +125,7 @@ function pumukit_parse_embed_url($url) {
 }
 
 /**
- *  Parses the embed_url field to return a proper embedded_url.
+ *  Parses the embed_url field to return the id.
  */
 function pumukit_parse_id($url) {
     global $CFG;
@@ -174,4 +173,21 @@ function pumukit_get_playable_embed_url($embed_url, $prof_email) {
     $url = $embed_url . $concatChar . http_build_query($parameters, '', '&');
 
     return $url;
+}
+
+
+function pumukit_get_metadata($embed_url, $prof_email) {
+    $embed_id = pumukit_parse_id($embed_url);
+    $ticket = pumukit_create_ticket($embed_id, $prof_email);
+    $parameters = array('id' => $embed_id, 
+                        'ticket' => $ticket,
+                        'professor_email' => $prof_email);
+
+    $sal = pumukit_curl_action_parameters('metadata' , $parameters , false);
+
+    $metadata = json_decode($sal['var'], true);
+    $title = $metadata['out']['title'];
+    $description = $metadata['out']['description'];
+
+    return array($title, $description);
 }
