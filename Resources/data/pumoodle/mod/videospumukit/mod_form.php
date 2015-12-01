@@ -72,10 +72,7 @@ class mod_videospumukit_mod_form extends moodleform_mod {
         // Adding the standard "intro" and "introformat" fields (the intro description).
         $this->standard_intro_elements();
 
-        $mform->addElement('text', 'embed_url', get_string('pumukitidorurl', 'videospumukit'), array('size'=>'64'));
-        $mform->addHelpButton('embed_url', 'pumukitidorurl', 'videospumukit');
 
-        $mform->addRule( 'embed_url', get_string('form_rule_insert_idorurl','videospumukit'), 'required' );
         
         $mform->addElement('hidden', 'professor_email', $USER->email);
 
@@ -84,9 +81,17 @@ class mod_videospumukit_mod_form extends moodleform_mod {
         } else {
             $mform->setType('name', PARAM_RAW);
         }
-        $mform->setType('embed_url', PARAM_RAW);
         $mform->setType('professor_email', PARAM_RAW);
 
+        $pmkid_arr = array();
+        $scriptattrs = 'style="position:relative; top:-49px; left:443px;"';
+
+        $mform->addElement('text', 'embed_url', get_string('pumukitidorurl', 'videospumukit'), array('size'=> 64));
+        $mform->addElement('submit', 'updatemetadata', get_string('updatemetadata_b','videospumukit'), $scriptattrs);
+        $mform->addHelpButton('embed_url', 'pumukitidorurl', 'videospumukit');
+        $mform->addRule( 'embed_url', get_string('form_rule_insert_idorurl','videospumukit'), 'required' );
+        $mform->setType('embed_url', PARAM_RAW);
+  
 
         //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
@@ -108,6 +113,21 @@ class mod_videospumukit_mod_form extends moodleform_mod {
         if(!pumukit_is_embed_url_correct($data['embed_url'], $data['professor_email'])) {
             $errors['embed_url'] = ' Error. The URL/ID given is not valid.';
         }
+        else if($data['updatemetadata'] != null) {
+            $mform =& $this->_form;
+            $title =& $mform->getElement('name');
+            list($title_text, $description_text) = pumukit_get_metadata($data['embed_url'], $data['professor_email']);
+            $title->setValue($title_text);
+            
+            $description =& $mform->getElement('introeditor');
+            $description->setValue($description_text);
+/*            echo "<pre>";
+            var_dump($description);
+            echo "</pre>";*/
+
+            $errors = array('' => '');
+        }
+        
         return $errors;
     }
 
