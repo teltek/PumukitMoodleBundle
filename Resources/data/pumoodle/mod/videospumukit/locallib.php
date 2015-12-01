@@ -179,13 +179,23 @@ function pumukit_get_playable_embed_url($embed_url, $prof_email) {
 function pumukit_get_metadata($embed_url, $prof_email) {
     $embed_id = pumukit_parse_id($embed_url);
     $ticket = pumukit_create_ticket($embed_id, $prof_email);
+
+    if (isset($SESSION->lang)) {
+        $lang = $SESSION->lang;
+    } else if (isset($USER->lang)) {
+        $lang = $USER->lang;
+    } else {
+        $lang = 'en';
+    }
+
     $parameters = array('id' => $embed_id, 
                         'ticket' => $ticket,
-                        'professor_email' => $prof_email);
+                        'professor_email' => $prof_email,
+                        'lang' => $lang);
 
     $sal = pumukit_curl_action_parameters('metadata' , $parameters , false);
-
     $metadata = json_decode($sal['var'], true);
+
     $title = $metadata['out']['title'];
     $description = $metadata['out']['description'];
 

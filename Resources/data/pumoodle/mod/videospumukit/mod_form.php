@@ -54,7 +54,7 @@ class mod_videospumukit_mod_form extends moodleform_mod {
         // Adding the standard "name" field
         $mform->addElement('text', 'name', get_string('pumukitname_', 'videospumukit'), array('size'=>'64'));
 
-        $mform->addRule('name', null, 'required', null, 'client');
+        //$mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'pumukitname', 'videospumukit');
 
@@ -120,10 +120,9 @@ class mod_videospumukit_mod_form extends moodleform_mod {
             $title->setValue($title_text);
             
             $description =& $mform->getElement('introeditor');
-            $description->setValue($description_text);
-/*            echo "<pre>";
-            var_dump($description);
-            echo "</pre>";*/
+            $desc_value = $description->getValue();
+            $desc_value['text'] = $description_text;
+            $description->setValue($desc_value);
 
             $errors = array('' => '');
         }

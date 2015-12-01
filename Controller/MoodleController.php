@@ -26,9 +26,9 @@ class MoodleController extends Controller
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:Series');
+                           ->getRepository('PumukitSchemaBundle:Series');
         $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:MultimediaObject');
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
 
         if ($professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)){
             $series = $seriesRepo->findByPersonIdAndRoleCod($professor->getId(), $roleCode);
@@ -40,7 +40,7 @@ class MoodleController extends Controller
                 $multimediaObjectsArray[$seriesTitle] = array();
                 $multimediaObjects = $mmobjRepo->findBySeriesAndPersonIdWithRoleCod($oneseries, $professor->getId(), $roleCode);
                 foreach ($multimediaObjects as $multimediaObject) {
-                  $multimediaObjectTitle = $multimediaObject->getRecordDate()->format('Y-m-d') . ' ' . $multimediaObject->getTitle($locale);
+                    $multimediaObjectTitle = $multimediaObject->getRecordDate()->format('Y-m-d') . ' ' . $multimediaObject->getTitle($locale);
                     if ($multimediaObject->getSubtitle($locale) != ''){
                         $multimediaObjectTitle .= " - " . $multimediaObject->getSubtitle($locale);
                     }
@@ -74,9 +74,9 @@ class MoodleController extends Controller
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:Series');
+                           ->getRepository('PumukitSchemaBundle:Series');
         $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:MultimediaObject');
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
 
         if ($professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)){
             $series = $seriesRepo->findByPersonIdAndRoleCod($professor->getId(), $roleCode);
@@ -92,18 +92,7 @@ class MoodleController extends Controller
                 $oneSeriesArray["mms"]   = array();
                 $multimediaObjects = $mmobjRepo->findBySeriesAndPersonIdWithRoleCod($oneseries, $professor->getId(), $roleCode);
                 foreach ($multimediaObjects as $multimediaObject){
-                    $mmArray = array();
-                    $mmArray['title'] = $multimediaObject->getTitle($locale);
-                    $mmArray['date']  = $multimediaObject->getRecordDate()->format('Y-m-d');
-                    $mmArray['url']   = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
-                    $mmArray['pic']   = $picService->getFirstUrlPic($multimediaObject, true, false);
-                    $mmArray['embed'] = $this->generateUrl('pumukit_moodle_moodle_embed',
-                                                           array(
-                                                                 'id' => $multimediaObject->getId(),
-                                                                 'lang' => $locale,
-                                                                 'opencast' => ($multimediaObject->getProperty('opencast') ? '1':'0')
-                                                                 ),
-                                                           true);
+                    $mmArray = $this->mmobjToArray($multimediaObject, $locale);
                     $oneSeriesArray["mms"][] = $mmArray;
                     $numberMultimediaObjects++;
                 }
@@ -121,14 +110,13 @@ class MoodleController extends Controller
         return new JsonResponse($out, 404);
     }
 
-
     /**
      * @Route("/embed", name="pumukit_moodle_moodle_embed")
      */
     public function embedAction(Request $request)
     {
         $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:MultimediaObject');
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
         $id = $request->get('id');
         $locale = $this->getLocale($request->get('lang'));
         $multimediaObject = $mmobjRepo->find($id);
@@ -153,7 +141,7 @@ class MoodleController extends Controller
     public function metadataAction(Request $request)
     {
         $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:MultimediaObject');
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
         $id = $request->get('id');
         $locale = $this->getLocale($request->get('lang'));
         $multimediaObject = $mmobjRepo->find($id);
@@ -162,7 +150,10 @@ class MoodleController extends Controller
 
         if ($multimediaObject) {
             if ($this->checkFieldTicket($email, $ticket, $id) ) {
-                return $this->renderJsonMetadata($multimediaObject, $request);
+                $out['status']     = "OK";
+                $out['out']        = $this->mmobjToArray($multimediaObject, $locale);
+                return new JsonResponse($out, 200);
+
             } else {
                 $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
                 $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
@@ -173,7 +164,7 @@ class MoodleController extends Controller
         return $response;
     }
 
-   /**
+    /**
      * Render iframe
      */
     private function renderIframe(MultimediaObject $multimediaObject, Request $request)
@@ -189,16 +180,16 @@ class MoodleController extends Controller
 
             return $this->render("PumukitMoodleBundle:Moodle:opencastiframe.html.twig",
                                  array(
-                                       "multimediaObject" => $multimediaObject,
-                                       "track" => $track,
-                                       "is_old_browser" => $isOldBrowser,
-                                       "mobile_device" => $mobileDevice
-                                       )
-                                 );
+                                     "multimediaObject" => $multimediaObject,
+                                     "track" => $track,
+                                     "is_old_browser" => $isOldBrowser,
+                                     "mobile_device" => $mobileDevice
+                                 )
+            );
         } else {
             $track = $request->query->has('track_id') ?
-              $multimediaObject->getTrackById($request->query->get('track_id')) :
-              $multimediaObject->getFilteredTrackWithTags(array('display'));
+                     $multimediaObject->getTrackById($request->query->get('track_id')) :
+                     $multimediaObject->getFilteredTrackWithTags(array('display'));
         }
         if (!$track)
             throw $this->createNotFoundException();
@@ -213,17 +204,11 @@ class MoodleController extends Controller
                                    'track' => $track));
     }
 
-   /**
+    /**
      * Render JsonMetadata
      */
     private function renderJsonMetadata(MultimediaObject $multimediaObject, Request $request)
     {
-        $out['status']     = "OK";
-        $out['out']        = array();
-        $out['out']['title'] = $multimediaObject->getTitle();
-        $out['out']['description'] = $multimediaObject->getDescription();        
-    
-        return new JsonResponse($out, 200);
     }
 
     private function checkFieldTicket($email, $ticket, $id='')
@@ -237,7 +222,7 @@ class MoodleController extends Controller
     private function findProfessorEmailTicket($email, $ticket, $roleCode)
     {
         $repo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:Person');
+                     ->getRepository('PumukitSchemaBundle:Person');
 
         $professor = $repo->findByRoleCodAndEmail($roleCode, $email);
         if ($this->checkFieldTicket($email, $ticket)) {
@@ -291,4 +276,26 @@ class MoodleController extends Controller
 
         return $version;
     }
+
+    /**
+     * Returns a dictionary with multimedia object elements.
+     */
+    protected function mmobjToArray(MultimediaObject $multimediaObject, $locale = null) {
+        $picService = $this->get('pumukitschema.pic');
+        $mmArray = array();
+        $mmArray['title'] = $multimediaObject->getTitle($locale);
+        $mmArray['description'] = $multimediaObject->getDescription($locale);
+        $mmArray['date']  = $multimediaObject->getRecordDate()->format('Y-m-d');
+        $mmArray['url']   = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
+        $mmArray['pic']   = $picService->getFirstUrlPic($multimediaObject, true, false);
+        $mmArray['embed'] = $this->generateUrl('pumukit_moodle_moodle_embed',
+                                               array(
+                                                   'id' => $multimediaObject->getId(),
+                                                   'lang' => $locale,
+                                                   'opencast' => ($multimediaObject->getProperty('opencast') ? '1':'0')
+                                               ),
+                                               true);
+        return $mmArray;
+    }
+
 }
