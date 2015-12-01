@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Pumukit\SchemaBundle\Document\MultimediaObject;
 
 /**
@@ -139,12 +140,37 @@ class MoodleController extends Controller
                 return $this->renderIframe($multimediaObject, $request);
             } else {
                 $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
-                return $this->render('PumukitMoodleBundle:Moodle:403forbidden.html.twig',
-                                   array('email' => $contactEmail, 'moodle_locale' => $locale));
+                $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
+                return $response;
             }
         }
-        return $this->render('PumukitMoodleBundle:Moodle:404notfound.html.twig',
-                             array('id' => $id, 'moodle_locale' => $locale));
+        $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:404notfound.html.twig', array('id' => $id, 'moodle_locale' => $locale)), 404);
+        return $response;
+    }
+    /**
+     * @Route("/metadata", name="pumukit_moodle_moodle_metadata")
+     */
+    public function metadataAction(Request $request)
+    {
+        $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
+        ->getRepository('PumukitSchemaBundle:MultimediaObject');
+        $id = $request->get('id');
+        $locale = $this->getLocale($request->get('lang'));
+        $multimediaObject = $mmobjRepo->find($id);
+        $email = $request->get('professor_email');
+        $ticket = $request->get('ticket');
+
+        if ($multimediaObject) {
+            if ($this->checkFieldTicket($email, $ticket, $id) ) {
+                return $this->renderJsonMetadata($multimediaObject, $request);
+            } else {
+                $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
+                $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
+                return $response;
+            }
+        }
+        $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:404notfound.html.twig', array('id' => $id, 'moodle_locale' => $locale)), 404);
+        return $response;
     }
 
    /**
@@ -185,6 +211,19 @@ class MoodleController extends Controller
                                    'intro' => false,
                                    'multimediaObject' => $multimediaObject,
                                    'track' => $track));
+    }
+
+   /**
+     * Render JsonMetadata
+     */
+    private function renderJsonMetadata(MultimediaObject $multimediaObject, Request $request)
+    {
+        $out['status']     = "OK";
+        $out['out']        = array();
+        $out['out']['title'] = $multimediaObject->getTitle();
+        $out['out']['description'] = $multimediaObject->getDescription();        
+    
+        return new JsonResponse($out, 200);
     }
 
     private function checkFieldTicket($email, $ticket, $id='')
