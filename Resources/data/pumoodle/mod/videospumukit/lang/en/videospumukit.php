@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'Videos PuMuKIT';
+$string['modulename'] = 'PuMuKIT Video';
 $string['modulenameplural'] = 'Videos PuMuKIT';
 $string['modulename_help'] = 'The pumukit module allows to create a new resource with an embedded video brought by the pumukit server';
 $string['pumukitfieldset'] = 'Custom example fieldset';
