@@ -30,8 +30,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'Clase grabada';
-$string['modulenameplural'] = 'Clases grabadas';
+$string['modulename'] = 'Videos PuMuKIT';
+$string['modulenameplural'] = 'Videos PuMuKIT';
 $string['modulename_help'] = 'El módulo pumukit permite incrustar un vídeo servido por un servidor pumukit como nuevo recurso';
 $string['pumukitfieldset'] = 'Custom example fieldset';
 $string['pumukitname'] = 'Nombre del vídeo en el curso';
@@ -52,4 +52,4 @@ $string['pumukitidorurl'] = 'ID de PuMuKIT o URL';
 $string['form_rule_insert_idorurl'] = 'Inserta el ID o la URL de PuMuKIT';
 $string['pumukitidorurl_help'] = 'Inserta el ID del Objeto Multimedia de PuMuKIT o su URL. </br>Este ID puede ser obtenido fácilmente en el back office de PuMuKIT, en la sección \'Info\' que aparece tras seleccionar un Objeto Multimedia.';
 $string['embed_url_notvalid'] = 'Error. El ID/URL dado no es válido.';
-
+$string['updatemetadata_b'] = 'Actualizar Metadatos';
