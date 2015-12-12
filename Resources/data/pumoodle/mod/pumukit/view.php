@@ -53,6 +53,12 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 add_to_log($course->id, 'pumukit', 'view', "view.php?id={$cm->id}", $pumukit->name, $cm->id);
 
+// Update 'viewed' state if required by completion system
+require_once($CFG->libdir . '/completionlib.php');
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
+
 /// Print the page header
 $PAGE->set_url('/mod/pumukit/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($pumukit->name));
