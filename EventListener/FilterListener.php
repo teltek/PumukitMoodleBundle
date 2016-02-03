@@ -25,7 +25,7 @@ class FilterListener
             && (!isset($routeParams["filter"]) || $routeParams["filter"])) {
       
           $filter = $this->dm->getFilterCollection()->enable("frontend");
-          $filter->setParameter("pub_channel_tag", "PUCHWEBTV");
+          $filter->setParameter("pub_channel_tag", array('$in' => array("PUCHWEBTV", "PUCHMOODLE")));
           $filter->setParameter("display_track_tag", "display");
         }
     }
