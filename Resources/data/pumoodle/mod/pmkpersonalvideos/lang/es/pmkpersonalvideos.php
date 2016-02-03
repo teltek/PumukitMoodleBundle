@@ -30,21 +30,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'Clase grabada';
-$string['modulenameplural'] = 'Clases grabadas';
-$string['modulename_help'] = 'El módulo pmkpersonalvideos permite incrustar un vídeo servido por un servidor pmkpersonalvideos como nuevo recurso';
+$string['modulename'] = 'PuMuKIT: Personal Video';
+$string['modulenameplural'] = 'PuMuKIT: Videos Personales';
+$string['modulename_help'] = 'El módulo pmkpersonalvideos permite incrustar un vídeo servido por un servidor PuMuKIT como nuevo recurso';
 $string['pmkpersonalvideosfieldset'] = 'Custom example fieldset';
 $string['pmkpersonalvideosname'] = 'Nombre del vídeo en el curso';
 $string['pmkpersonalvideosname_'] = 'Nombre del vídeo en el curso';
 $string['pmkpersonalvideosname_help'] = 'Establece el nombre de este recurso dentro del curso';
 $string['pmkpersonalvideos'] = 'Pmkpersonalvideos';
 $string['pluginadministration'] = 'pmkpersonalvideos administration';
-$string['pluginname'] = 'Pmkpersonalvideos';
+$string['pluginname'] = 'PuMuKIT: Videos Personales';
 $string['select_a_video'] = 'Seleccione un vídeo';
 $string['error_no_pmkpersonalvideos_output'] = 'Error en la respuesta del servidor Pmkpersonalvideos';
 $string['form_rule_select_a_lecture'] = 'Debe seleccionar una clase grabada';
 $string['description'] = 'Descripción opcional para la clase grabada';
-$string['pmkpersonalvideosurl'] = 'URL del servidor Pmkpersonalvideos';
+$string['pmkpersonalvideosurl'] = 'URL del servidor PuMuKIT';
 $string['configpmkpersonalvideosurl'] = 'Moodle se conectará a este endpoint para consultar al servidor Pmkpersonalvideos';
-$string['pmkpersonalvideossecret'] = 'Secreto compartido con Pmkpersonalvideos';
+$string['pmkpersonalvideossecret'] = 'Secreto compartido con PuMuKIT';
 $string['configpmkpersonalvideossecret'] = 'Moodle usará este secreto compartido para cifrar las consultas al servidor Pmkpersonalvideos';

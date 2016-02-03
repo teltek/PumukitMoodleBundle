@@ -30,21 +30,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'Recorded lecture';
-$string['modulenameplural'] = 'Recorded lectures';
-$string['modulename_help'] = 'The pmkpersonalvideos module allows to create a new resource with an embedded video brought by the pmkpersonalvideos server';
+$string['modulename'] = 'PuMuKIT: Personal Video';
+$string['modulenameplural'] = 'PuMuKIT: Personal Videos';
+$string['modulename_help'] = 'The pmkpersonalvideos module allows to create a new resource with an embedded video brought by the PuMuKIT server';
 $string['pmkpersonalvideosfieldset'] = 'Custom example fieldset';
 $string['pmkpersonalvideosname'] = 'Video name within this course';
 $string['pmkpersonalvideosname_'] = 'Video name within this course';
 $string['pmkpersonalvideosname_help'] = 'The name of this resource within the course';
 $string['pmkpersonalvideos'] = 'Pmkpersonalvideos';
 $string['pluginadministration'] = 'pmkpersonalvideos administration';
-$string['pluginname'] = 'Pmkpersonalvideos';
+$string['pluginname'] = 'PuMuKIT: Personal Videos';
 $string['select_a_video'] = 'Select a video';
 $string['error_no_pmkpersonalvideos_output'] = 'Error - Pmkpersonalvideos server response error';
 $string['form_rule_select_a_lecture'] = 'You must select a recorded lecture';
 $string['description'] = 'Optional description for the recorded lecture';
-$string['pmkpersonalvideosurl'] = 'Pmkpersonalvideos server URL';
+$string['pmkpersonalvideosurl'] = 'PuMuKIT server URL';
 $string['configpmkpersonalvideosurl'] = 'Moodle will connect to this endpoint to query the pmkpersonalvideos server';
-$string['pmkpersonalvideossecret'] = 'Pmkpersonalvideos shared secret';
+$string['pmkpersonalvideossecret'] = 'PuMuKIT shared secret';
 $string['configpmkpersonalvideossecret'] = 'Moodle will use this shared secret to encrypt queries to the pmkpersonalvideos server';
