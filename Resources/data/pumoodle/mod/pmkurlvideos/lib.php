@@ -52,7 +52,7 @@ function pmkurlvideos_supports($feature) {
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_GRADE_HAS_GRADE:         return false;
-        case FEATURE_GRADE_OUTCOMES:          return true;
+        case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         default:                              return null;
     }
