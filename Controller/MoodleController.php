@@ -124,7 +124,7 @@ class MoodleController extends Controller
         $ticket = $request->get('ticket');
 
         if ($multimediaObject) {
-            if ($this->checkFieldTicket($email, $ticket, $id)) {
+            if ($multimediaObject->containsTagWithCod('PUCHWEBTV') || $this->checkFieldTicket($email, $ticket, $id)) {
                 return $this->renderIframe($multimediaObject, $request);
             } else {
                 $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
@@ -151,7 +151,7 @@ class MoodleController extends Controller
         $ticket = $request->get('ticket');
 
         if ($multimediaObject) {
-            if ($this->checkFieldTicket($email, $ticket, $id)) {
+            if ($multimediaObject->containsTagWithCod('PUCHWEBTV') || $this->checkFieldTicket($email, $ticket, $id)) {
                 $out['status'] = 'OK';
                 $out['out'] = $this->mmobjToArray($multimediaObject, $locale);
 
