@@ -4,9 +4,9 @@ namespace Pumukit\MoodleBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Pumukit\SchemaBundle\Document\MultimediaObject;
 
 /**
@@ -20,106 +20,95 @@ class MoodleController extends Controller
     public function indexAction(Request $request)
     {
         $email = $request->get('professor_email');
-        $ticket  = $request->get('ticket');
+        $ticket = $request->get('ticket');
         $locale = $this->getLocale($request->get('lang'));
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:Series');
+                           ->getRepository('PumukitSchemaBundle:Series');
         $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:MultimediaObject');
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
 
-        if ($professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)){
+        if ($professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)) {
             $series = $seriesRepo->findByPersonIdAndRoleCod($professor->getId(), $roleCode);
             $numberMultimediaObjects = 0;
             $multimediaObjectsArray = array();
             $out = array();
-            foreach ($series as $oneseries){
+            foreach ($series as $oneseries) {
                 $seriesTitle = $oneseries->getTitle($locale);
                 $multimediaObjectsArray[$seriesTitle] = array();
                 $multimediaObjects = $mmobjRepo->findBySeriesAndPersonIdWithRoleCod($oneseries, $professor->getId(), $roleCode);
                 foreach ($multimediaObjects as $multimediaObject) {
-                  $multimediaObjectTitle = $multimediaObject->getRecordDate()->format('Y-m-d') . ' ' . $multimediaObject->getTitle($locale);
-                    if ($multimediaObject->getSubtitle($locale) != ''){
-                        $multimediaObjectTitle .= " - " . $multimediaObject->getSubtitle($locale);
+                    $multimediaObjectTitle = $multimediaObject->getRecordDate()->format('Y-m-d').' '.$multimediaObject->getTitle($locale);
+                    if ($multimediaObject->getSubtitle($locale) != '') {
+                        $multimediaObjectTitle .= ' - '.$multimediaObject->getSubtitle($locale);
                     }
                     $multimediaObjectsArray[$seriesTitle][$multimediaObjectTitle] = $this->generateUrl('pumukit_moodle_moodle_embed', array('id' => $multimediaObject->getId(), 'lang' => $locale), true);
-                    $numberMultimediaObjects++;
+                    ++$numberMultimediaObjects;
                 }
             }
-            
-            $out['status']     = "OK";
+
+            $out['status'] = 'OK';
             $out['status_txt'] = $numberMultimediaObjects;
-            $out['out']        = $multimediaObjectsArray;
-            
+            $out['out'] = $multimediaObjectsArray;
+
             return new JsonResponse($out, 200);
-        } 
-        
-        $out['status'] = "ERROR";
-        $out['status_txt'] = "Error: professor with email " . $email  . " does not have any video on WebTV Channel in the Pumukit server.";
+        }
+
+        $out['status'] = 'ERROR';
+        $out['status_txt'] = 'Error: professor with email '.$email.' does not have any video on WebTV Channel in the Pumukit server.';
         $out['out'] = null;
-        
+
         return new JsonResponse($out, 404);
     }
-    
+
     /**
      * @Route("/repository")
      */
     public function repositoryAction(Request $request)
     {
         $email = $request->get('professor_email');
-        $ticket  = $request->get('ticket');
+        $ticket = $request->get('ticket');
         $locale = $this->getLocale($request->get('lang'));
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:Series');
+                           ->getRepository('PumukitSchemaBundle:Series');
         $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:MultimediaObject');
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
 
-        if ($professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)){
+        if ($professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)) {
             $series = $seriesRepo->findByPersonIdAndRoleCod($professor->getId(), $roleCode);
             $numberMultimediaObjects = 0;
             $multimediaObjectsArray = array();
             $out = array();
             $picService = $this->get('pumukitschema.pic');
-            foreach ($series as $oneseries){
+            foreach ($series as $oneseries) {
                 $oneSeriesArray = array();
-                $oneSeriesArray["title"] = $oneseries->getTitle($locale);
-                $oneSeriesArray["url"]   = $this->generateUrl('pumukit_webtv_series_index', array('id' => $oneseries->getId()), true);
-                $oneSeriesArray["pic"]   = $picService->getFirstUrlPic($oneseries, true, false);
-                $oneSeriesArray["mms"]   = array();
+                $oneSeriesArray['title'] = $oneseries->getTitle($locale);
+                $oneSeriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $oneseries->getId()), true);
+                $oneSeriesArray['pic'] = $picService->getFirstUrlPic($oneseries, true, false);
+                $oneSeriesArray['mms'] = array();
                 $multimediaObjects = $mmobjRepo->findBySeriesAndPersonIdWithRoleCod($oneseries, $professor->getId(), $roleCode);
-                foreach ($multimediaObjects as $multimediaObject){
-                    $mmArray = array();
-                    $mmArray['title'] = $multimediaObject->getTitle($locale);
-                    $mmArray['date']  = $multimediaObject->getRecordDate()->format('Y-m-d');
-                    $mmArray['url']   = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
-                    $mmArray['pic']   = $picService->getFirstUrlPic($multimediaObject, true, false);
-                    $mmArray['embed'] = $this->generateUrl('pumukit_moodle_moodle_embed',
-                                                           array(
-                                                                 'id' => $multimediaObject->getId(),
-                                                                 'lang' => $locale,
-                                                                 'opencast' => ($multimediaObject->getProperty('opencast') ? '1':'0')
-                                                                 ),
-                                                           true);
-                    $oneSeriesArray["mms"][] = $mmArray;
-                    $numberMultimediaObjects++;
+                foreach ($multimediaObjects as $multimediaObject) {
+                    $mmArray = $this->mmobjToArray($multimediaObject, $locale);
+                    $oneSeriesArray['mms'][] = $mmArray;
+                    ++$numberMultimediaObjects;
                 }
                 $multimediaObjectsArray[] = $oneSeriesArray;
             }
-            $out['status']     = "OK";
+            $out['status'] = 'OK';
             $out['status_txt'] = $numberMultimediaObjects;
-            $out['out']        = $multimediaObjectsArray;
+            $out['out'] = $multimediaObjectsArray;
+
             return new JsonResponse($out, 200);
         }
-        $out['status'] = "ERROR";
-        $out['status_txt'] = "Error: professor with email " . $email  . " does not have any video on WebTV Channel in the Pumukit server.";
+        $out['status'] = 'ERROR';
+        $out['status_txt'] = 'Error: professor with email '.$email.' does not have any video on WebTV Channel in the Pumukit server.';
         $out['out'] = null;
 
         return new JsonResponse($out, 404);
     }
-
 
     /**
      * @Route("/embed", name="pumukit_moodle_moodle_embed")
@@ -127,7 +116,7 @@ class MoodleController extends Controller
     public function embedAction(Request $request)
     {
         $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:MultimediaObject');
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
         $id = $request->get('id');
         $locale = $this->getLocale($request->get('lang'));
         $multimediaObject = $mmobjRepo->find($id);
@@ -135,76 +124,81 @@ class MoodleController extends Controller
         $ticket = $request->get('ticket');
 
         if ($multimediaObject) {
-            if ($this->checkFieldTicket($email, $ticket, $id) ) {
+            if ($multimediaObject->containsTagWithCod('PUCHWEBTV') || $this->checkFieldTicket($email, $ticket, $id)) {
                 return $this->renderIframe($multimediaObject, $request);
             } else {
                 $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
-                return $this->render('PumukitMoodleBundle:Moodle:403forbidden.html.twig',
-                                   array('email' => $contactEmail, 'moodle_locale' => $locale));
+                $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
+
+                return $response;
             }
         }
-        return $this->render('PumukitMoodleBundle:Moodle:404notfound.html.twig',
-                             array('id' => $id, 'moodle_locale' => $locale));
+        $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:404notfound.html.twig', array('id' => $id, 'moodle_locale' => $locale)), 404);
+
+        return $response;
+    }
+    /**
+     * @Route("/metadata", name="pumukit_moodle_moodle_metadata")
+     */
+    public function metadataAction(Request $request)
+    {
+        $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
+        $id = $request->get('id');
+        $locale = $this->getLocale($request->get('lang'));
+        $multimediaObject = $mmobjRepo->find($id);
+        $email = $request->get('professor_email');
+        $ticket = $request->get('ticket');
+
+        if ($multimediaObject) {
+            if ($multimediaObject->containsTagWithCod('PUCHWEBTV') || $this->checkFieldTicket($email, $ticket, $id)) {
+                $out['status'] = 'OK';
+                $out['out'] = $this->mmobjToArray($multimediaObject, $locale);
+
+                return new JsonResponse($out, 200);
+            } else {
+                $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
+                $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
+
+                return $response;
+            }
+        }
+        $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:404notfound.html.twig', array('id' => $id, 'moodle_locale' => $locale)), 404);
+
+        return $response;
     }
 
-   /**
-     * Render iframe
+    /**
+     * Render iframe.
      */
     private function renderIframe(MultimediaObject $multimediaObject, Request $request)
     {
-        if ($multimediaObject->getProperty('opencast')){
-            /* $this->incNumView($multimediaObject); */
-            /* $this->dispatch($multimediaObject); */
-            $userAgent = $this->getRequest()->headers->get('user-agent');
-            $mobileDetectorService = $this->get('mobile_detect.mobile_detector');
-            $mobileDevice = ($mobileDetectorService->isMobile($userAgent) || $mobileDetectorService->isTablet($userAgent));
-            $isOldBrowser = $this->getIsOldBrowser($userAgent);
-            $track = $multimediaObject->getTrackWithTag('sbs');
-
-            return $this->render("PumukitMoodleBundle:Moodle:opencastiframe.html.twig",
-                                 array(
-                                       "multimediaObject" => $multimediaObject,
-                                       "track" => $track,
-                                       "is_old_browser" => $isOldBrowser,
-                                       "mobile_device" => $mobileDevice
-                                       )
-                                 );
-        } else {
-            $track = $request->query->has('track_id') ?
-              $multimediaObject->getTrackById($request->query->get('track_id')) :
-              $multimediaObject->getFilteredTrackWithTags(array('display'));
-        }
-        if (!$track)
-            throw $this->createNotFoundException();
-
-        //$this->incNumView($multimediaObject, $track);
-        //$this->dispatch($multimediaObject, $track);
-
-        return $this->render("PumukitMoodleBundle:Moodle:iframe.html.twig",
+        return $this->render('PumukitMoodleBundle:Moodle:iframe.html.twig',
                              array('autostart' => $request->query->get('autostart', 'false'),
                                    'intro' => false,
-                                   'multimediaObject' => $multimediaObject,
-                                   'track' => $track));
+                                   'multimediaObject' => $multimediaObject, ));
     }
 
-    private function checkFieldTicket($email, $ticket, $id='')
+    private function checkFieldTicket($email, $ticket, $id = '')
     {
-        $check = "";
+        $check = '';
         $password = $this->container->getParameter('pumukit_moodle.password');
-        $check = md5($password . date("Y-m-d") . $id . $email);
+        $check = md5($password.date('Y-m-d').$id.$email);
+
         return ($check === $ticket);
     }
 
     private function findProfessorEmailTicket($email, $ticket, $roleCode)
     {
         $repo = $this->get('doctrine_mongodb.odm.document_manager')
-        ->getRepository('PumukitSchemaBundle:Person');
+                     ->getRepository('PumukitSchemaBundle:Person');
 
         $professor = $repo->findByRoleCodAndEmail($roleCode, $email);
         if ($this->checkFieldTicket($email, $ticket)) {
             return $professor;
         }
-        return null;
+
+        return;
     }
 
     private function getLocale($queryLocale)
@@ -215,6 +209,7 @@ class MoodleController extends Controller
         if ((!$locale) || (!in_array($locale, $pumukitLocales))) {
             $locale = $defaultLocale;
         }
+
         return $locale;
     }
 
@@ -223,7 +218,7 @@ class MoodleController extends Controller
         $isOldBrowser = false;
         $webExplorer = $this->getWebExplorer($userAgent);
         $version = $this->getVersion($userAgent, $webExplorer);
-        if (($webExplorer == 'IE') || ($webExplorer == 'MSIE') || $webExplorer == 'Firefox' || $webExplorer == 'Opera' || ($webExplorer == 'Safari' && $version<4)){
+        if (($webExplorer == 'IE') || ($webExplorer == 'MSIE') || $webExplorer == 'Firefox' || $webExplorer == 'Opera' || ($webExplorer == 'Safari' && $version < 4)) {
             $isOldBrowser = true;
         }
 
@@ -232,11 +227,21 @@ class MoodleController extends Controller
 
     private function getWebExplorer($userAgent)
     {
-        if (preg_match('/MSIE/i', $userAgent))         $webExplorer = "MSIE";
-        if (preg_match('/Opera/i', $userAgent))        $webExplorer = 'Opera';
-        if (preg_match('/Firefox/i', $userAgent))      $webExplorer = 'Firefox';
-        if (preg_match('/Safari/i', $userAgent))       $webExplorer = 'Safari';
-        if (preg_match('/Chrome/i', $userAgent))       $webExplorer = 'Chrome';
+        if (preg_match('/MSIE/i', $userAgent)) {
+            $webExplorer = 'MSIE';
+        }
+        if (preg_match('/Opera/i', $userAgent)) {
+            $webExplorer = 'Opera';
+        }
+        if (preg_match('/Firefox/i', $userAgent)) {
+            $webExplorer = 'Firefox';
+        }
+        if (preg_match('/Safari/i', $userAgent)) {
+            $webExplorer = 'Safari';
+        }
+        if (preg_match('/Chrome/i', $userAgent)) {
+            $webExplorer = 'Chrome';
+        }
 
         return $webExplorer;
     }
@@ -245,11 +250,36 @@ class MoodleController extends Controller
     {
         $version = null;
 
-        if($webExplorer!=='Opera' && preg_match("#(".strtolower($webExplorer).")[/ ]?([0-9.]*)#", $userAgent, $match))
+        if ($webExplorer !== 'Opera' && preg_match('#('.strtolower($webExplorer).')[/ ]?([0-9.]*)#', $userAgent, $match)) {
             $version = floor($match[2]);
-        if($webExplorer=='Opera' || $webExplorer=='Safari' && preg_match("#(version)[/ ]?([0-9.]*)#", $userAgent, $match))
+        }
+        if ($webExplorer == 'Opera' || $webExplorer == 'Safari' && preg_match('#(version)[/ ]?([0-9.]*)#', $userAgent, $match)) {
             $version = floor($match[2]);
+        }
 
         return $version;
+    }
+
+    /**
+     * Returns a dictionary with multimedia object elements.
+     */
+    protected function mmobjToArray(MultimediaObject $multimediaObject, $locale = null)
+    {
+        $picService = $this->get('pumukitschema.pic');
+        $mmArray = array();
+        $mmArray['title'] = $multimediaObject->getTitle($locale);
+        $mmArray['description'] = $multimediaObject->getDescription($locale);
+        $mmArray['date'] = $multimediaObject->getRecordDate()->format('Y-m-d');
+        $mmArray['url'] = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
+        $mmArray['pic'] = $picService->getFirstUrlPic($multimediaObject, true, false);
+        $mmArray['embed'] = $this->generateUrl('pumukit_moodle_moodle_embed',
+                                               array(
+                                                   'id' => $multimediaObject->getId(),
+                                                   'lang' => $locale,
+                                                   'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
+                                               ),
+                                               true);
+
+        return $mmArray;
     }
 }

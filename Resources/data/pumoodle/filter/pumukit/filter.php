@@ -60,9 +60,9 @@ function filter_pumukit_matterhorn_callback($link) {
 
     preg_match('/id=(\w*)\&|id=(\w*)$/i', $link[1], $result);
     $mm_id = isset($result)?  $result[1] : null;
-
-    preg_match_all('/email=(.*)\\&|email=(.*)$/i', $link[1], $resultado, PREG_SET_ORDER);
+    preg_match_all('/email=(.*?)#/i', $link[1], $resultado, PREG_SET_ORDER);
     $email =  isset($resultado)?  $resultado[0][1] : null;
+
 
     $parameters = array(
                         'professor_email' => $email,

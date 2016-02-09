@@ -6,11 +6,13 @@
 
 1. [Introduction](#introduction)
 
-2. [Module installation](#module-installation)
+2. [Modules](#modules)
 
-    2.1. [Installation](#installation)
+    2.1. [Modules installation](#modules-installation-and-configuration)
 
-    2.2. [Installation check](#installation-check)
+    2.2. [Modules configuration](#modules-configuration)
+
+    2.3. [Installation check](#installation-check)
 
 3. [Repository and Filter installation](#repository-and-filter-installation)
 
@@ -25,12 +27,15 @@
 Pumoodle is a module created for Moodle allowing video embedding from Opencast and
 PuMuKIT so that you can easily insert videos from those platforms in the courses created.
 
-## Module installation
+## Modules
 
-The module allows us to embed videos directly into the Moodle course as a resource. Videos
-can be played through links in the module.
+The modules allow us to embed videos directly into the Moodle course as a resource. In the current version of our MoodleBundle there are two modules, each having a different functionality:
+* The 'Personal Videos' module will list all the videos we currently own and that we are able to publish on Moodle.
+* The 'Video URLs' module will let us add any video that is published on the PuMuKIT WebTV Portal.
 
-### Installation
+### Modules installation
+
+Both modules are installed in the same way. The only difference will be the name of the '.zip' file that has to be uploaded to the Moodle platform.
 
 To begin the installation, we need to have a Moodle administrator account.
 
@@ -43,7 +48,7 @@ menu.
 
 Select “Activity module (mod)” in “Plugin Type”.
 
-Upload the file named “mod.zip” to the “Zip Package”. A window opens to select the file.
+Upload the file named “pmkpersonalvideos.zip” (For the 'Personal Videos' module) or the "pmkurlvideos.zip" (For the 'Video URLs' module) to the “Zip Package”. A window opens to select the file.
 
 Choose the file and click “Upload this file”.
 
@@ -68,15 +73,14 @@ A message will be shown indicating the successful result of the installation.
 
 Click on “Continue”. The Module Configuration will be loaded.
 
+### Modules configuration
 
-
-To configure the module we need to set up the following parameters:
+To configure each module we need to set up the following parameters:
 - Pumukit Server Url : Pumukit server address followed by “/pumoodle/”
 (http://URL/pumoodle/)
 - Pumukit Shared Secret : Password to code the requests to the Pumukit server.
 
 Then click on “Save changes”. The module will be ready to use.
-
 
 ### Installation check
 
@@ -265,9 +269,3 @@ brings us back to the Page Creation section.
 On the Page Creation section the video is shown as a link. Fill the mandatory fields of the
 form. Click on “Save and return to course”, then we go to the created page and the video will be
 embedded on the page.
-
-
-
-
-
-
