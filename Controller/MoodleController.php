@@ -173,40 +173,10 @@ class MoodleController extends Controller
      */
     private function renderIframe(MultimediaObject $multimediaObject, Request $request)
     {
-        if ($multimediaObject->getProperty('opencast')) {
-            /* $this->incNumView($multimediaObject); */
-            /* $this->dispatch($multimediaObject); */
-            $userAgent = $this->getRequest()->headers->get('user-agent');
-            $mobileDetectorService = $this->get('mobile_detect.mobile_detector');
-            $mobileDevice = ($mobileDetectorService->isMobile($userAgent) || $mobileDetectorService->isTablet($userAgent));
-            $isOldBrowser = $this->getIsOldBrowser($userAgent);
-            $track = $multimediaObject->getTrackWithTag('sbs');
-
-            return $this->render('PumukitMoodleBundle:Moodle:opencastiframe.html.twig',
-                                 array(
-                                       'multimediaObject' => $multimediaObject,
-                                       'track' => $track,
-                                       'is_old_browser' => $isOldBrowser,
-                                       'mobile_device' => $mobileDevice,
-                                       )
-                                 );
-        } else {
-            $track = $request->query->has('track_id') ?
-                     $multimediaObject->getTrackById($request->query->get('track_id')) :
-                     $multimediaObject->getFilteredTrackWithTags(array('display'));
-        }
-        if (!$track) {
-            throw $this->createNotFoundException();
-        }
-
-        //$this->incNumView($multimediaObject, $track);
-        //$this->dispatch($multimediaObject, $track);
-
         return $this->render('PumukitMoodleBundle:Moodle:iframe.html.twig',
                              array('autostart' => $request->query->get('autostart', 'false'),
                                    'intro' => false,
-                                   'multimediaObject' => $multimediaObject,
-                                   'track' => $track, ));
+                                   'multimediaObject' => $multimediaObject, ));
     }
 
     private function checkFieldTicket($email, $ticket, $id = '')
