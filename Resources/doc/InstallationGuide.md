@@ -1,7 +1,7 @@
 Installation Guide
 ==================
 
-*This page is updated to the PuMuKIT2-moodle-bundle 1.0.0 and to the PuMuKIT 2.1.0*
+*This page is updated to the PuMuKIT2-moodle-bundle master and to the PuMuKIT 2.1.0*
 
 Requirements
 ------------
@@ -29,7 +29,7 @@ From your project directory, execute the following command to download
 the latest stable version of this bundle:
 
 ```bash
-$ composer require teltek/pmk2-moodle-bundle 1.0.x-dev
+$ composer require teltek/pmk2-moodle-bundle dev-master
 ```
 
 Step 3: Install the bundle
