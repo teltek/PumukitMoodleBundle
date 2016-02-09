@@ -44,7 +44,7 @@ class MoodleController extends Controller
                         $multimediaObjectTitle .= ' - '.$multimediaObject->getSubtitle($locale);
                     }
                     $multimediaObjectsArray[$seriesTitle][$multimediaObjectTitle] = $this->generateUrl('pumukit_moodle_moodle_embed', array('id' => $multimediaObject->getId(), 'lang' => $locale), true);
-                    $numberMultimediaObjects++;
+                    ++$numberMultimediaObjects;
                 }
             }
 
@@ -93,7 +93,7 @@ class MoodleController extends Controller
                 foreach ($multimediaObjects as $multimediaObject) {
                     $mmArray = $this->mmobjToArray($multimediaObject, $locale);
                     $oneSeriesArray['mms'][] = $mmArray;
-                    $numberMultimediaObjects++;
+                    ++$numberMultimediaObjects;
                 }
                 $multimediaObjectsArray[] = $oneSeriesArray;
             }
@@ -128,11 +128,13 @@ class MoodleController extends Controller
                 return $this->renderIframe($multimediaObject, $request);
             } else {
                 $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
-                $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
+                $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
+
                 return $response;
             }
         }
-        $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:404notfound.html.twig', array('id' => $id, 'moodle_locale' => $locale)), 404);
+        $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:404notfound.html.twig', array('id' => $id, 'moodle_locale' => $locale)), 404);
+
         return $response;
     }
     /**
@@ -149,18 +151,20 @@ class MoodleController extends Controller
         $ticket = $request->get('ticket');
 
         if ($multimediaObject) {
-            if ($this->checkFieldTicket($email, $ticket, $id) ) {
-                $out['status']     = "OK";
-                $out['out']        = $this->mmobjToArray($multimediaObject, $locale);
-                return new JsonResponse($out, 200);
+            if ($this->checkFieldTicket($email, $ticket, $id)) {
+                $out['status'] = 'OK';
+                $out['out'] = $this->mmobjToArray($multimediaObject, $locale);
 
+                return new JsonResponse($out, 200);
             } else {
                 $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
-                $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
+                $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
+
                 return $response;
             }
         }
-        $response = new Response( $this->renderView('PumukitMoodleBundle:Moodle:404notfound.html.twig', array('id' => $id, 'moodle_locale' => $locale)), 404);
+        $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:404notfound.html.twig', array('id' => $id, 'moodle_locale' => $locale)), 404);
+
         return $response;
     }
 
@@ -289,22 +293,23 @@ class MoodleController extends Controller
     /**
      * Returns a dictionary with multimedia object elements.
      */
-    protected function mmobjToArray(MultimediaObject $multimediaObject, $locale = null) {
+    protected function mmobjToArray(MultimediaObject $multimediaObject, $locale = null)
+    {
         $picService = $this->get('pumukitschema.pic');
         $mmArray = array();
         $mmArray['title'] = $multimediaObject->getTitle($locale);
         $mmArray['description'] = $multimediaObject->getDescription($locale);
-        $mmArray['date']  = $multimediaObject->getRecordDate()->format('Y-m-d');
-        $mmArray['url']   = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
-        $mmArray['pic']   = $picService->getFirstUrlPic($multimediaObject, true, false);
+        $mmArray['date'] = $multimediaObject->getRecordDate()->format('Y-m-d');
+        $mmArray['url'] = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
+        $mmArray['pic'] = $picService->getFirstUrlPic($multimediaObject, true, false);
         $mmArray['embed'] = $this->generateUrl('pumukit_moodle_moodle_embed',
                                                array(
                                                    'id' => $multimediaObject->getId(),
                                                    'lang' => $locale,
-                                                   'opencast' => ($multimediaObject->getProperty('opencast') ? '1':'0')
+                                                   'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
                                                ),
                                                true);
+
         return $mmArray;
     }
-
 }
