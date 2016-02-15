@@ -7,7 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Pumukit\SchemaBundle\Document\Tag;
 
-class MoodleInitPubchannel extends ContainerAwareCommand
+class MoodleInitPubchannelCommand extends ContainerAwareCommand
 {
     private $dm = null;
     private $tagRepo = null;
