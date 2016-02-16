@@ -43,6 +43,11 @@ the Kernel to enable the bundle (app/AppKernel.php) and loads the routing
 $ php app/console pumukit:install:bundle Pumukit/MoodleBundle/PumukitMoodleBundle
 ```
 
+Adds the 'Moodle' publication channel to be able to publish videos specifically on Moodle.
+```bash
+$ php app/console moodle:init:pubchannel
+```
+
 Step 4: Configure the bundle
 ----------------------------
 
