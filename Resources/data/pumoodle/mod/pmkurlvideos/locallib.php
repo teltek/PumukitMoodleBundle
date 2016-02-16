@@ -105,7 +105,7 @@ function pumukit_parse_embed_url($url) {
     $embed_url= $CFG->pmkurlvideos_pmkurlvideos;
     
     //Parses the 'embed_url' field in case it is an url that contains an id.
-    if (preg_match('~^http*://~', $url)) {
+    if (preg_match('~^http.*://~', $url)) {
         preg_match('/id\=(\w*)/i', $url, $result);
         $pmk_id = isset($result[1])?  $result[1] : null;
         if($pmk_id == null) {
@@ -131,7 +131,7 @@ function pumukit_parse_id($url) {
     global $CFG;
 
     //Parses the 'embed_url' field in case it is an url that contains an id.
-    if (preg_match('~^http*://~', $url)) {
+    if (preg_match('~^http.*://~', $url)) {
         preg_match('/id\=(\w*)/i', $url, $result);
         $pmk_id = isset($result[1])?  $result[1] : null;
         if($pmk_id == null) {
