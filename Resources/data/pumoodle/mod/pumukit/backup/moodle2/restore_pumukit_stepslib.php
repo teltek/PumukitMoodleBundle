@@ -67,11 +67,6 @@ class restore_pumukit_activity_structure_step extends restore_activity_structure
             $data->timemodified = time();
         }
 
-        if ($data->grade < 0) {
-            // Scale found, get mapping.
-            $data->grade = -($this->get_mappingid('scale', abs($data->grade)));
-        }
-
         // Create the pumukit instance.
         $newitemid = $DB->insert_record('pumukit', $data);
         $this->apply_activity_instance($newitemid);
