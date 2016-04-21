@@ -46,8 +46,10 @@ class backup_pumukit_activity_structure_step extends backup_activity_structure_s
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define the root element describing the pumukit instance.
-        $pumukit = new backup_nested_element('pumukit', array('id'), array(
-            'name', 'intro', 'introformat', 'grade'));
+        $pumukit = new backup_nested_element('pumukit',
+					     array('id'),
+					     array('name', 'intro', 'introformat', 'embed_url', 'professor_email')
+					     );
 
         // If we had more elements, we would build the tree here.
 
