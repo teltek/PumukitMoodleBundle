@@ -96,9 +96,8 @@ class mod_pumukit_mod_form extends moodleform_mod {
         // maybe some data_preprocessing before definition() would be more elegant...
         $pumukit_out = json_decode (pumukit_curl_action_parameters('index', 
                         array('professor_email' => $USER->email,
-                              'ticket'          => pumukit_create_ticket($USER->email),
+                              'ticket'          => pumukit_create_ticket('', $USER->email),
                               'lang'            => $lang )), true);
-
         // TO DO: improve error processing, now it is only displayed in the select form.
         if (!$pumukit_out) {
             $pumukit_list = array(get_string('error_no_pumukit_output', 'pumukit') => null);
@@ -111,6 +110,7 @@ class mod_pumukit_mod_form extends moodleform_mod {
         $mform->addElement( $this->create_serial_select($pumukit_list));
         $mform->addRule( 'embed_url', get_string('form_rule_select_a_lecture','pumukit'), 'required' );
         $mform->addElement('hidden', 'professor_email', $USER->email);
+	$mform->setType('professor_email', PARAM_NOTAGS);
 
         //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
