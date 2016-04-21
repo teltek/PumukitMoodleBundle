@@ -85,9 +85,9 @@ $url_temp_array = explode('/', $pumukit->embed_url); // Strict standards: Only v
 
 
 preg_match('/id\=(\w*)\&|id\=(\w*)$/i', $pumukit->embed_url, $result);
-$mm_id = isset($result)?  $result[1] : null;
+$mm_id = isset($result[1])?  $result[1] : null;
 preg_match('/lang\=(\w*)\&|id\=(\w*)$/i', $pumukit->embed_url, $result);
-$lang = isset($result)?  $result[1] : null;
+$lang = isset($result[1])?  $result[1] : null;
 $concatChar = ($mm_id || $lang) ? '&': '?';
 $parameters = array(
               'professor_email' => $pumukit->professor_email,
