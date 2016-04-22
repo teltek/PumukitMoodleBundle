@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // These should be customized at Site Administration block -> Plugins -> Activity modules -> Recorded lecture
 define ('PUMUKITURL', 'http://cmarautopub/pumoodle/');
-define ('SECRET', 'This is a PuMoodle secret!¡!');
+defined('SECRET') or define ('SECRET', 'This is a PuMoodle secret!¡!');
 
 /**
  * Creates a daily ticket to authenticate the serials+videos and embed requests

@@ -14,7 +14,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-define ('SECRET', 'This is a PuMoodle secret!¡!');
+defined('SECRET') or define ('SECRET', 'This is a PuMoodle secret!¡!');
 
 require_once($CFG->libdir.'/filelib.php');
 
