@@ -82,7 +82,7 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
             </script>');
 
         // Adding the standard "intro" and "introformat" fields (the intro description).
-        $this->add_intro_editor();
+	$this->standard_intro_elements();
 
         //-------------------------------------------------------------------------------
         // Adding the rest of pmkpersonalvideos settings, spreading all them into this fieldset
@@ -96,7 +96,7 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
         // maybe some data_preprocessing before definition() would be more elegant...
         $pmkpersonalvideos_out = json_decode (pmkpersonalvideos_curl_action_parameters('index', 
                         array('professor_email' => $USER->email,
-                              'ticket'          => pmkpersonalvideos_create_ticket($USER->email),
+                              'ticket'          => pmkpersonalvideos_create_ticket('', $USER->email),
                               'lang'            => $lang )), true);
 
         // TO DO: improve error processing, now it is only displayed in the select form.
@@ -111,7 +111,7 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
         $mform->addElement( $this->create_serial_select($pmkpersonalvideos_list));
         $mform->addRule( 'embed_url', get_string('form_rule_select_a_lecture','pmkpersonalvideos'), 'required' );
         $mform->addElement('hidden', 'professor_email', $USER->email);
-
+	$mform->setType('professor_email', PARAM_TEXT);
         //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();
