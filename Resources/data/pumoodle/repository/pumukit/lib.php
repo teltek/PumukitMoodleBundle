@@ -164,11 +164,13 @@ class repository_pumukit extends repository {
         $mform->addElement('text', 'pumukitrepositoryurl', 
                      get_string('pumukiturl', 'repository_pumukit'), 
                      array('value'=>$pumukitrepositoryurl,'size' => '40'));
+	$mform->setType('pumukitrepositoryurl', PARAM_TEXT);
         $mform->addElement('static', 'pumukiturldefault', '', get_string('pumukiturldefault', 'repository_pumukit') . PUMUKITREPOSITORYURL);
 
         $mform->addElement('text', 'pumukitrepositorysecret', 
                      get_string('pumukitsecret', 'repository_pumukit'), 
                      array('value'=>'','size' => '40'));
+	$mform->setType('pumukitrepositorysecret', PARAM_TEXT);
         $mform->addElement('static', 'pumukitsecretdefault', '', get_string('pumukitsecretdefault', 'repository_pumukit') . PUMUKITREPOSITORYSECRET);
         return true;
     }
