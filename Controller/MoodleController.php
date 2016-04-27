@@ -122,7 +122,6 @@ class MoodleController extends Controller
         $multimediaObject = $mmobjRepo->find($id);
         $email = $request->get('professor_email');
         $ticket = $request->get('ticket');
-
         if ($multimediaObject) {
             if ($multimediaObject->containsTagWithCod('PUCHWEBTV') || $this->checkFieldTicket($email, $ticket, $id)) {
                 return $this->renderIframe($multimediaObject, $request);
@@ -277,9 +276,9 @@ class MoodleController extends Controller
                                                    'id' => $multimediaObject->getId(),
                                                    'lang' => $locale,
                                                    'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
+						   'autostart' => false,
                                                ),
                                                true);
-
         return $mmArray;
     }
 }
