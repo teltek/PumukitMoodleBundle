@@ -3,6 +3,8 @@
 // Language string for filter/pumukit.
  
 $string['filtername'] = 'Pumukit filter';
+$string['secret'] = 'PuMuKIT secret';
+$string['secret_description'] = 'Moodle will use this shared secret to encrypt queries to the pumukit server';
 
 // Examples from helloworld filter
 // $string['word'] = 'The thing to greet';

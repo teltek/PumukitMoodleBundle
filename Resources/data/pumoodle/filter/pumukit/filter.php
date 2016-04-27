@@ -19,8 +19,8 @@ define ('SECRET', 'This is a PuMoodle secret!¡!');
 require_once($CFG->libdir.'/filelib.php');
 
 class filter_pumukit extends moodle_text_filter {
-   
- 
+
+
     public function filter($text, array $options = array()) {
         global $CFG;
 
@@ -37,7 +37,7 @@ class filter_pumukit extends moodle_text_filter {
 
 
         // Look for '/pumoodle/embed', replace the entire <a... </a> tag and send the url as $link[1]
-        $search =  '/<a\\s[^>]*href=\"(https?:\\/\\/.*?\\/pumoodle\\/embed?.*?)\">.*<\\/a>/is';
+        $search =  '/<a\\s[^>]*href=\"(https?:\\/\\/.*?\\/pumoodle\\/embed?.*?)\">.*?<\\/a>/is';
         $newtext = $text; // we need to return the original value if regex fails!
 
         $newtext = preg_replace_callback($search, 'filter_pumukit_matterhorn_callback', $newtext);
@@ -72,8 +72,8 @@ function filter_pumukit_matterhorn_callback($link) {
 
     $iframe_opencast = '<iframe src="' . $url . '" style="border:0px #FFFFFF none; width:100%; height:850px;" scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" ></iframe>';
 
-    $iframe_normal = '<iframe src="' . $url . '" style="border:0px #FFFFFF none; width:640px; height:480px;" scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" ></iframe>';
-    
+    $iframe_normal = '<iframe src="' . $url . '" style="border:0px #FFFFFF none; width:640px; height:520px;" scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" ></iframe>';
+
     $iframe=($opencast)? $iframe_opencast : $iframe_normal;
 
     return $iframe;
@@ -83,12 +83,11 @@ function filter_pumukit_matterhorn_callback($link) {
 function create_ticket($id, $email) {
     global $CFG;
 
-    $pumukitsecret = empty($CFG->pumukit_secret) ? SECRET : $CFG->pumukit_secret;
+    $pumukitsecret = empty($CFG->filter_pumukit_secret) ? SECRET : $CFG->filter_pumukit_secret;
     $date   = date("Y-m-d");
     // At the moment, the IP is not checked on PuMuKit's side
-    $ip     = $_SERVER["REMOTE_ADDR"];  
+    $ip     = $_SERVER["REMOTE_ADDR"];
     $ticket = md5($pumukitsecret . $date . $id . $email);
 
     return $ticket;
 }
-

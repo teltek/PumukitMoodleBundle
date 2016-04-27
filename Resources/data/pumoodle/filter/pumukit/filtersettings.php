@@ -15,16 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Media filter
+ * Administration settings definitions for the pumukit filter.
+ * Settings can be accessed from:
+ * Site Administration block -> Plugins -> Filters -> Pumukit filter
+ * This form stores general settings into the site wide $CFG object
  *
  * @package    filter
  * @subpackage pumukit
- * @copyright  Andres Perez aperez@teltek.es
+ * @copyright  2016
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2016042700;       // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011112900;       // Requires this Moodle version
-$plugin->component = 'filter_pumukit'; // Full name of the plugin (used for diagnostics)
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configtext('filter_pumukit_secret',
+						get_string('secret', 'filter_pumukit'),
+						get_string('secret_description', 'filter_pumukit'), 'This is a PuMoodle secret!!', PARAM_NOTAGS)
+		   );
+}
