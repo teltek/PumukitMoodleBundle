@@ -51,7 +51,13 @@ if ($id) {
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-add_to_log($course->id, 'pmkurlvideos', 'view', "view.php?id={$cm->id}", $pumukit->name, $cm->id);
+//New view log event.
+$event = \mod_pmkurlvideos\event\course_module_viewed::create(array(
+								  'objectid' => $cm->instance,
+								  'context' => $context,
+								  ));
+$event->add_record_snapshot('course', $course);
+$event->trigger();
 
 // Update 'viewed' state if required by completion system
 require_once($CFG->libdir . '/completionlib.php');

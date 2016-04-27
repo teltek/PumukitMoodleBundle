@@ -36,7 +36,11 @@ $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
 require_course_login($course);
 
-add_to_log($course->id, 'pmkpersonalvideos', 'view all', 'index.php?id='.$course->id, '');
+//New 'all view' log event.
+$event = \pmkpersonalvideos\event\course_module_instance_list_viewed::create(array(
+									      'context' => context_course::instance($course->id)
+									      ));
+$event->trigger();
 
 $coursecontext = context_course::instance($course->id);
 
