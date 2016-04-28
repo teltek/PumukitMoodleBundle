@@ -35,8 +35,8 @@ require_once(dirname(__FILE__).'/locallib.php');
 /**
  * Module instance settings form
  */
-class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
-
+class mod_pmkpersonalvideos_mod_form extends moodleform_mod
+{
     /**
      * Defines forms elements
      */
@@ -54,7 +54,7 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
 
         $this->standard_coursemodule_elements();
         $mform = $this->_form;
-    
+
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -71,8 +71,8 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
         $mform->addHelpButton('name', 'pmkpersonalvideosname', 'pmkpersonalvideos');
 
         // Adding a js function to update the name element when a video is selected
-        $mform->addElement('static', null, '', 
-            '<script type="text/javascript">
+        $mform->addElement('static', null, '',
+                           '<script type="text/javascript">
             //<![CDATA[
             function updateName(id,valor) {
                 var nombre = document.getElementById(id);
@@ -94,10 +94,10 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
         // TO DO: implement user authentication between moodle and pmkpersonalvideos (LDAP?)
 
         // maybe some data_preprocessing before definition() would be more elegant...
-        $pmkpersonalvideos_out = json_decode (pmkpersonalvideos_curl_action_parameters('index', 
-                        array('professor_email' => $USER->email,
-                              'ticket'          => pmkpersonalvideos_create_ticket('', $USER->email),
-                              'lang'            => $lang )), true);
+        $pmkpersonalvideos_out = json_decode (pmkpersonalvideos_curl_action_parameters('index',
+                                                                                       array('professor_email' => $USER->email,
+                                                                                             'ticket'          => pmkpersonalvideos_create_ticket('', $USER->email),
+                                                                                             'lang'            => $lang )), true);
 
         // TO DO: improve error processing, now it is only displayed in the select form.
         if (!$pmkpersonalvideos_out) {
@@ -107,7 +107,7 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
         } else {
             $pmkpersonalvideos_list = $pmkpersonalvideos_out['out'];
         }
-        
+
         $mform->addElement( $this->create_serial_select($pmkpersonalvideos_list));
         $mform->addRule( 'embed_url', get_string('form_rule_select_a_lecture','pmkpersonalvideos'), 'required' );
         $mform->addElement('hidden', 'professor_email', $USER->email);
@@ -118,16 +118,16 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
     }
 
     /**
-     * Creates the select field of the HTML_QuickForm with 
-     * disabled select options for the serial titles and 
+     * Creates the select field of the HTML_QuickForm with
+     * disabled select options for the serial titles and
      * standard select options for the lectures.
      */
     function create_serial_select($pmkpersonalvideos_list)
     {
         // http://stackoverflow.com/a/2150275
         $maxrows = 25;
-        $mform = $this->_form;    
-        $select = $mform->createElement( 'select');     
+        $mform = $this->_form;
+        $select = $mform->createElement( 'select');
         $select->setName('embed_url');
 
         $rows = 0;
@@ -140,7 +140,7 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod {
                 $display_name = '  · '.$name;
 
                 // Debug - for simplicity's sake, video date precedes the real title
-                // returned by pmkpersonalvideos. Each option updates the resource name 
+                // returned by pmkpersonalvideos. Each option updates the resource name
                 // with the real title.
                 $reg_date='/[0-9]{4}-[0-9]{2}-[0-9]{2} /';
                 $title = (preg_match($reg_date, $name))? substr($name,11):$name;
