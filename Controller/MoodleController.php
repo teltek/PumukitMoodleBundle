@@ -43,7 +43,8 @@ class MoodleController extends Controller
                     if ($multimediaObject->getSubtitle($locale) != '') {
                         $multimediaObjectTitle .= ' - '.$multimediaObject->getSubtitle($locale);
                     }
-                    $multimediaObjectsArray[$seriesTitle][$multimediaObjectTitle] = $this->generateUrl('pumukit_moodle_moodle_embed', array('id' => $multimediaObject->getId(), 'lang' => $locale), true);
+                    $opencast = ($multimediaObject->getProperty('opencast') ? '1' : '0');
+                    $multimediaObjectsArray[$seriesTitle][$multimediaObjectTitle] = $this->generateUrl('pumukit_moodle_moodle_embed', array('id' => $multimediaObject->getId(), 'lang' => $locale, 'opencast' => $opencast), true);
                     ++$numberMultimediaObjects;
                 }
             }
