@@ -172,10 +172,7 @@ class MoodleController extends Controller
      */
     private function renderIframe(MultimediaObject $multimediaObject, Request $request)
     {
-        return $this->render('PumukitMoodleBundle:Moodle:iframe.html.twig',
-                             array('autostart' => $request->query->get('autostart', 'false'),
-                                   'intro' => false,
-                                   'multimediaObject' => $multimediaObject, ));
+        return $this->forward('PumukitBasePlayerBundle:BasePlayer:index', array('request' => $request, 'multimediaObject' => $multimediaObject));
     }
 
     private function checkFieldTicket($email, $ticket, $id = '')
