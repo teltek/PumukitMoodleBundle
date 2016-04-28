@@ -53,6 +53,7 @@ class filter_pumukit extends moodle_text_filter {
 }
 
 function filter_pumukit_matterhorn_callback($link) {
+    global $CFG;
 
     $opencast = false;
     preg_match('/opencast=(\w)\&|opencast=(\w)$/i', $link[1], $result);
@@ -70,9 +71,20 @@ function filter_pumukit_matterhorn_callback($link) {
                         );
     $url = preg_replace('/email=(.*)\\&|email=(.*)$/i', http_build_query($parameters, '', '&'), $link[1]);
 
-    $iframe_opencast = '<iframe src="' . $url . '" style="border:0px #FFFFFF none; width:100%; height:850px;" scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" ></iframe>';
+    $iframe_single_width = $CFG->iframe_singlevideo_width?:'600px';
+    $iframe_single_height = $CFG->iframe_singlevideo_height?:'400px' ;
+    $iframe_multi_width = $CFG->iframe_multivideo_width?:'100%';
+    $iframe_multi_height = $CFG->iframe_multivideo_height?:'400px';
 
-    $iframe_normal = '<iframe src="' . $url . '" style="border:0px #FFFFFF none; width:640px; height:520px;" scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" ></iframe>';
+    $iframe_opencast = '<iframe src="' . $url . '"' .
+                       '        style="border:0px #FFFFFF none; width:'. $iframe_multi_width . '; height:' . $iframe_multi_height .';"' .
+                       '        scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" >'.
+                       '</iframe>';
+
+    $iframe_normal = '<iframe src="' . $url . '"' .
+                     '        style="border:0px #FFFFFF none; width:' . $iframe_single_width . '; height:' . $iframe_single_height . ';"' .
+                     '        scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" >'.
+                     '</iframe>';
 
     $iframe=($opencast)? $iframe_opencast : $iframe_normal;
 
