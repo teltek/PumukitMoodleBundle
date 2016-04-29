@@ -40,13 +40,14 @@ class mod_pmkurlvideos_mod_form extends moodleform_mod {
     /**
      * Defines forms elements
      */
-    public function definition() {
+    public function definition()
+    {
         global $USER;       // to obtain email
         global $SESSION;    // to obtain page language
 
         $this->standard_coursemodule_elements();
         $mform = $this->_form;
-    
+
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -58,22 +59,22 @@ class mod_pmkurlvideos_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('name', 'pumukitname', 'pmkurlvideos');
 
-/*        // Adding a js function to update the name element when a video is selected
-        $mform->addElement('static', null, '', 
-            '<script type="text/javascript">
-            //<![CDATA[
-            function updateName(id,valor) {
-                var nombre = document.getElementById(id);
-                nombre.value = valor;
-            }
-            //]]>
-            </script>');
-*/
+        /*        // Adding a js function to update the name element when a video is selected
+           $mform->addElement('static', null, '',
+           '<script type="text/javascript">
+           //<![CDATA[
+           function updateName(id,valor) {
+           var nombre = document.getElementById(id);
+           nombre.value = valor;
+           }
+           //]]>
+           </script>');
+         */
         // Adding the standard "intro" and "introformat" fields (the intro description).
         $this->standard_intro_elements();
 
 
-        
+
         $mform->addElement('hidden', 'professor_email', $USER->email);
 
         if (!empty($CFG->formatstringstriptags)) {
@@ -91,81 +92,44 @@ class mod_pmkurlvideos_mod_form extends moodleform_mod {
         $mform->addHelpButton('embed_url', 'pumukitidorurl', 'pmkurlvideos');
         $mform->addRule( 'embed_url', get_string('form_rule_insert_idorurl','pmkurlvideos'), 'required' );
         $mform->setType('embed_url', PARAM_RAW);
-  
 
         //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();
     }
 
-
-    public function definition_after_data() {
+    public function definition_after_data()
+    {
         global $CFG, $COURSE;
         $mform =& $this->_form;
-        
+
         $embed_url =& $mform->getElement('embed_url');
         $embed_url->setValue(pumukit_parse_id($embed_url->getValue()));
     }
 
-
-    public function validation($data, $files) {
-        $errors = array();
-        if(!pumukit_is_embed_url_correct($data['embed_url'], $data['professor_email'])) {
+    public function validation($data, $files)
+    {
+        $errors = parent::validation($data, $files);
+        $mform =& $this->_form;
+        list($title_text, $description_text, $url) = pumukit_get_metadata($data['embed_url'], $data['professor_email']);
+        if(!$url) {
             $errors['embed_url'] = ' Error. The URL/ID given is not valid.';
+            return $errors;
         }
-        else if($data['updatemetadata'] != null) {
-            $mform =& $this->_form;
-            $title =& $mform->getElement('name');
-            list($title_text, $description_text) = pumukit_get_metadata($data['embed_url'], $data['professor_email']);
-            $title->setValue($title_text);
-            
+        $embed_url =& $mform->getElement('embed_url');
+        $embed_url->setValue($url);
+        $title =& $mform->getElement('name');
+
+        if(isset($data['updatemetadata'])) {
             $description =& $mform->getElement('introeditor');
+            $title->setValue($title_text);
             $desc_value = $description->getValue();
             $desc_value['text'] = $description_text;
             $description->setValue($desc_value);
-
-            $errors = array('' => '');
+            $errors[''] = '';
+            //Unset name error, since we added it ourselves now.
+            if(isset($errors['name'])) unset($errors['name']);
         }
-        
         return $errors;
-    }
-
-    /**
-     * Creates the select field of the HTML_QuickForm with 
-     * disabled select options for the serial titles and 
-     * standard select options for the lectures.
-     */
-    function create_serial_select($pumukit_list)
-    {
-        // http://stackoverflow.com/a/2150275
-/*        $maxrows = 25;
-        $mform = $this->_form;    
-        $select = $mform->createElement( 'text');     
-        $select->setName('embed_url');
-
-/*        $rows = 0;
-          foreach ($pumukit_list as $serial_title => $mms){
-            $rows++;
-            $select->addOption( $serial_title, '', array( 'disabled' => 'disabled' ) );
-            if (!$mms) continue;
-            foreach ( $mms as $name => $id ) {
-                $rows++;
-                $display_name = '  · '.$name;
-
-                // Debug - for simplicity's sake, video date precedes the real title
-                // returned by pumukit. Each option updates the resource name 
-                // with the real title.
-                $reg_date='/[0-9]{4}-[0-9]{2}-[0-9]{2} /';
-                $title = (preg_match($reg_date, $name))? substr($name,11):$name;
-                $select->addOption($display_name, $id, array ('onclick'=>'updateName(\'id_name\',\''.$title.'\')') );
-            }
-        }*/
-
-        $label = get_string('select_a_video','pmkurlvideos');
-        $select->setLabel($label);
-/*        if (1 == $rows) $rows = 2; // A select with 1 row is unreadable
-        $select->setSize(min($rows,$maxrows));*/
-
-        return $select;
     }
 }
