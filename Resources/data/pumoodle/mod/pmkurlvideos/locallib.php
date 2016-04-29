@@ -39,13 +39,14 @@ define ('SECRET', 'This is a PuMoodle secret!¡!');
  * @param integer $id - person or video id to be authenticated.
  * @return string $ticket
  */
-function pumukit_create_ticket($id, $email) {
+function pumukit_create_ticket($id, $email)
+{
     global $CFG;
 
     $pumukitsecret = empty($CFG->pmkurlvideos_secret) ? SECRET : $CFG->pmkurlvideos_secret;
     $date   = date("Y-m-d");
     // At the moment, the IP is not checked on PuMuKit's side
-    $ip     = $_SERVER["REMOTE_ADDR"];  
+    $ip     = $_SERVER["REMOTE_ADDR"];
     $ticket = md5($pumukitsecret . $date . $id . $email);
     return $ticket;
 }
@@ -58,13 +59,14 @@ function pumukit_create_ticket($id, $email) {
  * @param array $parameters (key => value)
  * @return string $output
  */
-function pumukit_curl_action_parameters($action, $parameters = null, $absoluteurl = false){
+function pumukit_curl_action_parameters($action, $parameters = null, $absoluteurl = false)
+{
     global $CFG;
     if ($absoluteurl) {
         $url = $action;
     } elseif (empty($CFG->pmkurlvideos_pmkurlvideos)){
         $url = PMKURLVIDEOS . $action . '?' . http_build_query($parameters, '', '&');
-    } else{       
+    } else{
         $url = trim($CFG->pmkurlvideos_pmkurlvideos);
         // Add the final slash if needed
         $url .= (substr($url, -1) == '/') ? '' : '/';
@@ -79,18 +81,19 @@ function pumukit_curl_action_parameters($action, $parameters = null, $absoluteur
     curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // needed for html5 player capability detection
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    $sal["var"]    = curl_exec($ch); 
+    $sal["var"]    = curl_exec($ch);
     $sal["error"]  = curl_error($ch);
     $sal["status"] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    
+
     return $sal;
 }
 
 /**
  *  Parses the embed_url field to return a proper embedded_url.
  */
-function pumukit_parse_embed_url($url) {
+function pumukit_parse_embed_url($url)
+{
     global $CFG;
 
     // If the teacher does not change the course language, session->lang is not set.
@@ -103,7 +106,7 @@ function pumukit_parse_embed_url($url) {
     }
 
     $embed_url= $CFG->pmkurlvideos_pmkurlvideos;
-    
+
     //Parses the 'embed_url' field in case it is an url that contains an id.
     if (preg_match('~^http.*://~', $url)) {
         preg_match('/id\=(\w*)/i', $url, $result);
@@ -127,9 +130,9 @@ function pumukit_parse_embed_url($url) {
 /**
  *  Parses the embed_url field to return the id.
  */
-function pumukit_parse_id($url) {
+function pumukit_parse_id($url)
+{
     global $CFG;
-
     //Parses the 'embed_url' field in case it is an url that contains an id.
     if (preg_match('~^http.*://~', $url)) {
         preg_match('/id\=(\w*)/i', $url, $result);
@@ -146,25 +149,13 @@ function pumukit_parse_id($url) {
     return $url;
 }
 
-/**
- *  Checks wether the embedded url is valid and can be used to watch the video.
- */
-function pumukit_is_embed_url_correct ($embed_url, $prof_email) {
-    $correct = false;
-    $url = pumukit_parse_embed_url($embed_url);
-    $url = pumukit_get_playable_embed_url($url, $prof_email);
-    $sal = pumukit_curl_action_parameters($url , null, true);
-
-    $correct = ($sal['status'] == '200');
-    return $correct;
-}
-
-
-function pumukit_get_playable_embed_url($embed_url, $prof_email) {
-    preg_match('/id\=(\w*)/i', $embed_url, $result);
-    $mm_id = isset($result[1])?  $result[1] : null;
-    preg_match('/lang\=(\w*)/i', $embed_url, $result);
-    $lang = isset($result[1])?  $result[1] : null;
+function pumukit_get_iframe($embed_url, $prof_email)
+{
+    $link_params = array();
+    parse_str(html_entity_decode(parse_url($embed_url, PHP_URL_QUERY)), $link_params);
+    $mm_id = isset($link_params['id']) ? $link_params['id'] : null;
+    $lang = isset($link_params['lang']) ? $link_params['lang'] : null;
+    $opencast = isset($link_params['opencast']) ? ($link_params['opencast'] == '1') : false;
     $concatChar = ($mm_id || $lang) ? '&': '?';
     $parameters = array(
         'professor_email' => $prof_email,
@@ -172,11 +163,23 @@ function pumukit_get_playable_embed_url($embed_url, $prof_email) {
     );
     $url = $embed_url . $concatChar . http_build_query($parameters, '', '&');
 
-    return $url;
+    if($opencast) {
+        $iframe_width = '100%';
+        $iframe_height = '600px' ;
+    }
+    else {
+        $iframe_width = '600px';
+        $iframe_height = '400px' ;
+    }
+    $iframe_html = '<iframe src="' . $url . '"' .
+                   '        style="border:0px #FFFFFF none; width:' . $iframe_width . '; height:' . $iframe_height . ';"' .
+                   '        scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" >'.
+                   '</iframe>';
+    return $iframe_html;
 }
 
-
-function pumukit_get_metadata($embed_url, $prof_email) {
+function pumukit_get_metadata($embed_url, $prof_email)
+{
     $embed_id = pumukit_parse_id($embed_url);
     $ticket = pumukit_create_ticket($embed_id, $prof_email);
 
@@ -188,7 +191,7 @@ function pumukit_get_metadata($embed_url, $prof_email) {
         $lang = 'en';
     }
 
-    $parameters = array('id' => $embed_id, 
+    $parameters = array('id' => $embed_id,
                         'ticket' => $ticket,
                         'professor_email' => $prof_email,
                         'lang' => $lang);
@@ -198,6 +201,7 @@ function pumukit_get_metadata($embed_url, $prof_email) {
 
     $title = $metadata['out']['title'];
     $description = $metadata['out']['description'];
+    $url = $metadata['out']['url'];
 
-    return array($title, $description);
+    return array($title, $description, $url);
 }

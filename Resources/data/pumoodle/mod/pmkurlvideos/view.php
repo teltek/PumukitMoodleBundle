@@ -29,7 +29,7 @@
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/locallib.php'); 
+require_once(dirname(__FILE__).'/locallib.php');
 
 global $USER;
 
@@ -37,13 +37,13 @@ $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // pumukit instance ID - it should be named as the first character of the module
 
 if ($id) {
-	$cm      = get_coursemodule_from_id('pmkurlvideos', $id, 0, false, MUST_EXIST);
-	$course  = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-	$pumukit = $DB->get_record('pmkurlvideos', array('id' => $cm->instance), '*', MUST_EXIST);
+    $cm      = get_coursemodule_from_id('pmkurlvideos', $id, 0, false, MUST_EXIST);
+    $course  = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $pumukit = $DB->get_record('pmkurlvideos', array('id' => $cm->instance), '*', MUST_EXIST);
 } elseif ($n) {
-	$pumukit = $DB->get_record('pmkurlvideos', array('id' => $n), '*', MUST_EXIST);
-	$course  = $DB->get_record('course', array('id' => $pumukit->course), '*', MUST_EXIST);
-	$cm      = get_coursemodule_from_instance('pmkurlvideos', $pumukit->id, $course->id, false, MUST_EXIST);
+    $pumukit = $DB->get_record('pmkurlvideos', array('id' => $n), '*', MUST_EXIST);
+    $course  = $DB->get_record('course', array('id' => $pumukit->course), '*', MUST_EXIST);
+    $cm      = get_coursemodule_from_instance('pmkurlvideos', $pumukit->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
 }
@@ -53,9 +53,9 @@ $context = context_module::instance($cm->id);
 
 //New view log event.
 $event = \mod_pmkurlvideos\event\course_module_viewed::create(array(
-								  'objectid' => $cm->instance,
-								  'context' => $context,
-								  ));
+    'objectid' => $cm->instance,
+    'context' => $context,
+));
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
@@ -84,11 +84,9 @@ if ($pumukit->intro) { // Conditions to show the intro can change to look for ow
     echo $OUTPUT->box(format_module_intro('pmkurlvideos', $pumukit, $cm->id), 'generalbox mod_introbox', 'pmkurlvideosintro');
 }
 
-$url = pumukit_get_playable_embed_url($pumukit->embed_url, $pumukit->professor_email);
+$iframe_html = pumukit_get_iframe($pumukit->embed_url, $pumukit->professor_email);
 
-// TO DO - test an iframe instead of direct curl echo.
-$sal = pumukit_curl_action_parameters($url , null, true);
-echo $sal['var'];
+echo $iframe_html;
 
 // Finish the page
 echo $OUTPUT->footer();
