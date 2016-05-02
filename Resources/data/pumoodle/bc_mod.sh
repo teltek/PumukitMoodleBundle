@@ -1,3 +1,4 @@
+rm -rf ./mod/pumukit
 cp -r ./mod/pmkpersonalvideos/ ./mod/pumukit
 mv ./mod/pumukit/backup/moodle2/restore_pmkpersonalvideos_activity_task.class.php ./mod/pumukit/backup/moodle2/restore_pumukit_activity_task.class.php
 mv ./mod/pumukit/backup/moodle2/restore_pmkpersonalvideos_stepslib.php ./mod/pumukit/backup/moodle2/restore_pumukit_stepslib.php
