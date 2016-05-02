@@ -26,7 +26,7 @@
  *
  * @package    mod
  * @subpackage pmkpersonalvideos
- * @copyright  2012 
+ * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,6 +50,7 @@ function pmkpersonalvideos_supports($feature) {
     switch($feature) {
         // To make this module a resource instead of an activity
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
+        case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
