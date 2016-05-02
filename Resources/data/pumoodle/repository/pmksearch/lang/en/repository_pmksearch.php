@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains pumukit repository plugin language strings
+ * This file contains pmksearch repository plugin language strings
  */
-$string['pluginname_help'] = 'Repositorio de vídeos de PuMuKit';
+$string['pluginname_help'] = 'Pumukit video repository';
 $string['pluginname'] = 'PuMuKit videos';
-$string['pumukit:view'] = 'Ver repositorio PuMuKit';
-$string['configplugin'] = 'Configuración del repositorio PuMuKit';
-$string['account'] = 'Información de la cuenta';
+$string['pmksearch:view'] = 'View pumukit repository';
+$string['configplugin'] = 'Pumukit repository configuration';
+$string['account'] = 'Account information';
+$string['configplugin'] = 'Configuration for this plugin';
 $string['api_key'] = 'API Key';
-$string['error_no_pumukit_output'] = 'Error en la respuesta del servidor PuMuKit';
-$string['pumukiturl'] = 'URL del servidor PuMuKit';
-$string['pumukitsecret'] = 'Secreto compartido con Pumukit';
-$string['pumukiturldefault'] = 'URL por defecto: ';
-$string['pumukitsecretdefault'] = 'Secreot por defecto: ';
-
+$string['error_no_pmksearch_output'] = 'Error - Pumukit server response error';
+$string['pmksearchurl'] = 'Pumukit server URL';
+$string['pmksearchsecret'] = 'Pumukit shared secret';
+$string['pmksearchurldefault'] = 'Default server URL: ';
+$string['pmksearchsecretdefault'] = 'Default pumukit secret: ';

@@ -17,7 +17,7 @@
 
 $capabilities = array(
 
-    'repository/pumukit:view' => array(
+    'repository/pmksearch:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(

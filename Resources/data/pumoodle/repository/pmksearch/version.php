@@ -17,7 +17,7 @@
 /**
  * Version information
  *
- * @package    repository_pumukit
+ * @package    repository_pmksearch
  * @category   repository
  * @copyright
  * @author     Andres Perez <aperez@teltek.es>
@@ -26,6 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015081001;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2015081002;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2011120504;        // Requires this Moodle version (2.2)
-$plugin->component = 'repository_pumukit'; // Full name of the plugin (used for diagnostics)
+$plugin->component = 'repository_pmksearch'; // Full name of the plugin (used for diagnostics)
