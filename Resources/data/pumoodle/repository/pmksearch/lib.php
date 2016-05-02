@@ -39,7 +39,8 @@ class repository_pmksearch extends repository {
      * @param stdClass $context
      * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array('ajax' => false)) {
+    public function __construct($repositoryid, $context = SITEID, $options = array('ajax' => false))
+    {
         parent::__construct($repositoryid, $context, $options);
     }
 
@@ -49,7 +50,8 @@ class repository_pmksearch extends repository {
      * @param string $path
      * @param string $page
      */
-    public function get_listing($path = '', $page = '') {
+    public function get_listing($path = '', $page = '')
+    {
 
         // TO DO: implement user authentication between moodle and pmksearch
 
@@ -61,9 +63,9 @@ class repository_pmksearch extends repository {
         $list['dynload'] = false;
         // the current path of this list.
         $list['path'] = array(
-                array('name'=>'Course list', 'path'=>'')
+            array('name'=>'Course list', 'path'=>'')
                 // array('name'=>'sub_dir', 'path'=>'/sub_dir')
-                );
+        );
         // set to true, the login link will be removed
         $list['nologin'] = true;
         // set to true, the search button will be removed
@@ -76,7 +78,8 @@ class repository_pmksearch extends repository {
     /**
      * Check if user logged in
      */
-    public function check_login() {
+    public function check_login()
+    {
         global $SESSION;
         // if (!empty($SESSION->logged)) {
         // return true;
@@ -90,7 +93,8 @@ class repository_pmksearch extends repository {
      * if check_login returns false,
      * this function will be called to print a login form.
      */
-    public function print_login() {
+    public function print_login()
+    {
         $user_field->label = get_string('username').': ';
         $user_field->id    = 'demo_username';
         $user_field->type  = 'text';
@@ -112,7 +116,8 @@ class repository_pmksearch extends repository {
      *
      * @param string $text
      */
-    public function search($text, $page = 0) {
+    public function search($text, $page = 0)
+    {
         $search_result = array();
         // search result listing's format is the same as
         // file listing
@@ -128,15 +133,17 @@ class repository_pmksearch extends repository {
      * @param string $filename
      */
     /*
-        public function get_file($url, $file_name = '') {
-        }
-    */
+       public function get_file($url, $file_name = '')
+       {
+       }
+     */
 
     /**
      * when logout button on file picker is clicked, this function will be
      * called.
      */
-    public function logout() {
+    public function logout()
+    {
         global $SESSION;
         unset($SESSION->logged);
         return true;
@@ -147,14 +154,16 @@ class repository_pmksearch extends repository {
      *
      * @return array
      */
-    public static function get_instance_option_names() {
+    public static function get_instance_option_names()
+    {
         return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret');
     }
 
     /**
      * Instance config form
      */
-    public static function instance_config_form($mform) {
+    public static function instance_config_form($mform)
+    {
         $pmksearchrepositoryurl = get_config('pmksearch', 'pmksearchrepositoryurl');
         if (empty($pmksearchrepositoryurl)) {
             $pmksearchrepositoryurl = '';
@@ -162,14 +171,14 @@ class repository_pmksearch extends repository {
 
 
         $mform->addElement('text', 'pmksearchrepositoryurl',
-                     get_string('pmksearchurl', 'repository_pmksearch'),
-                     array('value'=>$pmksearchrepositoryurl,'size' => '40'));
+                           get_string('pmksearchurl', 'repository_pmksearch'),
+                           array('value'=>$pmksearchrepositoryurl,'size' => '40'));
 	$mform->setType('pmksearchrepositoryurl', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchurldefault', '', get_string('pmksearchurldefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYURL);
 
         $mform->addElement('text', 'pmksearchrepositorysecret',
-                     get_string('pmksearchsecret', 'repository_pmksearch'),
-                     array('value'=>'','size' => '40'));
+                           get_string('pmksearchsecret', 'repository_pmksearch'),
+                           array('value'=>'','size' => '40'));
 	$mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYSECRET);
         return true;
@@ -197,7 +206,8 @@ class repository_pmksearch extends repository {
      *
      * @return bool
      */
-    public static function plugin_init() {
+    public static function plugin_init()
+    {
         $result = true;
         // do nothing
         return $result;
@@ -208,12 +218,14 @@ class repository_pmksearch extends repository {
      * see http://docs.moodle.org/dev/Repository_plugins#supported_returntypes.28.29
      * @return int
      */
-    public function supported_returntypes() {
+    public function supported_returntypes()
+    {
 
         return FILE_EXTERNAL;
     }
     // Only use this repository with moodle media, not images
-    public function supported_filetypes() {
+    public function supported_filetypes()
+    {
         // return array('web_video');
         return array('web_file','web_video');
         // return '*';
@@ -225,7 +237,8 @@ class repository_pmksearch extends repository {
      * @param integer $id - person or video id to be authenticated.
      * @return string $ticket
      */
-    private function pmksearch_create_ticket($id) {
+    private function pmksearch_create_ticket($id)
+    {
 
         $instancesecret = $this->options['pmksearchrepositorysecret'];
         $secret = empty($instancesecret) ? PMKSEARCHREPOSITORYSECRET : $instancesecret;
@@ -246,7 +259,8 @@ class repository_pmksearch extends repository {
      * @return string $output
      */
     private function pmksearch_curl_action_parameters($action, array $parameters = null,
-                            $absoluteurl = false){
+                                                      $absoluteurl = false)
+    {
         $pmksearchrepositoryurl = $this->options['pmksearchrepositoryurl'];
         if ($absoluteurl) {
             $url = $action;
@@ -259,8 +273,7 @@ class repository_pmksearch extends repository {
             $url .=  $action . '?' . http_build_query($parameters, '', '&');
         }
         // Debug - uncomment the next line to view the query sent to pmksearch.
-        //  echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
-
+        // echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
         $ch   = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -305,11 +318,11 @@ class repository_pmksearch extends repository {
 
         // TO DO: implement some kind of ldap authentication with user (teacher) instead of email check.
 
-        $pmksearch_out = json_decode ($this->pmksearch_curl_action_parameters('repository',
-            array('professor_email' => $USER->email,
-                  'ticket'    => $this->pmksearch_create_ticket($USER->email),
-                  'lang' => $lang ,
-                  'search' => $text)), true);
+        $pmksearch_out = json_decode ($this->pmksearch_curl_action_parameters('search_repository',
+                                                                              array('professor_email' => $USER->email,
+                                                                                    'ticket'    => $this->pmksearch_create_ticket($USER->email),
+                                                                                    'lang' => $lang ,
+                                                                                    'search' => $text)), true);
         if (!$pmksearch_out) {
             // get_string('error_no_pmksearch_output', 'pmksearch'); has a descriptive error status
             return array(array('title' => 'Unknown error.'));
@@ -332,19 +345,19 @@ class repository_pmksearch extends repository {
                 // There is a check in /repository/repository_ajax.php line 167  that
                 // throws an "invalidfiletype" exception if title has no video extension.
                 $children[] = array( 'title' => $shorttitle . ".avi",
-                     'shorttitle' => $shorttitle,
-                     'thumbnail' => $mm['pic'],
-                     'thumbnail_width' => $width,
-                     'thumbnail_height' => $height,
-                     'source' => $mm['embed'] . '&email=' . $USER->email . '#' . $mm['title']);
+                                     'shorttitle' => $shorttitle,
+                                     'thumbnail' => $mm['pic'],
+                                     'thumbnail_width' => $width,
+                                     'thumbnail_height' => $height,
+                                     'source' => $mm['embed'] . '&email=' . $USER->email . '#' . $mm['title']);
             }
 
             // create a "folder" with the serial title
             $list[]= array( 'title' => $serial['title'],
-                    'thumbnail' => $serial['pic'],
-                    'thumbnail_width' => $width,
-                    'thumbnail_height' => $height,
-                    'children' => $children );
+                            'thumbnail' => $serial['pic'],
+                            'thumbnail_width' => $width,
+                            'thumbnail_height' => $height,
+                            'children' => $children );
         }
 
 
