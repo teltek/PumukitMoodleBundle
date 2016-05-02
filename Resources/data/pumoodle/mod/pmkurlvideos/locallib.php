@@ -145,6 +145,7 @@ function pumukit_parse_id($url)
             $url= $pmk_id;
         }
     }
+
     //If an id can't be found, we will just copy the url 'as is'.
     return $url;
 }
@@ -162,7 +163,6 @@ function pumukit_get_iframe($embed_url, $prof_email)
         'ticket' => pumukit_create_ticket($mm_id, $prof_email)
     );
     $url = $embed_url . $concatChar . http_build_query($parameters, '', '&');
-
     if($opencast) {
         $iframe_width = '100%';
         $iframe_height = '600px' ;
@@ -201,7 +201,6 @@ function pumukit_get_metadata($embed_url, $prof_email)
 
     $title = $metadata['out']['title'];
     $description = $metadata['out']['description'];
-    $url = $metadata['out']['url'];
-
+    $url = $metadata['out']['embed'];
     return array($title, $description, $url);
 }

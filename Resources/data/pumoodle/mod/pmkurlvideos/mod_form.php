@@ -102,6 +102,7 @@ class mod_pmkurlvideos_mod_form extends moodleform_mod {
     {
         global $CFG, $COURSE;
         $mform =& $this->_form;
+        parent::definition_after_data();
 
         $embed_url =& $mform->getElement('embed_url');
         $embed_url->setValue(pumukit_parse_id($embed_url->getValue()));
@@ -116,11 +117,8 @@ class mod_pmkurlvideos_mod_form extends moodleform_mod {
             $errors['embed_url'] = ' Error. The URL/ID given is not valid.';
             return $errors;
         }
-        $embed_url =& $mform->getElement('embed_url');
-        $embed_url->setValue($url);
-        $title =& $mform->getElement('name');
-
         if(isset($data['updatemetadata'])) {
+            $title =& $mform->getElement('name');
             $description =& $mform->getElement('introeditor');
             $title->setValue($title_text);
             $desc_value = $description->getValue();

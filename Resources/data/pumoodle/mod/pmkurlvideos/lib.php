@@ -26,7 +26,7 @@
  *
  * @package    mod
  * @subpackage pmkurlvideos
- * @copyright  2012 
+ * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,6 +50,7 @@ function pmkurlvideos_supports($feature) {
     switch($feature) {
             // To make this module a resource instead of an activity
         case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
+        case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_GRADE_HAS_GRADE:         return false;
         case FEATURE_GRADE_OUTCOMES:          return false;
@@ -74,9 +75,8 @@ function pmkurlvideos_add_instance(stdClass $pumukit, mod_pmkurlvideos_mod_form 
     global $DB;
 
     $pumukit->timecreated = time();
-
-    $pumukit->embed_url = pumukit_parse_embed_url($pumukit->embed_url);
-
+    list($title_text, $description_text, $url) = pumukit_get_metadata($pumukit->embed_url, $pumukit->professor_email);
+    $pumukit->embed_url = $url;
     # You may have to add extra stuff in here #
 
     return $DB->insert_record('pmkurlvideos', $pumukit);
@@ -98,9 +98,8 @@ function pmkurlvideos_update_instance(stdClass $pumukit, mod_pmkurlvideos_mod_fo
 
     $pumukit->timemodified = time();
     $pumukit->id = $pumukit->instance;
-
-    $pumukit->embed_url = pumukit_parse_embed_url($pumukit->embed_url);
-
+    list($title_text, $description_text, $url) = pumukit_get_metadata($pumukit->embed_url, $pumukit->professor_email);
+    $pumukit->embed_url = $url;
     # You may have to add extra stuff in here #
 
     return $DB->update_record('pmkurlvideos', $pumukit);
@@ -386,4 +385,3 @@ function pmkurlvideos_extend_navigation(navigation_node $navref, stdclass $cours
  */
 function pmkurlvideos_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $pumukitnode=null) {
 }
-
