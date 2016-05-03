@@ -123,9 +123,28 @@ class RepositoryPMKSearchController extends Controller
 
     protected function getRepositorySeries($professor, $roleCode)
     {
-        $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
-                           ->getRepository('PumukitSchemaBundle:Series');
-        return $seriesRepo->findByPersonIdAndRoleCod($professor->getId(), $roleCode);
+        $dm = $this->get('doctrine_mongodb.odm.document_manager');
+        $seriesRepo = $dm->getRepository('PumukitSchemaBundle:Series');
+        $mmobjRepo = $dm->getRepository('PumukitSchemaBundle:MultimediaObject');
+
+        $referencedSeries = $mmobjRepo->findSeriesFieldByPersonIdAndRoleCod($professor->getId(), $roleCode);
+        $publicSeries = $mmobjRepo->createStandardQueryBuilder()
+                                  ->field('tags.cod')->equals('PUCHWEBTV')
+                                  ->distinct('series')
+                                  ->getQuery()->execute();
+
+        $seriesQueryBuilder = $seriesRepo->createQueryBuilder();
+        return $seriesQueryBuilder
+                 ->addOr(
+                     $seriesQueryBuilder->expr()
+                                        ->field('_id')->in($referencedSeries->toArray())
+                 )
+                 ->addOr(
+                     $seriesQueryBuilder->expr()
+                                        ->field('_id')->in($publicSeries->toArray())
+                 )
+                 ->getQuery()
+                 ->execute();
     }
 
     protected function getRepositoryMmobjs($series, $professor, $roleCode, $searchText)
@@ -138,11 +157,16 @@ class RepositoryPMKSearchController extends Controller
         if($searchText)
             $qb = $qb->field('$text')->equals(array('$search' => $searchText));
 
-        $qb->field('people')->elemMatch(
-            $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
-               ->field('cod')->equals($roleCode)
+        $qb->addOr(
+            $qb->expr()
+               ->field('people')->elemMatch(
+                   $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
+                      ->field('cod')->equals($roleCode)
+               )
+        )->addOr(
+            $qb->expr()
+               ->field('tags.cod')->equals('PUCHWEBTV')
         );
-
 
         return $qb->getQuery()->execute();
     }
