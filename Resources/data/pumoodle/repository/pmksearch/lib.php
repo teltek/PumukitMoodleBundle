@@ -58,7 +58,7 @@ class repository_pmksearch extends repository {
         $list = array();
         $list['list'] = $this->retrieve_pmksearchs_and_create_list();
         // the management interface url
-        $list['manage'] = true;
+        $list['manage'] = $this->options['pmksearchrepositorymanagerlink'];
         // dynamically loading. False as the entire list is created in one query.
         $list['dynload'] = false;
         // the current path of this list.
@@ -156,7 +156,7 @@ class repository_pmksearch extends repository {
      */
     public static function get_instance_option_names()
     {
-        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret');
+        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret', 'pmksearchrepositorymanagerlink');
     }
 
     /**
@@ -181,6 +181,12 @@ class repository_pmksearch extends repository {
                            array('value'=>'','size' => '40'));
 	$mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYSECRET);
+
+        $mform->addElement('text', 'pmksearchrepositorymanagerlink',
+                           get_string('pmksearchmanagerlink', 'repository_pmksearch'),
+                           array('value'=>'','size' => '40'));
+	$mform->setType('pmksearchrepositorymanagerlink', PARAM_TEXT);
+
         return true;
     }
 
