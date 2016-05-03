@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * repository_pumukit class
+ * repository_pmksearch class
  * This is a subclass of repository class
  * http://docs.moodle.org/dev/Repository_plugins
  *
- * @package    repository_pumukit
+ * @package    repository_pmksearch
  * @category   repository
  * @copyright  Andres Perez <aperez@teltek.es>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,10 +27,10 @@
 
 // These should be customized for each repository instance at
 // Site administration ► Plugins ► Repositories ► Manage repositories
-define ('PUMUKITREPOSITORYURL', 'http://cmarautopub/pumoodle/');
-define ('PUMUKITREPOSITORYSECRET', 'This is a PuMoodle secret!¡!');
+define ('PMKSEARCHREPOSITORYURL', 'http://cmarautopub/pumoodle/');
+define ('PMKSEARCHREPOSITORYSECRET', 'This is a PuMoodle secret!¡!');
 
-class repository_pumukit extends repository {
+class repository_pmksearch extends repository {
 
     /**
      * Constructor
@@ -39,7 +39,8 @@ class repository_pumukit extends repository {
      * @param stdClass $context
      * @param array $options
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array('ajax' => false)) {
+    public function __construct($repositoryid, $context = SITEID, $options = array('ajax' => false))
+    {
         parent::__construct($repositoryid, $context, $options);
     }
 
@@ -49,25 +50,26 @@ class repository_pumukit extends repository {
      * @param string $path
      * @param string $page
      */
-    public function get_listing($path = '', $page = '') {
+    public function get_listing($path = '', $page = '')
+    {
 
-        // TO DO: implement user authentication between moodle and pumukit
+        // TO DO: implement user authentication between moodle and pmksearch
 
         $list = array();
-        $list['list'] = $this->retrieve_pumukits_and_create_list();
+        $list['list'] = $this->retrieve_pmksearchs_and_create_list();
         // the management interface url
-        $list['manage'] = false;
+        $list['manage'] = true;
         // dynamically loading. False as the entire list is created in one query.
         $list['dynload'] = false;
         // the current path of this list.
         $list['path'] = array(
-                array('name'=>'Course list', 'path'=>'')
+            array('name'=>'Course list', 'path'=>'')
                 // array('name'=>'sub_dir', 'path'=>'/sub_dir')
-                );
+        );
         // set to true, the login link will be removed
         $list['nologin'] = true;
         // set to true, the search button will be removed
-        $list['nosearch'] = true;
+        $list['nosearch'] = false;
         $list['norefresh'] = true;
 
         return $list;
@@ -76,7 +78,8 @@ class repository_pumukit extends repository {
     /**
      * Check if user logged in
      */
-    public function check_login() {
+    public function check_login()
+    {
         global $SESSION;
         // if (!empty($SESSION->logged)) {
         // return true;
@@ -90,7 +93,8 @@ class repository_pumukit extends repository {
      * if check_login returns false,
      * this function will be called to print a login form.
      */
-    public function print_login() {
+    public function print_login()
+    {
         $user_field->label = get_string('username').': ';
         $user_field->id    = 'demo_username';
         $user_field->type  = 'text';
@@ -112,11 +116,12 @@ class repository_pumukit extends repository {
      *
      * @param string $text
      */
-    public function search($text, $page = 0) {
+    public function search($text, $page = 0)
+    {
         $search_result = array();
         // search result listing's format is the same as
         // file listing
-        $search_result['list'] = $this->retrieve_pumukits_and_create_list($text);
+        $search_result['list'] = $this->retrieve_pmksearchs_and_create_list($text);
         return $search_result;
     }
     /**
@@ -128,15 +133,17 @@ class repository_pumukit extends repository {
      * @param string $filename
      */
     /*
-        public function get_file($url, $file_name = '') {
-        }
-    */
+       public function get_file($url, $file_name = '')
+       {
+       }
+     */
 
     /**
      * when logout button on file picker is clicked, this function will be
      * called.
      */
-    public function logout() {
+    public function logout()
+    {
         global $SESSION;
         unset($SESSION->logged);
         return true;
@@ -147,31 +154,33 @@ class repository_pumukit extends repository {
      *
      * @return array
      */
-    public static function get_instance_option_names() {
-        return array('pumukitrepositoryurl', 'pumukitrepositorysecret');
+    public static function get_instance_option_names()
+    {
+        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret');
     }
 
     /**
      * Instance config form
      */
-    public static function instance_config_form($mform) {
-        $pumukitrepositoryurl = get_config('pumukit', 'pumukitrepositoryurl');
-        if (empty($pumukitrepositoryurl)) {
-            $pumukitrepositoryurl = '';
+    public static function instance_config_form($mform)
+    {
+        $pmksearchrepositoryurl = get_config('pmksearch', 'pmksearchrepositoryurl');
+        if (empty($pmksearchrepositoryurl)) {
+            $pmksearchrepositoryurl = '';
         }
 
 
-        $mform->addElement('text', 'pumukitrepositoryurl',
-                     get_string('pumukiturl', 'repository_pumukit'),
-                     array('value'=>$pumukitrepositoryurl,'size' => '40'));
-	$mform->setType('pumukitrepositoryurl', PARAM_TEXT);
-        $mform->addElement('static', 'pumukiturldefault', '', get_string('pumukiturldefault', 'repository_pumukit') . PUMUKITREPOSITORYURL);
+        $mform->addElement('text', 'pmksearchrepositoryurl',
+                           get_string('pmksearchurl', 'repository_pmksearch'),
+                           array('value'=>$pmksearchrepositoryurl,'size' => '40'));
+	$mform->setType('pmksearchrepositoryurl', PARAM_TEXT);
+        $mform->addElement('static', 'pmksearchurldefault', '', get_string('pmksearchurldefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYURL);
 
-        $mform->addElement('text', 'pumukitrepositorysecret',
-                     get_string('pumukitsecret', 'repository_pumukit'),
-                     array('value'=>'','size' => '40'));
-	$mform->setType('pumukitrepositorysecret', PARAM_TEXT);
-        $mform->addElement('static', 'pumukitsecretdefault', '', get_string('pumukitsecretdefault', 'repository_pumukit') . PUMUKITREPOSITORYSECRET);
+        $mform->addElement('text', 'pmksearchrepositorysecret',
+                           get_string('pmksearchsecret', 'repository_pmksearch'),
+                           array('value'=>'','size' => '40'));
+	$mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
+        $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYSECRET);
         return true;
     }
 
@@ -188,8 +197,8 @@ class repository_pumukit extends repository {
      * Type config form - A common setting for all the moodle site (the same for all instances)
      * Not used.
      */
-    // public static function type_config_form($mform, $classname = 'repository_pumukit') {
-    //     $mform->addElement('text', 'api_key', get_string('api_key', 'repository_pumukit'), array('value'=>'','size' => '40'));
+    // public static function type_config_form($mform, $classname = 'repository_pmksearch') {
+    //     $mform->addElement('text', 'api_key', get_string('api_key', 'repository_pmksearch'), array('value'=>'','size' => '40'));
     // }
 
     /**
@@ -197,7 +206,8 @@ class repository_pumukit extends repository {
      *
      * @return bool
      */
-    public static function plugin_init() {
+    public static function plugin_init()
+    {
         $result = true;
         // do nothing
         return $result;
@@ -208,12 +218,14 @@ class repository_pumukit extends repository {
      * see http://docs.moodle.org/dev/Repository_plugins#supported_returntypes.28.29
      * @return int
      */
-    public function supported_returntypes() {
+    public function supported_returntypes()
+    {
 
         return FILE_EXTERNAL;
     }
     // Only use this repository with moodle media, not images
-    public function supported_filetypes() {
+    public function supported_filetypes()
+    {
         // return array('web_video');
         return array('web_file','web_video');
         // return '*';
@@ -225,13 +237,14 @@ class repository_pumukit extends repository {
      * @param integer $id - person or video id to be authenticated.
      * @return string $ticket
      */
-    private function pumukit_create_ticket($id) {
+    private function pmksearch_create_ticket($id)
+    {
 
-        $instancesecret = $this->options['pumukitrepositorysecret'];
-        $secret = empty($instancesecret) ? PUMUKITREPOSITORYSECRET : $instancesecret;
+        $instancesecret = $this->options['pmksearchrepositorysecret'];
+        $secret = empty($instancesecret) ? PMKSEARCHREPOSITORYSECRET : $instancesecret;
 
         $date   = date("Y-m-d");
-        // At the moment, the IP is not checked on PuMuKit's side
+        // At the moment, the IP is not checked on Pmksearch's side
         $ip     = $_SERVER["REMOTE_ADDR"];
         $ticket = md5($secret . $date . $id);
 
@@ -239,28 +252,28 @@ class repository_pumukit extends repository {
     }
 
     /**
-     * Gets curl output for the pumukit host and the given url.
+     * Gets curl output for the pmksearch host and the given url.
      *
-     * @param string $action from pumukit module.
+     * @param string $action from pmksearch module.
      * @param array $parameters (key => value)
      * @return string $output
      */
-    private function pumukit_curl_action_parameters($action, array $parameters = null,
-                            $absoluteurl = false){
-        $pumukitrepositoryurl = $this->options['pumukitrepositoryurl'];
+    private function pmksearch_curl_action_parameters($action, array $parameters = null,
+                                                      $absoluteurl = false)
+    {
+        $pmksearchrepositoryurl = $this->options['pmksearchrepositoryurl'];
         if ($absoluteurl) {
             $url = $action;
-        } elseif (empty($pumukitrepositoryurl)){
-            $url = PUMUKITREPOSITORYURL . $action . '?' . http_build_query($parameters, '', '&');
+        } elseif (empty($pmksearchrepositoryurl)){
+            $url = PMKSEARCHREPOSITORYURL . $action . '?' . http_build_query($parameters, '', '&');
         } else{
-            $url = trim($pumukitrepositoryurl);
+            $url = trim($pmksearchrepositoryurl);
             // Add the final slash if needed
             $url .= (substr($url, -1) == '/') ? '' : '/';
             $url .=  $action . '?' . http_build_query($parameters, '', '&');
         }
-        // Debug - uncomment the next line to view the query sent to pumukit.
-        //  echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
-
+        // Debug - uncomment the next line to view the query sent to pmksearch.
+        // echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
         $ch   = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -282,11 +295,11 @@ class repository_pumukit extends repository {
     }
 
     /**
-     * Queries a pumukit server and processes the result in the moodle list format
+     * Queries a pmksearch server and processes the result in the moodle list format
      * The authentication is done with a ticket with current user's email.
      *
      */
-    private function retrieve_pumukits_and_create_list($text = '') {
+    private function retrieve_pmksearchs_and_create_list($text = '') {
         global $USER;       // To get email for authentication
         global $SESSION;    // To get page language
         // If the teacher does not change the course language, session->lang is not set.
@@ -305,25 +318,25 @@ class repository_pumukit extends repository {
 
         // TO DO: implement some kind of ldap authentication with user (teacher) instead of email check.
 
-        $pumukit_out = json_decode ($this->pumukit_curl_action_parameters('repository',
-            array('professor_email' => $USER->email,
-                  'ticket'    => $this->pumukit_create_ticket($USER->email),
-                  'lang' => $lang ,
-                  'search' => $text)), true);
-        if (!$pumukit_out) {
-            // get_string('error_no_pumukit_output', 'pumukit'); has a descriptive error status
+        $pmksearch_out = json_decode ($this->pmksearch_curl_action_parameters('search_repository',
+                                                                              array('professor_email' => $USER->email,
+                                                                                    'ticket'    => $this->pmksearch_create_ticket($USER->email),
+                                                                                    'lang' => $lang ,
+                                                                                    'search' => $text)), true);
+        if (!$pmksearch_out) {
+            // get_string('error_no_pmksearch_output', 'pmksearch'); has a descriptive error status
             return array(array('title' => 'Unknown error.'));
 
-        } else if ($pumukit_out['status'] == "ERROR"){
-            // $pumukit_out['status_txt'] has a descriptive error status
-            return array(array('title' => $pumukit_out['status_txt']));
+        } else if ($pmksearch_out['status'] == "ERROR"){
+            // $pmksearch_out['status_txt'] has a descriptive error status
+            return array(array('title' => $pmksearch_out['status_txt']));
 
         } else {
-            $pumukit_list = $pumukit_out['out'];
+            $pmksearch_list = $pmksearch_out['out'];
         }
 
         $list = array();
-        foreach ($pumukit_list as $serial){
+        foreach ($pmksearch_list as $serial){
             // create the "children files" with the multimedia objects
             $children = array();
             foreach ($serial['mms'] as $mm) {
@@ -332,19 +345,19 @@ class repository_pumukit extends repository {
                 // There is a check in /repository/repository_ajax.php line 167  that
                 // throws an "invalidfiletype" exception if title has no video extension.
                 $children[] = array( 'title' => $shorttitle . ".avi",
-                     'shorttitle' => $shorttitle,
-                     'thumbnail' => $mm['pic'],
-                     'thumbnail_width' => $width,
-                     'thumbnail_height' => $height,
-                     'source' => $mm['embed'] . '&email=' . $USER->email . '#' . $mm['title']);
+                                     'shorttitle' => $shorttitle,
+                                     'thumbnail' => $mm['pic'],
+                                     'thumbnail_width' => $width,
+                                     'thumbnail_height' => $height,
+                                     'source' => $mm['embed'] . '&email=' . $USER->email . '#' . $mm['title']);
             }
 
             // create a "folder" with the serial title
             $list[]= array( 'title' => $serial['title'],
-                    'thumbnail' => $serial['pic'],
-                    'thumbnail_width' => $width,
-                    'thumbnail_height' => $height,
-                    'children' => $children );
+                            'thumbnail' => $serial['pic'],
+                            'thumbnail_width' => $width,
+                            'thumbnail_height' => $height,
+                            'children' => $children );
         }
 
 
