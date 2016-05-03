@@ -56,7 +56,7 @@ class repository_pumukit extends repository {
         $list = array();
         $list['list'] = $this->retrieve_pumukits_and_create_list();
         // the management interface url
-        $list['manage'] = true;
+        $list['manage'] = false;
         // dynamically loading. False as the entire list is created in one query.
         $list['dynload'] = false;
         // the current path of this list.
@@ -67,7 +67,7 @@ class repository_pumukit extends repository {
         // set to true, the login link will be removed
         $list['nologin'] = true;
         // set to true, the search button will be removed
-        $list['nosearch'] = false;
+        $list['nosearch'] = true;
         $list['norefresh'] = true;
 
         return $list;
