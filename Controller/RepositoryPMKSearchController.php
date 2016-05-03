@@ -22,15 +22,12 @@ class RepositoryPMKSearchController extends Controller
         $email = $request->get('professor_email');
         $ticket = $request->get('ticket');
         $locale = $this->getLocale($request->get('lang'));
+        $searchText = $request->get('search');
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
-        $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
-                           ->getRepository('PumukitSchemaBundle:Series');
-        $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
-                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
 
         if ($professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)) {
-            $series = $seriesRepo->findByPersonIdAndRoleCod($professor->getId(), $roleCode);
+            $series = $this->getRepositorySeries($professor, $roleCode);
             $numberMultimediaObjects = 0;
             $multimediaObjectsArray = array();
             $out = array();
@@ -41,13 +38,14 @@ class RepositoryPMKSearchController extends Controller
                 $oneSeriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $oneseries->getId()), true);
                 $oneSeriesArray['pic'] = $picService->getFirstUrlPic($oneseries, true, false);
                 $oneSeriesArray['mms'] = array();
-                $multimediaObjects = $mmobjRepo->findBySeriesAndPersonIdWithRoleCod($oneseries, $professor->getId(), $roleCode);
+                $multimediaObjects = $this->getRepositoryMmobjs($oneseries, $professor, $roleCode, $searchText);
                 foreach ($multimediaObjects as $multimediaObject) {
                     $mmArray = $this->mmobjToArray($multimediaObject, $locale);
                     $oneSeriesArray['mms'][] = $mmArray;
                     ++$numberMultimediaObjects;
                 }
-                $multimediaObjectsArray[] = $oneSeriesArray;
+                if(count($oneSeriesArray['mms']) > 0)
+                    $multimediaObjectsArray[] = $oneSeriesArray;
             }
             $out['status'] = 'OK';
             $out['status_txt'] = $numberMultimediaObjects;
@@ -121,5 +119,31 @@ class RepositoryPMKSearchController extends Controller
                                                ),
                                                true);
         return $mmArray;
+    }
+
+    protected function getRepositorySeries($professor, $roleCode)
+    {
+        $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
+                           ->getRepository('PumukitSchemaBundle:Series');
+        return $seriesRepo->findByPersonIdAndRoleCod($professor->getId(), $roleCode);
+    }
+
+    protected function getRepositoryMmobjs($series, $professor, $roleCode, $searchText)
+    {
+        $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
+                          ->getRepository('PumukitSchemaBundle:MultimediaObject');
+        $qb = $mmobjRepo->createStandardQueryBuilder()
+                        ->field('series')->references($series);
+
+        if($searchText)
+            $qb = $qb->field('$text')->equals(array('$search' => $searchText));
+
+        $qb->field('people')->elemMatch(
+            $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
+               ->field('cod')->equals($roleCode)
+        );
+
+
+        return $qb->getQuery()->execute();
     }
 }
