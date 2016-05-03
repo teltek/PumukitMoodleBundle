@@ -38,6 +38,12 @@ class RepositoryPMKSearchController extends Controller
                 $oneSeriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $oneseries->getId()), true);
                 $oneSeriesArray['pic'] = $picService->getFirstUrlPic($oneseries, true, false);
                 $oneSeriesArray['mms'] = array();
+                $oneSeriesArray['playlist'] = array(
+                    'title' => 'Playlist for this series.',
+                    'thumbnail' => $picService->getFirstUrlPic($oneseries, true, false),
+                    //TODO: Generate 'embed' url for the 'playlist' of a series. Then REPLACE IT HERE:
+                    'embed' => $this->generateUrl('pumukit_webtv_series_index', array('id' => $oneseries->getId()), true),
+                );
                 $multimediaObjects = $this->getRepositoryMmobjs($oneseries, $professor, $roleCode, $searchText);
                 foreach ($multimediaObjects as $multimediaObject) {
                     $mmArray = $this->mmobjToArray($multimediaObject, $locale);
