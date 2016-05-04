@@ -45,6 +45,12 @@ class RepositoryPMKSearchController extends Controller
                 $seriesResult[$seriesId]['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $series->getId()), true);
                 $seriesResult[$seriesId]['pic'] = $picService->getFirstUrlPic($series, true, false);
                 $seriesResult[$seriesId]['mms'] = array();
+                $seriesResult[$seriesId]['playlist'] = array(
+                    'title' => 'Playlist for this series.',
+                    'thumbnail' => $picService->getFirstUrlPic($multimediaObject->getSeries(), true, false),
+                    //TODO: Generate 'embed' url for the 'playlist' of a series. Then REPLACE IT HERE:
+                    'embed' => $this->generateUrl('pumukit_webtv_series_index', array('id' => $seriesId), true),
+                );
             }
             $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
             $seriesResult[$seriesId]['mms'][] = $mmobjResult;
