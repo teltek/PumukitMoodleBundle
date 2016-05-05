@@ -43,6 +43,7 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod
     public function definition() {
         global $USER;       // to obtain email
         global $SESSION;    // to obtain page language
+        global $CFG;        // To obtain Moodle Version.
         // If the teacher does not change the course language, session->lang is not set.
         if (isset($SESSION->lang)) {
             $lang = $SESSION->lang;
@@ -82,7 +83,11 @@ class mod_pmkpersonalvideos_mod_form extends moodleform_mod
             </script>');
 
         // Adding the standard "intro" and "introformat" fields (the intro description).
-	$this->standard_intro_elements();
+        if($CFG->version < 2015033000.00){ //Moodle version < 2.9dev (Build: 20150309)
+            $this->add_intro_editor();
+        }else{
+	    $this->standard_intro_elements();
+        }
 
         //-------------------------------------------------------------------------------
         // Adding the rest of pmkpersonalvideos settings, spreading all them into this fieldset
