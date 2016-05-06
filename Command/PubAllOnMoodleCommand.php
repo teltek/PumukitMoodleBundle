@@ -28,12 +28,12 @@ Ascii graphic of the logic behind this command:
 
 | pub_channel |  status   |      |   final_pub_channels    | final_status |
 |-------------|-----------|      |-------------------------|--------------|
-| PUCHWEBTV   | PUBLISHED |      | PUCHMOOODLE & PUCHWEBTV |  PUBLISHED   |
-| PUCHWEBTV   |  HIDDEN   |  =>  |      PUCHMOOODLE        |  PUBLISHED   |
-| PUCHWEBTV   |  BLOCKED  |  =>  |      PUCHMOOODLE        |  PUBLISHED   |
-|    None     | PUBLISHED |      |      PUCHMOOODLE        |  PUBLISHED   |
-|    None     |  HIDDEN   |      |      PUCHMOOODLE        |  PUBLISHED   |
-|    None     |  BLOCKED  |      |      PUCHMOOODLE        |  PUBLISHED   |
+| PUCHWEBTV   | PUBLISHED |      | PUCHMOOODLE & PUCHWEBTV |   PUBLISHED  |
+| PUCHWEBTV   |  HIDDEN   |  =>  |      PUCHMOOODLE        |   PUBLISHED  |
+| PUCHWEBTV   |  BLOCKED  |  =>  |      PUCHMOOODLE        |   PUBLISHED  |
+|    None     | PUBLISHED |      |          None           |   PUBLISHED  |
+|    None     |  HIDDEN   |      |          None           |    HIDDEN    |
+|    None     |  BLOCKED  |      |          None           |    BLOCKED   |
 
 
 
@@ -58,6 +58,7 @@ EOT
         $qb = $this->mmobjRepo->createStandardQueryBuilder();
         $allMmobjs = $qb->addOr($qb->expr()->field('tags.cod')->notEqual($this->puchTagCode))
                         ->addOr($qb->expr()->field('status')->notEqual(MultimediaObject::STATUS_PUBLISHED))
+                        ->field('tags.cod')->equals($webTVPubTag->getCod())
                         ->getQuery()->execute();
         $counter = 0;
         foreach ($allMmobjs as $mmobj) {
