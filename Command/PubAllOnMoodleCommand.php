@@ -63,11 +63,15 @@ EOT
         $counter = 0;
         foreach ($allMmobjs as $mmobj) {
             $counter++;
+            $logLine = sprintf('Added PUCHMOODLE tag to %s ', $mmobj->getId());
             $this->tagService->addTagToMultimediaObject($mmobj, $moodlePubTag->getId(), false);
             if($mmobj->getStatus() != MultimediaObject::STATUS_PUBLISHED) {
+                $logLine .= sprintf('| Changed status from %s to STATUS_PUBLISHED ', ($mmobj->getStatus() == 1)?'STATUS_BLOQ':'STATUS_HIDE');
                 $mmobj->setStatus(MultimediaObject::STATUS_PUBLISHED);
                 $this->tagService->removeTagFromMultimediaObject($mmobj, $webTVPubTag->getId(), false);
+                $logLine .= sprintf('| Removed %s channel from Multimedia Object', $webTVPubTag->getCod());
             }
+            $output->writeln(sprintf('<comment>%s</comment>', $logLine));
             $this->dm->persist($mmobj);
             $this->dm->flush();
         }
