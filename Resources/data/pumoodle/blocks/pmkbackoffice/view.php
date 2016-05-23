@@ -16,7 +16,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
 require_login($course);
 $PAGE->set_url('/blocks/pmkbackoffice/view.php', array('id' => $courseid));
 $PAGE->set_pagelayout('standard');
-$PAGE->set_heading(get_string('edithtml', 'block_pmkbackoffice'));
+$PAGE->set_heading(get_string('pagetitle', 'block_pmkbackoffice'));
 
 echo $OUTPUT->header();
 ?>
