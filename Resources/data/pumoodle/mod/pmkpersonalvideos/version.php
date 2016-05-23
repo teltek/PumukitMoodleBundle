@@ -31,7 +31,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 0;             // If version == 0 then module will not be installed
-$plugin->version   = 2016042802;    // The current module version (Date: YYYYMMDDXX)
+$plugin->version   = 2016230500;    // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2011051000;    // Requires this Moodle version
 $plugin->component = 'mod_pmkpersonalvideos'; // To check on upgrade, that module sits in correct place
