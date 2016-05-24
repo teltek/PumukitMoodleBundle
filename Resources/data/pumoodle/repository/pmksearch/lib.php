@@ -345,6 +345,14 @@ class repository_pmksearch extends repository {
         foreach ($pmksearch_list as $serial){
             // create the "children files" with the multimedia objects
             $children = array();
+            $children[] = array(
+                'title' => $serial['playlist']['title'] . '.mp4',
+                'shorttitle' => $serial['playlist']['title'],
+                'thumbnail' => $serial['playlist']['thumbnail'],
+                'thumbnail_width' => $width,
+                'thumbnail_height' => $height,
+                'source' => $serial['playlist']['embed'] . '&email=' . $USER->email . '#' . $serial['playlist']['title'],
+            );
             foreach ($serial['mms'] as $mm) {
                 $shorttitle = $mm['date'] . " " . $mm['title'];
                 // hack to accept this file by extension - see /repository/youtube/lib.php line 127
