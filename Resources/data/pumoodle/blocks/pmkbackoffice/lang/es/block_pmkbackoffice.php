@@ -1,7 +1,7 @@
 <?php
 $string['linktopage'] = 'Ir al Media Manager de PuMuKIT';
 $string['pagetitle'] = 'PuMuKIT - Media Manager';
-$string['pagenotfoundtext'] = 'La instancia del repositorio \'pmksearch\' no fue encontrada. ¿Quizás se envió el id equivocado?';
+$string['pagenotfoundtext'] = 'La instancia del repositorio \'pmksearch\' no fue encontrada. ¿Quizás se envió el id equivocado como parámetro \'instance_id\'?';
 $string['pluginname'] = 'PuMuKIT - Media Manager block';
 $string['pmkbackoffice'] = 'PuMuKIT - Media Manager';
 $string['pmkbackoffice:addinstance'] = 'Añadir un nuevo \'block\' PuMuKIT - Media Manager';
