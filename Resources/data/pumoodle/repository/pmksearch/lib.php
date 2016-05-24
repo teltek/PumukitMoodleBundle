@@ -54,11 +54,12 @@ class repository_pmksearch extends repository {
     {
 
         // TO DO: implement user authentication between moodle and pmksearch
-
+        global $COURSE;
         $list = array();
         $list['list'] = $this->retrieve_pmksearchs_and_create_list();
-        // the management interface url
-        $list['manage'] = $this->options['pmksearchrepositorymanagerlink'];
+        // the management interface url (using the pumukit block).
+        $manage_url = new moodle_url('/blocks/pmkbackoffice/view.php', array('courseid' => $COURSE->id));
+        $list['manage'] = $manage_url->out(true); //Prints the url.
         // dynamically loading. False as the entire list is created in one query.
         $list['dynload'] = false;
         // the current path of this list.
@@ -156,7 +157,7 @@ class repository_pmksearch extends repository {
      */
     public static function get_instance_option_names()
     {
-        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret', 'pmksearchrepositorymanagerlink');
+        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret');
     }
 
     /**
@@ -169,7 +170,6 @@ class repository_pmksearch extends repository {
             $pmksearchrepositoryurl = '';
         }
 
-
         $mform->addElement('text', 'pmksearchrepositoryurl',
                            get_string('pmksearchurl', 'repository_pmksearch'),
                            array('value'=>$pmksearchrepositoryurl,'size' => '40'));
@@ -181,11 +181,6 @@ class repository_pmksearch extends repository {
                            array('value'=>'','size' => '40'));
 	$mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYSECRET);
-
-        $mform->addElement('text', 'pmksearchrepositorymanagerlink',
-                           get_string('pmksearchmanagerlink', 'repository_pmksearch'),
-                           array('value'=>'','size' => '40'));
-	$mform->setType('pmksearchrepositorymanagerlink', PARAM_TEXT);
 
         return true;
     }
