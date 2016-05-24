@@ -58,8 +58,10 @@ class repository_pmksearch extends repository {
         $list = array();
         $list['list'] = $this->retrieve_pmksearchs_and_create_list();
         // the management interface url (using the pumukit block).
-        $manage_url = new moodle_url('/blocks/pmkbackoffice/view.php', array('courseid' => $COURSE->id));
-        $list['manage'] = $manage_url->out(true); //Prints the url.
+        $api_url = parse_url($this->get_option('pmksearchrepositoryurl'));
+        $manager_url = sprintf('%s://%s', $api_url['scheme'], $api_url['host']);
+        $manager_block = new moodle_url('/blocks/pmkbackoffice/view.php', array('courseid' => $COURSE->id, 'url' => $manager_url));
+        $list['manage'] = $manager_block->out(false); //Prints the url.
         // dynamically loading. False as the entire list is created in one query.
         $list['dynload'] = false;
         // the current path of this list.
@@ -165,20 +167,15 @@ class repository_pmksearch extends repository {
      */
     public static function instance_config_form($mform)
     {
-        $pmksearchrepositoryurl = get_config('pmksearch', 'pmksearchrepositoryurl');
-        if (empty($pmksearchrepositoryurl)) {
-            $pmksearchrepositoryurl = '';
-        }
-
         $mform->addElement('text', 'pmksearchrepositoryurl',
                            get_string('pmksearchurl', 'repository_pmksearch'),
-                           array('value'=>$pmksearchrepositoryurl,'size' => '40'));
+                           array('value' => '','size' => '40'));
 	$mform->setType('pmksearchrepositoryurl', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchurldefault', '', get_string('pmksearchurldefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYURL);
 
         $mform->addElement('text', 'pmksearchrepositorysecret',
                            get_string('pmksearchsecret', 'repository_pmksearch'),
-                           array('value'=>'','size' => '40'));
+                           array('value' => '','size' => '40'));
 	$mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYSECRET);
 
