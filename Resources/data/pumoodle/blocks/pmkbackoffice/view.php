@@ -6,18 +6,23 @@ require_once('../../config.php');
 global $DB, $OUTPUT, $PAGE;
 
 // Check for all required variables.
-$courseid = required_param('courseid', PARAM_INT);
-$pmk2_url = required_param('url', PARAM_RAW);
+$course_id = required_param('course_id', PARAM_INT);
+$instance_id = required_param('instance_id', PARAM_RAW);
 
-if (!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourse', 'block_pmkbackoffice', $courseid);
+if (!$course = $DB->get_record('course', array('id' => $course_id))) {
+    print_error('invalidcourse', 'block_pmkbackoffice', $course_id);
 }
 
 require_login($course);
-$PAGE->set_url('/blocks/pmkbackoffice/view.php', array('id' => $courseid));
+$PAGE->set_url('/blocks/pmkbackoffice/view.php', array('id' => $course_id));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading(get_string('pagetitle', 'block_pmkbackoffice'));
 
+$pmk2_url = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearch_managerurl'));
+if(!$pmk2_url)
+    send_header_404();
+else
+    $pmk2_url = $pmk2_url->value;
 echo $OUTPUT->header();
 ?>
 <script>
@@ -36,15 +41,22 @@ echo $OUTPUT->header();
      }
  }
 </script>
-<iframe src="<?php echo $pmk2_url ?>"
-        id='pmk_iframe'
-        width="100%"
-        height="2200px"
-        onload="requestIframeHeight(this)"
-        scrolling="no"
-        border="0"
-        frameborder="0">
-</iframe>
+<?php if($pmk2_url): ?>
+  <iframe src="<?php echo $pmk2_url ?>"
+          id='pmk_iframe'
+          width="100%"
+          height="2200px"
+          onload="requestIframeHeight(this)"
+          scrolling="no"
+          border="0"
+          frameborder="0">
+  </iframe>
+<?php else: ?>
+<h2>404 - Not Found</h2>
+<p>
+<?php echo get_string('pagenotfoundtext', 'block_pmkbackoffice') ?>
+</p>
+<?php endif?>
 <?php
 echo $OUTPUT->footer();
 ?>
