@@ -58,8 +58,7 @@ class repository_pmksearch extends repository {
         $list = array();
         $list['list'] = $this->retrieve_pmksearchs_and_create_list();
         // the management interface url (using the pumukit block).
-        $manager_url = $this->get_option('pmksearch_managerurl');
-        $manager_block = new moodle_url('/blocks/pmkbackoffice/view.php', array('courseid' => $COURSE->id, 'url' => $manager_url));
+        $manager_block = new moodle_url('/blocks/pmkbackoffice/view.php', array('course_id' => $COURSE->id, 'instance_id' => $this->instance->id));
         $list['manage'] = $manager_block->out(false); //Prints the url.
         // dynamically loading. False as the entire list is created in one query.
         $list['dynload'] = false;
