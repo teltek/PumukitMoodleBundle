@@ -33,7 +33,7 @@ class filter_pumukit extends moodle_text_filter {
             return $text;
         }
         // Look for '/pumoodle/embed', replace the entire <a... </a> tag and send the url as $link[1]
-        $search =  '/<a\\s[^>]*href=\"(https?:\\/\\/.*?\\/pumoodle\\/embed?.*?)\">.*?<\\/a>/is';
+        $search =  '/<a\\s[^>]*href=\"(https?:\\/\\/[^>]*?\\/pumoodle\\/embed.*?)\">.*?<\\/a>/is';
         $newtext = preg_replace_callback($search, 'filter_pumukit_callback', $text);
 
         if (empty($newtext) or $newtext === $text) {

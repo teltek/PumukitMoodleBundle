@@ -26,39 +26,37 @@ class RepositoryPMKSearchController extends Controller
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
 
-        if ($professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)) {
-            $series = $this->getRepositorySeries($professor, $roleCode);
-            $numberMultimediaObjects = 0;
-            $multimediaObjectsArray = array();
-            $out = array();
-            $picService = $this->get('pumukitschema.pic');
-            foreach ($series as $oneseries) {
-                $oneSeriesArray = array();
-                $oneSeriesArray['title'] = $oneseries->getTitle($locale);
-                $oneSeriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $oneseries->getId()), true);
-                $oneSeriesArray['pic'] = $picService->getFirstUrlPic($oneseries, true, false);
-                $oneSeriesArray['mms'] = array();
-                $multimediaObjects = $this->getRepositoryMmobjs($oneseries, $professor, $roleCode, $searchText);
-                foreach ($multimediaObjects as $multimediaObject) {
-                    $mmArray = $this->mmobjToArray($multimediaObject, $locale);
-                    $oneSeriesArray['mms'][] = $mmArray;
-                    ++$numberMultimediaObjects;
-                }
-                if(count($oneSeriesArray['mms']) > 0)
-                    $multimediaObjectsArray[] = $oneSeriesArray;
-            }
-            $out['status'] = 'OK';
-            $out['status_txt'] = $numberMultimediaObjects;
-            $out['out'] = $multimediaObjectsArray;
-
-            return new JsonResponse($out, 200);
+        if (!$professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)) {
+            $out['status'] = 'ERROR';
+            $out['status_txt'] = 'Error: professor with email '.$email.' does not have any video on WebTV Channel in the Pumukit server.';
+            $out['out'] = null;
+            return new JsonResponse($out, 404);
         }
-        $out['status'] = 'ERROR';
-        $out['status_txt'] = 'Error: professor with email '.$email.' does not have any video on WebTV Channel in the Pumukit server.';
-        $out['out'] = null;
+        $seriesResult = array();
+        $numberMultimediaObjects = 0;
+        $picService = $this->get('pumukitschema.pic');
+        $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
+        foreach ($multimediaObjects as $multimediaObject) {
+            $seriesId = $multimediaObject->getSeries()->getId();
+            if(!isset($seriesResult[$seriesId])) {
+                $series = $multimediaObject->getSeries();
+                $seriesResult[$seriesId] = array();
+                $seriesResult[$seriesId]['title'] = $series->getTitle($locale);
+                $seriesResult[$seriesId]['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $series->getId()), true);
+                $seriesResult[$seriesId]['pic'] = $picService->getFirstUrlPic($series, true, false);
+                $seriesResult[$seriesId]['mms'] = array();
+            }
+            $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
+            $seriesResult[$seriesId]['mms'][] = $mmobjResult;
+            ++$numberMultimediaObjects;
+        }
+        $out['status'] = 'OK';
+        $out['status_txt'] = $numberMultimediaObjects;
+        $out['out'] = $seriesResult;
 
-        return new JsonResponse($out, 404);
+        return new JsonResponse($out, 200);
     }
+
 
     /**
      * -- AUXILIARY FUNCTIONS --
@@ -121,28 +119,24 @@ class RepositoryPMKSearchController extends Controller
         return $mmArray;
     }
 
-    protected function getRepositorySeries($professor, $roleCode)
-    {
-        $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
-                           ->getRepository('PumukitSchemaBundle:Series');
-        return $seriesRepo->findByPersonIdAndRoleCod($professor->getId(), $roleCode);
-    }
-
-    protected function getRepositoryMmobjs($series, $professor, $roleCode, $searchText)
+    protected function getRepositoryMmobjs($professor, $roleCode, $searchText)
     {
         $mmobjRepo = $this->get('doctrine_mongodb.odm.document_manager')
                           ->getRepository('PumukitSchemaBundle:MultimediaObject');
-        $qb = $mmobjRepo->createStandardQueryBuilder()
-                        ->field('series')->references($series);
 
+        $qb = $mmobjRepo->createStandardQueryBuilder();
         if($searchText)
             $qb = $qb->field('$text')->equals(array('$search' => $searchText));
-
-        $qb->field('people')->elemMatch(
-            $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
-               ->field('cod')->equals($roleCode)
+        $qb->addOr(
+            $qb->expr()
+               ->field('people')->elemMatch(
+                   $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
+                      ->field('cod')->equals($roleCode)
+               )
+        )->addOr(
+            $qb->expr()
+               ->field('tags.cod')->equals('PUCHWEBTV')
         );
-
 
         return $qb->getQuery()->execute();
     }
