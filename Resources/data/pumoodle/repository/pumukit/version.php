@@ -19,13 +19,13 @@
  *
  * @package    repository_pumukit
  * @category   repository
- * @copyright  
+ * @copyright
  * @author     Andres Perez <aperez@teltek.es>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015081000;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2016230500;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2011120504;        // Requires this Moodle version (2.2)
 $plugin->component = 'repository_pumukit'; // Full name of the plugin (used for diagnostics)
