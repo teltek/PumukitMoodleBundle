@@ -27,6 +27,6 @@ $string['api_key'] = 'API Key';
 $string['error_no_pmksearch_output'] = 'Error - Pumukit server response error';
 $string['pmksearchurl'] = 'Pumukit server URL';
 $string['pmksearchsecret'] = 'Pumukit shared secret';
-$string['pmksearchmanagerlink'] = 'Pumukit Management URL';
+$string['pmksearch_managerurl'] = 'Pumukit Management URL';
 $string['pmksearchurldefault'] = 'Default server URL: ';
 $string['pmksearchsecretdefault'] = 'Default pumukit secret: ';

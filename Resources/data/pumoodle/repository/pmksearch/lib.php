@@ -58,8 +58,7 @@ class repository_pmksearch extends repository {
         $list = array();
         $list['list'] = $this->retrieve_pmksearchs_and_create_list();
         // the management interface url (using the pumukit block).
-        $api_url = parse_url($this->get_option('pmksearchrepositoryurl'));
-        $manager_url = sprintf('%s://%s', $api_url['scheme'], $api_url['host']);
+        $manager_url = $this->get_option('pmksearch_managerurl');
         $manager_block = new moodle_url('/blocks/pmkbackoffice/view.php', array('courseid' => $COURSE->id, 'url' => $manager_url));
         $list['manage'] = $manager_block->out(false); //Prints the url.
         // dynamically loading. False as the entire list is created in one query.
@@ -159,7 +158,7 @@ class repository_pmksearch extends repository {
      */
     public static function get_instance_option_names()
     {
-        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret');
+        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret', 'pmksearch_managerurl');
     }
 
     /**
@@ -178,6 +177,11 @@ class repository_pmksearch extends repository {
                            array('value' => '','size' => '40'));
 	$mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYSECRET);
+
+        $mform->addElement('text', 'pmksearch_managerurl',
+                           get_string('pmksearch_managerurl', 'repository_pmksearch'),
+                           array('value' => '','size' => '40'));
+	$mform->setType('pmksearch_managerurl', PARAM_TEXT);
 
         return true;
     }
