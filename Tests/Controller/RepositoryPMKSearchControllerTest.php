@@ -17,6 +17,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
     private $factory;
     private $client;
     private $router;
+    private $roleCode;
     private $series;
 
     public function __construct()
@@ -39,6 +40,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
                                               ->get('pumukitschema.pic');
         $this->client = static::createClient();
         $this->router = $this->client->getContainer()->get('router');
+        $this->roleCode = $this->client->getContainer()->getParameter('pumukit_moodle.role');
     }
 
     public function testSearchRepository()
@@ -100,6 +102,8 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
 
     private function addContent()
     {
+        //Get rolecode that marks a person as 'owner'
+        $roleCode = $this->roleCode;
         //Create tags to assign to videos:
         $tagWebTV = new Tag();
         $tagWebTV->setCod('PUCHWEBTV');
@@ -113,11 +117,12 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $owner->setEmail('tester@pumukit.es');
         $owner->setName('Tester');
         $owner = $this->personService->updatePerson($owner);
+        $this->dm->persist($owner);
         $role = new Role();
         $role->setDisplay(true);
-        $role->setCod('owner');
-        $role->setXml('owner');
-        $role->setName('Owner');
+        $role->setCod($roleCode);
+        $role->setXml($roleCode);
+        $role->setName($roleCode);
         $this->dm->persist($role);
         //Create mmobjs to be assigned
         $track = new Track();
