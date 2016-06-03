@@ -36,6 +36,18 @@ class Configuration implements ConfigurationInterface
               ->info('Role used to filter persons in multimedia object')
             ->end()
           ->end()
+          ->children()
+            ->scalarNode('naked_backoffice_domain')
+              ->defaultFalse()
+              ->info('Domain or subdomain used to access into the naked backoffice')
+            ->end()
+          ->end()
+          ->children()
+            ->scalarNode('naked_backoffice_background')
+              ->defaultValue('white')
+              ->info('CSS color used in the naked backoffice background')
+            ->end()
+          ->end()
         ;
 
         return $treeBuilder;
