@@ -29,11 +29,11 @@ class PumukitMoodleExtension extends Extension
         $container->setParameter('pumukit_moodle.role', $config['role']);
 
         if ($config['naked_backoffice_domain']) {
-            $container->setParameter('pumukit.naked_backoffice_domain', $config['naked_backoffice_domain']);
+            $container->setParameter('pumukit2.naked_backoffice_domain', $config['naked_backoffice_domain']);
         }
 
         if ($config['naked_backoffice_background']) {
-            $container->setParameter('pumukit.naked_backoffice_background', $config['naked_backoffice_background']);
+            $container->setParameter('pumukit2.naked_backoffice_background', $config['naked_backoffice_background']);
         }
     }
 }
