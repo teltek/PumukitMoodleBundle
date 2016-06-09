@@ -16,13 +16,16 @@ If you modify mod, repository or filter folders,
 create the new zip files following these instructions:
 
 ```bash
-$ cd /path/to/pumoodle
 $ cd mod
-$ zip -r ../install/mod.zip pumukit/
+$ zip -r ../install/pmkpersonalvideos.zip pmkpersonalvideos
+$ zip -r ../install/pmkurlvideos.zip pmkurlvideos
 $ cd ../repository
+$ zip -r ../install/pmksearch.zip pmksearch
 $ zip -r ../install/repository.zip pumukit/
 $ cd ../filter
 $ zip -r ../install/filter.zip pumukit/
+$ cd ../blocks
+$ zip -r ../install/pmkbackoffice.zip pmkbackoffice
 ```
 
 NOTE: `/path/to/pumoodle` location:
