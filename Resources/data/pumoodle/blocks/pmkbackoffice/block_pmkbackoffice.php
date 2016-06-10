@@ -15,4 +15,8 @@ class block_pmkbackoffice extends block_base {
         $this->content->footer = html_writer::link($url, sprintf('--> %s <--',get_string('linktopage', 'block_pmkbackoffice')));
         return $this->content;
     }
+    //Prevents the block from appearing anywhere.
+    public function applicable_formats() {
+        return array();
+    }
 }
