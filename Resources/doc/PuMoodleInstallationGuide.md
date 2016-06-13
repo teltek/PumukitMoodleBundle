@@ -35,43 +35,35 @@ The modules allow us to embed videos directly into the Moodle course as a resour
 
 ### Modules installation
 
-Both modules are installed in the same way. The only difference will be the name of the '.zip' file that has to be uploaded to the Moodle platform.
+The process to install both modules is essentially the same. The only difference will be the name of the '.zip' file that has to be uploaded to the Moodle platform.
 
-To begin the installation, we need to have a Moodle administrator account.
+*Note: To begin the installation, we need to have a Moodle administrator account.*
 
-Login on Moodle as administrator.
+* Login on Moodle as administrator.
 
-Go to “Administration” -> “Site Administration” -> “Plugins” -> “Install add ons” on the left-side
+* Go to *Administration -> Site Administration -> Plugins -> Install plugins* on the left-side
 menu.
 
+* Select *Activity module (mod)* in *Plugin Type*. (If the *Plugin Type* option does not appear, click on 'Show more...').
 
+* Upload the file named *pmkpersonalvideos.zip* (For the 'Personal Videos' module) or the *pmkurlvideos.zip* (For the 'Video URLs' module) with the “Zip Package” field. A window opens to select the file.
 
-Select “Activity module (mod)” in “Plugin Type”.
+* Choose the file and click on *"Upload this file"*.
 
-Upload the file named “pmkpersonalvideos.zip” (For the 'Personal Videos' module) or the "pmkurlvideos.zip" (For the 'Video URLs' module) to the “Zip Package”. A window opens to select the file.
+* Mark the checkbox and click on *Install plugin from the ZIP file* (previous image).
 
-Choose the file and click “Upload this file”.
+A validation window is shown. 
 
-
-
-Mark the checkbox and click "Install add-on from the ZIP file" (previous image).
-
-A validation window is shown. Press "Install add-on".
-
-
+* Press "Install add-on".
 
 Here we see all the plugins that require update or are pending to install. The Pumukit module
 should be listed here.
 
-To continue the installation click on "Upgrade Moodle Database now".
-
-
+* To continue the installation click on "Upgrade Moodle Database now".
 
 A message will be shown indicating the successful result of the installation.
 
-
-
-Click on “Continue”. The Module Configuration will be loaded.
+* Click on “Continue”. The Module Configuration will be loaded.
 
 ### Modules configuration
 
