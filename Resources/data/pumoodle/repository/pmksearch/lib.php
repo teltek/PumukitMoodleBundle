@@ -27,7 +27,7 @@
 
 // These should be customized for each repository instance at
 // Site administration ► Plugins ► Repositories ► Manage repositories
-define ('PMKSEARCHREPOSITORYURL', 'http://cmarautopub/pumoodle/');
+define ('PMKSEARCHREPOSITORYURL', 'http://pumukit_host/pumoodle/');
 define ('PMKSEARCHREPOSITORYSECRET', 'This is a PuMoodle secret!¡!');
 
 class repository_pmksearch extends repository {
