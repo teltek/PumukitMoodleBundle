@@ -52,26 +52,35 @@ class repository_pmksearch extends repository {
      */
     public function get_listing($path = '', $page = '')
     {
-
         // TO DO: implement user authentication between moodle and pmksearch
+        $list = $this->init_list_params();
+        $list['list'] = $this->retrieve_pmksearchs_and_create_list();
+        return $list;
+    }
+
+    /**
+     * Returns a dictionary with the list params.
+     *
+     * This functions is used as a helper to avoid code repetition.
+     *
+     * @return array
+     */
+    private function init_list_params()
+    {
         global $COURSE;
         $list = array();
-        $list['list'] = $this->retrieve_pmksearchs_and_create_list();
-        // the management interface url (using the pumukit block).
         $manager_block = new moodle_url('/blocks/pmkbackoffice/view.php', array('course_id' => $COURSE->id, 'instance_id' => $this->instance->id));
         $list['manage'] = $manager_block->out(false); //Prints the url.
-        // dynamically loading. False as the entire list is created in one query.
-        $list['dynload'] = false;
+        // the management interface url (using the pumukit block).
+        $list['dynload'] = false; // dynamically loading. False as the entire list is created in one query.
         // the current path of this list.
         $list['path'] = array(
             array('name'=>'Course list', 'path'=>'')
                 // array('name'=>'sub_dir', 'path'=>'/sub_dir')
         );
-        // set to true, the login link will be removed
-        $list['nologin'] = true;
-        // set to true, the search button will be removed
-        $list['nosearch'] = false;
-        $list['norefresh'] = true;
+        $list['nologin'] = true; // set to true, the login link will be removed
+        $list['nosearch'] = false; // set to false, the search box will appear
+        $list['norefresh'] = true; // set to true, the refresh button will be removed
 
         return $list;
     }
@@ -119,11 +128,17 @@ class repository_pmksearch extends repository {
      */
     public function search($text, $page = 0)
     {
-        $search_result = array();
-        // search result listing's format is the same as
-        // file listing
-        $search_result['list'] = $this->retrieve_pmksearchs_and_create_list($text);
-        return $search_result;
+        $list = $this->init_list_params();
+        $list['norefresh'] = false;  //We init the 'refresh'
+        $list['issearchresult'] = true;
+        // search result listing's format is the same as file listing
+        $search_results = $this->retrieve_pmksearchs_and_create_list($text);
+        if(count($search_results) < 1)
+            $list['path'] = null;
+
+        $list['list'] = $search_results;
+        return $list;
+
     }
     /**
      * move file to local moodle
@@ -369,7 +384,6 @@ class repository_pmksearch extends repository {
                             'thumbnail_height' => $height,
                             'children' => $children );
         }
-
 
         return $list;
     }
