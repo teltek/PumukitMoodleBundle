@@ -86,42 +86,6 @@ class repository_pmksearch extends repository {
     }
 
     /**
-     * Check if user logged in
-     */
-    public function check_login()
-    {
-        global $SESSION;
-        // if (!empty($SESSION->logged)) {
-        // return true;
-        // } else {
-        // return false;
-        // }
-        return true;
-    }
-
-    /**
-     * if check_login returns false,
-     * this function will be called to print a login form.
-     */
-    public function print_login()
-    {
-        $user_field->label = get_string('username').': ';
-        $user_field->id    = 'demo_username';
-        $user_field->type  = 'text';
-        $user_field->name  = 'demousername';
-        $user_field->value = '';
-
-        $passwd_field->label = get_string('password').': ';
-        $passwd_field->id    = 'demo_password';
-        $passwd_field->type  = 'password';
-        $passwd_field->name  = 'demopassword';
-
-        $form = array();
-        $form['login'] = array($user_field, $passwd_field);
-        return $form;
-    }
-
-    /**
      * Search in external repository
      *
      * @param string $text
@@ -153,17 +117,6 @@ class repository_pmksearch extends repository {
        {
        }
      */
-
-    /**
-     * when logout button on file picker is clicked, this function will be
-     * called.
-     */
-    public function logout()
-    {
-        global $SESSION;
-        unset($SESSION->logged);
-        return true;
-    }
 
     /**
      * this function must be static
