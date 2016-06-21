@@ -200,8 +200,9 @@ class RepositoryPMKSearchController extends Controller
                           ->getRepository('PumukitSchemaBundle:MultimediaObject');
 
         $qb = $mmobjRepo->createStandardQueryBuilder();
-        //TODO: The videos shown in Moodle should be:
-        // * All public videos (on webtv? on moodle? just published?)
+        //The videos shown in Moodle should be:
+        // * All public videos on webtv.
+        //             (or)
         // * All videos belonging to the professor:
         //   - Owner of video.
         //   - Belongs to the video group (to edit? to view? both?)
