@@ -16,10 +16,11 @@ use Pumukit\SchemaBundle\Document\Series;
 class RepositoryPMKSearchController extends Controller
 {
     /**
-     * @Route("/search_repository")
+     * @Route("/search_repository", defaults={"filter":false})
      */
     public function searchRepositoryAction(Request $request)
     {
+        $this->enableFilter();
         $email = $request->get('professor_email');
         $ticket = $request->get('ticket');
         $locale = $this->getLocale($request->get('lang'));
@@ -201,20 +202,28 @@ class RepositoryPMKSearchController extends Controller
         //   - Belongs to the video group (to edit? to view? both?)
         if($searchText)
             $qb = $qb->field('$text')->equals(array('$search' => $searchText));
-        if($professor != null) {
-            $qb->addOr(
-                $qb->expr()
-                   ->field('people')->elemMatch(
-                       $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
-                          ->field('cod')->equals($roleCode)
-                   )
-            );
-        }
         $qb->addOr(
             $qb->expr()
                ->field('tags.cod')->equals('PUCHWEBTV')
         );
-
+        if(!$professor) {
+            return $qb->getQuery()->execute();
+        }
+        $filterOwnerExpr = $qb->expr()
+                              ->field('tags.cod')->equals('PUCHMOODLE')
+                              ->addOr(
+                                  $qb->expr()
+                                     ->field('people')
+                                     ->elemMatch(
+                                         $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
+                                            ->field('cod')->equals($roleCode)
+                                     )
+                              );
+        $user = $professor->getUser();
+        if($user) {
+            $filterOwnerExpr->addOr($qb->expr()->field('groups')->in($user->getGroupsIds()));
+        }
+        $qb->addOr($filterOwnerExpr);
         return $qb->getQuery()->execute();
     }
 
@@ -228,5 +237,12 @@ class RepositoryPMKSearchController extends Controller
         };
         $qb = $seriesRepo->createQueryBuilder()->field('playlist.multimedia_objects')->in($mmobjIds);
         return $qb->getQuery()->execute();
+    }
+
+    protected function enableFilter()
+    {
+        $filter = $this->get('doctrine_mongodb.odm.document_manager')->getFilterCollection()->enable('frontend');
+        $filter->setParameter('status', MultimediaObject::STATUS_PUBLISHED);
+        $filter->setParameter('display_track_tag', 'display');
     }
 }
