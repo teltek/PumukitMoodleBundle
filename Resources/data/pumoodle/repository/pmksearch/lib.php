@@ -47,6 +47,7 @@ class repository_pmksearch extends repository {
     /**
      * Get file listing
      *
+     * For more info: https://docs.moodle.org/dev/Repository_plugins#get_listing.28.24path.3D.22.22.2C_.24page.3D.22.22.29
      * @param string $path
      * @param string $page
      */
@@ -80,7 +81,7 @@ class repository_pmksearch extends repository {
         );
         $list['nologin'] = true; // set to true, the login link will be removed
         $list['nosearch'] = false; // set to false, the search box will appear
-        $list['norefresh'] = true; // set to true, the refresh button will be removed
+        $list['norefresh'] = false; // set to true, the refresh button will be removed
 
         return $list;
     }
@@ -93,7 +94,6 @@ class repository_pmksearch extends repository {
     public function search($text, $page = 0)
     {
         $list = $this->init_list_params();
-        $list['norefresh'] = false;  //We init the 'refresh'
         $list['issearchresult'] = true;
         // search result listing's format is the same as file listing
         $search_results = $this->retrieve_pmksearchs_and_create_list($text);
