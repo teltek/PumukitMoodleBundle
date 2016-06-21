@@ -177,8 +177,8 @@ class RepositoryPMKSearchController extends Controller
         $playlistMmobjs = $playlistService->getPlaylistMmobjs($playlist);
         $mmobjsArray = array();
         $mmobjsArray[] = array(
-            'title' => 'Insert this playlist.'.'avi',
-            'shorttitle' => 'Insert this playlist.',
+            'title' => 'Insert playlist "'.$playlist->getTitle().'".avi',
+            'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
             'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
         );
         foreach($playlistMmobjs as $mmobj) {
