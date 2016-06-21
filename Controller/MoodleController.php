@@ -137,6 +137,16 @@ class MoodleController extends Controller
 
         return $response;
     }
+
+    /**
+     * @Route("/embed/playlist", name="pumukit_moodle_embed_playlist")
+     */
+    public function embedPlaylistAction(Request $request)
+    {
+        $seriesId = $request->get('id');
+        return $this->redirect($this->generateUrl('pumukit_playlistplayer_index', array('id' => $seriesId)));
+    }
+
     /**
      * @Route("/metadata", name="pumukit_moodle_moodle_metadata")
      */
