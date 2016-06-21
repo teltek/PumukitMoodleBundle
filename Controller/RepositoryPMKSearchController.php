@@ -182,7 +182,12 @@ class RepositoryPMKSearchController extends Controller
             'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
         );
         foreach($playlistMmobjs as $mmobj) {
-            $mmobjsArray[] = $this->mmobjToArray($mmobj, $locale);
+            $newMmobj = $this->mmobjToArray($mmobj, $locale);
+            //Workaround to prevent playlist mmobjs from being selected.
+            $newMmobj['source'] = '';
+            $newMmobj['children'] = array();
+            $mmobjsArray[] = $newMmobj;
+
         }
         if(count($mmobjsArray) <= 1)
             $mmobjsArray = array();
