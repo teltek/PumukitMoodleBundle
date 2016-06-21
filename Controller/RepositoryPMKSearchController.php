@@ -25,14 +25,7 @@ class RepositoryPMKSearchController extends Controller
         $searchText = $request->get('search');
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
-
-        if (!$professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode)) {
-            $out['status'] = 'ERROR';
-            $out['status_txt'] = 'Error: professor with email '.$email.' does not have any video on WebTV Channel in the Pumukit server.';
-            $out['out'] = null;
-            return new JsonResponse($out, 404);
-        }
-        $seriesResult = array();
+        $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
         $numberMultimediaObjects = 0;
         $picService = $this->get('pumukitschema.pic');
         $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
@@ -133,13 +126,16 @@ class RepositoryPMKSearchController extends Controller
         $qb = $mmobjRepo->createStandardQueryBuilder();
         if($searchText)
             $qb = $qb->field('$text')->equals(array('$search' => $searchText));
+        if($professor != null) {
+            $qb->addOr(
+                $qb->expr()
+                   ->field('people')->elemMatch(
+                       $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
+                          ->field('cod')->equals($roleCode)
+                   )
+            );
+        }
         $qb->addOr(
-            $qb->expr()
-               ->field('people')->elemMatch(
-                   $qb->expr()->field('people._id')->equals(new \MongoId($professor->getId()))
-                      ->field('cod')->equals($roleCode)
-               )
-        )->addOr(
             $qb->expr()
                ->field('tags.cod')->equals('PUCHWEBTV')
         );
