@@ -304,40 +304,6 @@ class repository_pmksearch extends repository {
             $pmksearch_list = $pmksearch_out['out'];
         }
 
-        $list = array();
-        foreach ($pmksearch_list as $serial){
-            // create the "children files" with the multimedia objects
-            $children = array();
-            //TODO: Removed 'playlist' adding. THIS is not fully implemented yet.
-            /* $children[] = array(
-               'title' => $serial['playlist']['title'] . '.mp4',
-               'shorttitle' => $serial['playlist']['title'],
-               'thumbnail' => $serial['playlist']['thumbnail'],
-               'thumbnail_width' => $width,
-               'thumbnail_height' => $height,
-               'source' => $serial['playlist']['embed'] . '&email=' . $USER->email . '#' . $serial['playlist']['title'],
-               ); */
-            foreach ($serial['mms'] as $mm) {
-                $shorttitle = $mm['date'] . " " . $mm['title'];
-                // hack to accept this file by extension - see /repository/youtube/lib.php line 127
-                // There is a check in /repository/repository_ajax.php line 167  that
-                // throws an "invalidfiletype" exception if title has no video extension.
-                $children[] = array( 'title' => $shorttitle . ".avi",
-                                     'shorttitle' => $shorttitle,
-                                     'thumbnail' => $mm['pic'],
-                                     'thumbnail_width' => $width,
-                                     'thumbnail_height' => $height,
-                                     'source' => $mm['embed'] . '&email=' . $USER->email . '#' . $mm['title']);
-            }
-
-            // create a "folder" with the serial title
-            $list[]= array( 'title' => $serial['title'],
-                            'thumbnail' => $serial['pic'],
-                            'thumbnail_width' => $width,
-                            'thumbnail_height' => $height,
-                            'children' => $children );
-        }
-
-        return $list;
+        return $pmksearch_list;
     }
 }
