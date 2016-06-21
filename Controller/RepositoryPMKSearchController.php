@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Pumukit\SchemaBundle\Document\MultimediaObject;
+use Pumukit\SchemaBundle\Document\Series;
 
 /**
  * @Route("/pumoodle")
@@ -26,32 +27,44 @@ class RepositoryPMKSearchController extends Controller
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
-        $numberMultimediaObjects = 0;
         $picService = $this->get('pumukitschema.pic');
+
+        $seriesResult = array();
+        $numberMultimediaObjects = 0;
         $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
         foreach ($multimediaObjects as $multimediaObject) {
             $seriesId = $multimediaObject->getSeries()->getId();
             if(!isset($seriesResult[$seriesId])) {
                 $series = $multimediaObject->getSeries();
-                $seriesResult[$seriesId] = array();
-                $seriesResult[$seriesId]['title'] = $series->getTitle($locale);
-                $seriesResult[$seriesId]['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $series->getId()), true);
-                $seriesResult[$seriesId]['pic'] = $picService->getDefaultUrlPicForObject($series, true, false);
-                $seriesResult[$seriesId]['mms'] = array();
-                $seriesResult[$seriesId]['playlist'] = array(
-                    'title' => 'Playlist for this series.',
-                    'thumbnail' => $url = $request->getUriForPath('/bundles/pumukitmoodle/images/playlist.png'),
-                    //TODO: Generate 'embed' url for the 'playlist' of a series. Then REPLACE IT HERE:
-                    'embed' => $this->generateUrl('pumukit_webtv_series_index', array('id' => $seriesId), true),
-                );
+                $seriesResult[$seriesId] = $this->seriesToArray($series, $locale);
             }
             $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
-            $seriesResult[$seriesId]['mms'][] = $mmobjResult;
+            $seriesResult[$seriesId]['children'][] = $mmobjResult;
             ++$numberMultimediaObjects;
         }
+
+        $playlists =  $this->getRepositoryPlaylists($multimediaObjects);
+        $playlistsResult = array();
+        foreach($playlists as $playlist) {
+            $playlistId = $playlist->getId();
+            if(!isset($playlistResult[$playlistId])) {
+                $playlistsResult[$playlistId] = $this->playlistToArray($playlist, $locale);
+            }
+        }
+
         $out['status'] = 'OK';
         $out['status_txt'] = $numberMultimediaObjects;
-        $out['out'] = $seriesResult;
+        //Dividing the results in 'series' and 'playlists'.
+        $out['out'] = array(
+            array(
+                'title' => 'series',
+                'children' => $seriesResult,
+            ),
+            array(
+                'title' => 'playlists',
+                'children' => $playlistsResult,
+            ),
+        );
 
         return new JsonResponse($out, 200);
     }
@@ -101,21 +114,78 @@ class RepositoryPMKSearchController extends Controller
     protected function mmobjToArray(MultimediaObject $multimediaObject, $locale = null)
     {
         $picService = $this->get('pumukitschema.pic');
-        $mmArray = array();
-        $mmArray['title'] = $multimediaObject->getTitle($locale);
-        $mmArray['description'] = $multimediaObject->getDescription($locale);
-        $mmArray['date'] = $multimediaObject->getRecordDate()->format('Y-m-d');
-        $mmArray['url'] = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
-        $mmArray['pic'] = $picService->getFirstUrlPic($multimediaObject, true, false);
-        $mmArray['embed'] = $this->generateUrl('pumukit_moodle_moodle_embed',
-                                               array(
-                                                   'id' => $multimediaObject->getId(),
-                                                   'lang' => $locale,
-                                                   'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
-						   'autostart' => false,
-                                               ),
-                                               true);
+        $width  = 140;
+        $height = 105;
+        $url = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
+        $thumbnail = $picService->getFirstUrlPic($multimediaObject, true, false);
+        $mmArray = array(
+            'title' => $multimediaObject->getTitle($locale) . ".mp4",
+            'shorttitle'=> $multimediaObject->getTitle($locale),
+            'url' => $url,
+            'thumbnail' => $thumbnail,
+            'thumbnail_width' => $width,
+            'thumbnail_height' => $height,
+            'icon' => $thumbnail,
+            'source' => $this->generateUrl(
+                'pumukit_moodle_moodle_embed',
+                array(
+                    'id' => $multimediaObject->getId(),
+                    'lang' => $locale,
+                    'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
+		    'autostart' => false,
+                ),
+                true
+            ),
+        );
         return $mmArray;
+    }
+
+    protected function seriesToArray(Series $series, $locale = null)
+    {
+        $picService = $this->get('pumukitschema.pic');
+        $seriesArray = array();
+        $seriesArray['title'] = $series->getTitle($locale);
+        $seriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $series->getId()), true);
+        $seriesArray['thumbnail'] = $picService->getDefaultUrlPicForObject($series, true, false);
+        $seriesArray['icon'] = $picService->getDefaultUrlPicForObject($series, true, false);
+        $seriesArray['children'] = array();
+        return $seriesArray;
+    }
+
+    protected function playlistToArray(Series $playlist, $locale = null)
+    {
+        $picService = $this->get('pumukitschema.pic');
+        $width  = 140;
+        $height = 105;
+        $thumbnail = $picService->getDefaultUrlPicForObject($playlist, true, false);
+        $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true);
+        return array(
+            'title' => $playlist->getTitle(),
+            'thumbnail' => $thumbnail,
+            'thumbnail_width' => $width,
+            'thumbnail_height' => $height,
+            'icon' => $thumbnail,
+            'source' => $source,
+            'children' => $this->playlistMmobjsToArray($playlist),
+        );
+    }
+    protected function playlistMmobjsToArray(Series $playlist, $locale = null)
+    {
+        $picService = $this->get('pumukitschema.pic');
+        $playlistService = $this->get('pumukit_baseplayer.seriesplaylist');
+        $playlistMmobjs = $playlistService->getPlaylistMmobjs($playlist);
+        $mmobjsArray = array();
+        $mmobjsArray[] = array(
+            'title' => 'Insert this playlist.'.'avi',
+            'shorttitle' => 'Insert this playlist.',
+            'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
+        );
+        foreach($playlistMmobjs as $mmobj) {
+            $mmobjsArray[] = $this->mmobjToArray($mmobj, $locale);
+        }
+        if(count($mmobjsArray) <= 1)
+            $mmobjsArray = array();
+        return $mmobjsArray;
     }
 
     protected function getRepositoryMmobjs($professor, $roleCode, $searchText)
@@ -124,6 +194,11 @@ class RepositoryPMKSearchController extends Controller
                           ->getRepository('PumukitSchemaBundle:MultimediaObject');
 
         $qb = $mmobjRepo->createStandardQueryBuilder();
+        //TODO: The videos shown in Moodle should be:
+        // * All public videos (on webtv? on moodle? just published?)
+        // * All videos belonging to the professor:
+        //   - Owner of video.
+        //   - Belongs to the video group (to edit? to view? both?)
         if($searchText)
             $qb = $qb->field('$text')->equals(array('$search' => $searchText));
         if($professor != null) {
@@ -140,6 +215,18 @@ class RepositoryPMKSearchController extends Controller
                ->field('tags.cod')->equals('PUCHWEBTV')
         );
 
+        return $qb->getQuery()->execute();
+    }
+
+    protected function getRepositoryPlaylists($mmobjs)
+    {
+        $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
+                           ->getRepository('PumukitSchemaBundle:Series');
+        $mmobjIds = array();
+        foreach($mmobjs as $q) {
+            $mmobjIds[] = new \MongoId($q->getId());
+        };
+        $qb = $seriesRepo->createQueryBuilder()->field('playlist.multimedia_objects')->in($mmobjIds);
         return $qb->getQuery()->execute();
     }
 }
