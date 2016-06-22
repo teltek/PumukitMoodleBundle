@@ -49,36 +49,35 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $email = 'tester@pumukit.es';
         $ticket = md5($password.date('Y-m-d').$email);
         $locale = 'en';
-
-        //When no professor email is provided, returns 404.
+        //When no professor email is provided, returns only public videos.
         $crawler = $this->client->request('GET', '/pumoodle/search_repository');
-        $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $content = json_decode($this->client->getResponse()->getContent(), true);
         //Test that the content of the response is correct.
-        $this->assertEquals("ERROR", $content['status']);
-        $this->assertEquals("Error: professor with email  does not have any video on WebTV Channel in the Pumukit server.", $content['status_txt']);
-        $this->assertEquals(null, $content['out']);
-
-        //We pass a correct email, but no ticket. The answer should be mostly the same.
-        $url = '/pumoodle/search_repository?professor_email='.urlencode($email);
-        $crawler = $this->client->request('GET', $url);
-        $content = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertEquals("ERROR", $content['status']);
-        $this->assertEquals("Error: professor with email $email does not have any video on WebTV Channel in the Pumukit server.", $content['status_txt']);
-        $this->assertEquals(null, $content['out']);
-
+        $this->assertEquals("OK", $content['status']);
+        $this->assertCount(2, $content['out']);
+        $this->assertEquals('series', $content['out'][0]['title']);
+        $this->assertEquals('playlists', $content['out'][1]['title']);
+        $this->assertEquals(1, count($content['out'][0]['children']));
+        $this->assertEquals(true, isset($content['out'][0]['children'][$this->series['id']]));
+        $outSeries = $content['out'][0]['children'][$this->series['id']];
+        $this->assertEquals("New", $outSeries['title']);
+        $this->assertEquals(1, count($outSeries['children']));
+        $webtvMmobj = $this->mmobjToArray($this->series['mms']['webtvpub'], $locale);
+        $this->assertEquals($webtvMmobj, $outSeries['children'][0]);
         //We now include the ticket, now we should get objects as return.
+        $url = '/pumoodle/search_repository?professor_email='.urlencode($email);
         $url = $url .'&ticket='.$ticket;
         $crawler = $this->client->request('GET', $url);
         $content = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertEquals("OK", $content['status']);
-        $responseSeries = $content['out'][$this->series['id']];
-        $responseMmobjs = $responseSeries['mms'];
+        $responseSeries = $content['out'][0]['children'][$this->series['id']];
+        $responseMmobjs = $responseSeries['children'];
         ///Check that series are correct.
-        $this->assertCount(1, $content['out']);
+        $this->assertCount(2, $content['out']);
         $this->assertEquals($this->series['title'], $responseSeries['title']);
         $this->assertEquals($this->series['url'], $responseSeries['url']);
-        $this->assertEquals($this->series['pic'], $responseSeries['pic']);
+        $this->assertEquals($this->series['pic'], $responseSeries['thumbnail']);
         //Check that mms are correct.
         $this->assertCount(2,  $responseMmobjs);
         $returnedMmobjs = array(
@@ -182,20 +181,29 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
     private function mmobjToArray(MultimediaObject $multimediaObject, $locale = null)
     {
         $picService = $this->picService;
-        $mmArray = array();
-        $mmArray['title'] = $multimediaObject->getTitle($locale);
-        $mmArray['description'] = $multimediaObject->getDescription($locale);
-        $mmArray['date'] = $multimediaObject->getRecordDate()->format('Y-m-d');
-        $mmArray['url'] = $this->router->generate('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
-        $mmArray['pic'] = $picService->getFirstUrlPic($multimediaObject, true, false);
-        $mmArray['embed'] = $this->router->generate('pumukit_moodle_moodle_embed',
-                                               array(
-                                                   'id' => $multimediaObject->getId(),
-                                                   'lang' => $locale,
-                                                   'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
-						   'autostart' => false,
-                                               ),
-                                               true);
+        $width  = 140;
+        $height = 105;
+        $url = $this->router->generate('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
+        $thumbnail = $picService->getFirstUrlPic($multimediaObject, true, false);
+        $mmArray = array(
+            'title' => $multimediaObject->getTitle($locale) . ".mp4",
+            'shorttitle'=> $multimediaObject->getTitle($locale),
+            'url' => $url,
+            'thumbnail' => $thumbnail,
+            'thumbnail_width' => $width,
+            'thumbnail_height' => $height,
+            'icon' => $thumbnail,
+            'source' => $this->router->generate(
+                'pumukit_moodle_moodle_embed',
+                array(
+                    'id' => $multimediaObject->getId(),
+                    'lang' => $locale,
+                    'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
+		    'autostart' => false,
+                ),
+                true
+            ),
+        );
         return $mmArray;
     }
 }
