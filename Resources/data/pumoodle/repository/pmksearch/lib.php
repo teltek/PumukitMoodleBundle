@@ -47,6 +47,7 @@ class repository_pmksearch extends repository {
     /**
      * Get file listing
      *
+     * For more info: https://docs.moodle.org/dev/Repository_plugins#get_listing.28.24path.3D.22.22.2C_.24page.3D.22.22.29
      * @param string $path
      * @param string $page
      */
@@ -80,7 +81,7 @@ class repository_pmksearch extends repository {
         );
         $list['nologin'] = true; // set to true, the login link will be removed
         $list['nosearch'] = false; // set to false, the search box will appear
-        $list['norefresh'] = true; // set to true, the refresh button will be removed
+        $list['norefresh'] = false; // set to true, the refresh button will be removed
 
         return $list;
     }
@@ -93,7 +94,6 @@ class repository_pmksearch extends repository {
     public function search($text, $page = 0)
     {
         $list = $this->init_list_params();
-        $list['norefresh'] = false;  //We init the 'refresh'
         $list['issearchresult'] = true;
         // search result listing's format is the same as file listing
         $search_results = $this->retrieve_pmksearchs_and_create_list($text);
@@ -304,40 +304,6 @@ class repository_pmksearch extends repository {
             $pmksearch_list = $pmksearch_out['out'];
         }
 
-        $list = array();
-        foreach ($pmksearch_list as $serial){
-            // create the "children files" with the multimedia objects
-            $children = array();
-            //TODO: Removed 'playlist' adding. THIS is not fully implemented yet.
-            /* $children[] = array(
-               'title' => $serial['playlist']['title'] . '.mp4',
-               'shorttitle' => $serial['playlist']['title'],
-               'thumbnail' => $serial['playlist']['thumbnail'],
-               'thumbnail_width' => $width,
-               'thumbnail_height' => $height,
-               'source' => $serial['playlist']['embed'] . '&email=' . $USER->email . '#' . $serial['playlist']['title'],
-               ); */
-            foreach ($serial['mms'] as $mm) {
-                $shorttitle = $mm['date'] . " " . $mm['title'];
-                // hack to accept this file by extension - see /repository/youtube/lib.php line 127
-                // There is a check in /repository/repository_ajax.php line 167  that
-                // throws an "invalidfiletype" exception if title has no video extension.
-                $children[] = array( 'title' => $shorttitle . ".avi",
-                                     'shorttitle' => $shorttitle,
-                                     'thumbnail' => $mm['pic'],
-                                     'thumbnail_width' => $width,
-                                     'thumbnail_height' => $height,
-                                     'source' => $mm['embed'] . '&email=' . $USER->email . '#' . $mm['title']);
-            }
-
-            // create a "folder" with the serial title
-            $list[]= array( 'title' => $serial['title'],
-                            'thumbnail' => $serial['pic'],
-                            'thumbnail_width' => $width,
-                            'thumbnail_height' => $height,
-                            'children' => $children );
-        }
-
-        return $list;
+        return $pmksearch_list;
     }
 }
