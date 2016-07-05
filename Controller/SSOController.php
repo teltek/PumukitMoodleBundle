@@ -72,13 +72,12 @@ class SSOController extends Controller
 
         $this->login($user, $request);
 
-        return new RedirectResponse('/admin');
+        return new RedirectResponse('/admin/series');
     }
 
     private function getHash($email, $password, $domain)
     {
         $date = date('d/m/Y');
-
         return md5($email.$password.$date.$domain);
     }
 
