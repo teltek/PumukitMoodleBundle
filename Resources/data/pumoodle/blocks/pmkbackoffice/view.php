@@ -21,9 +21,21 @@ $PAGE->set_heading(get_string('pagetitle', 'block_pmkbackoffice'));
 $pmk2_url = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearch_managerurl'));
 if(!$pmk2_url)
     send_header_404();
-else
+else {
     $pmk2_url = $pmk2_url->value;
+    $db_secret = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearchrepositorysecret'));
+    if($db_secret)
+        $secret = $db_secret->value;
+    else
+        $secret = '';
+    $email = $USER->email;
+    $date = date('d/m/Y');
+    $domain = parse_url($pmk2_url)['host'];
+    $hash = md5($email.$secret.$date.$domain);
+    $pmk2_url .= '?hash='.$hash.'&email='.rawurlencode($email);
+}
 echo $OUTPUT->header();
+
 ?>
 <script>
  function requestIframeHeight(ifrm) {
