@@ -28,7 +28,6 @@ class RepositoryPMKSearchController extends Controller
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
-        $picService = $this->get('pumukitschema.pic');
         $mmobjService = $this->get('pumukitschema.multimedia_object');
         $userService = $this->get('pumukitschema.user');
 
@@ -70,25 +69,32 @@ class RepositoryPMKSearchController extends Controller
         $out['status'] = 'OK';
         $out['status_txt'] = $numberMultimediaObjects;
 
+        $picService = $this->get('pumukitschema.pic');
+        $folderThumbnail = $picService->getDefaultSeriesUrlPic(true);
         $out['out'] = array(
             array(
                 'title' => 'Series',
+                'icon' => $folderThumbnail,
                 'children' => array(
                     array(
                         'title' => 'My Series',
+                        'icon' => $folderThumbnail,
                         'children' => $mySeriesResult,
                     ),
                     array(
                         'title' => 'Public Series',
+                        'icon' => $folderThumbnail,
                         'children' => $publicSeriesResult,
                     ),
                 ),
             ),
             array(
                 'title' => 'Playlists',
+                'icon' => $folderThumbnail,
                 'children' => array(
                     array(
                         'title' => 'My Playlists',
+                        'icon' => $folderThumbnail,
                         'children' =>  $myPlaylistsResult,
                     ),
                 ),
