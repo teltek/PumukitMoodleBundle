@@ -204,11 +204,7 @@ class RepositoryPMKSearchController extends Controller
         $playlistService = $this->get('pumukit_baseplayer.seriesplaylist');
         $playlistMmobjs = $playlistService->getPlaylistMmobjs($playlist);
         $mmobjsArray = array();
-        $mmobjsArray[] = array(
-            'title' => 'Insert playlist "'.$playlist->getTitle().'".avi',
-            'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
-            'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
-        );
+
         foreach($playlistMmobjs as $mmobj) {
             $newMmobj = $this->mmobjToArray($mmobj, $locale);
             //Workaround to prevent playlist mmobjs from being selected.
@@ -219,7 +215,20 @@ class RepositoryPMKSearchController extends Controller
         }
         if(count($mmobjsArray) <= 1)
             $mmobjsArray = array();
-        return $mmobjsArray;
+
+        $playlistArray = array(
+            array(
+                'title' => 'Insert playlist "'.$playlist->getTitle().'".avi',
+                'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
+                'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
+            ),
+            array(
+                'title' => 'Videos in this playlist',
+                'children' => $mmobjsArray,
+            ),
+        );
+
+        return $playlistArray;
     }
 
     protected function getRepositoryMmobjs($professor, $roleCode, $searchText)
