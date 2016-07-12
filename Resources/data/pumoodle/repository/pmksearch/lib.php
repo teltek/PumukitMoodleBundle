@@ -247,7 +247,7 @@ class repository_pmksearch extends repository {
             $url .=  $action . '?' . http_build_query($parameters, '', '&');
         }
         // Debug - uncomment the next line to view the query sent to pmksearch.
-        // echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
+        // error_log('Debug - sending petition:  '.$url);
         $ch   = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -264,7 +264,6 @@ class repository_pmksearch extends repository {
             die ("\nError - review http status\n"); // to do excepcion
 
         }
-
         return $sal["var"];
     }
 
@@ -291,7 +290,6 @@ class repository_pmksearch extends repository {
         $height = 105;
 
         // TO DO: implement some kind of ldap authentication with user (teacher) instead of email check.
-
         $pmksearch_out = json_decode ($this->pmksearch_curl_action_parameters('search_repository',
                                                                               array('professor_email' => $USER->email,
                                                                                     'ticket'    => $this->pmksearch_create_ticket($USER->email),
