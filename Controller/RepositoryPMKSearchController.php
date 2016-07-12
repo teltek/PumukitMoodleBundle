@@ -222,14 +222,27 @@ class RepositoryPMKSearchController extends Controller
         if(count($mmobjsArray) <= 1)
             $mmobjsArray = array();
 
+        $picService = $this->get('pumukitschema.pic');
+        $playlistThumbnail = $picService->getDefaultUrlPicForObject($playlist, true, false);//$picService->getFirstUrlPic($playlist, true);
+        //TODO: Get img for description. Get default mmobj img.
+        $defaultThumbnail = $picService->getDefaultUrlPicForObject(new MultimediaObject(), true, false);
+        $folderThumbnail = $picService->getDefaultSeriesUrlPic(true);
         $playlistArray = array(
             array(
-                'title' => 'Insert playlist "'.$playlist->getTitle().'".avi',
+                'title' => 'Insert playlist "'.$playlist->getTitle().'"',
+                'thumbnail' => $playlistThumbnail,
+                'icon' => $playlistThumbnail,
                 'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
                 'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
             ),
             array(
+                'title' => 'Description: '.$playlist->getDescription(),
+                'icon' => $defaultThumbnail,
+                'children' => array(),
+            ),
+            array(
                 'title' => 'Videos in this playlist',
+                'icon' => $folderThumbnail,
                 'children' => $mmobjsArray,
             ),
         );
