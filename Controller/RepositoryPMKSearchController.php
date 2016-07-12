@@ -40,7 +40,7 @@ class RepositoryPMKSearchController extends Controller
             $seriesId = $multimediaObject->getSeries()->getId();
             $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
             //If video is owned, add to owned list.
-            if($professor && $mmobjService->isUserOwner($professor ,$multimediaObject)) {
+            if($professor && $mmobjService->isUserOwner($professor->getUser() ,$multimediaObject)) {
                 if(!isset($mySeriesResult[$seriesId])) {
                     $series = $multimediaObject->getSeries();
                     $mySeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
