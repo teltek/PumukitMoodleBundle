@@ -29,41 +29,69 @@ class RepositoryPMKSearchController extends Controller
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
         $picService = $this->get('pumukitschema.pic');
+        $mmobjService = $this->get('pumukitschema.multimedia_object');
+        $userService = $this->get('pumukitschema.user');
 
-        $seriesResult = array();
+        $mySeriesResult = array();
+        $publicSeriesResult = array();
         $numberMultimediaObjects = 0;
         $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
         foreach ($multimediaObjects as $multimediaObject) {
             $seriesId = $multimediaObject->getSeries()->getId();
-            if(!isset($seriesResult[$seriesId])) {
-                $series = $multimediaObject->getSeries();
-                $seriesResult[$seriesId] = $this->seriesToArray($series, $locale);
-            }
             $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
-            $seriesResult[$seriesId]['children'][] = $mmobjResult;
+            //If video is owned, add to owned list.
+            if($professor && $mmobjService->isUserOwner($professor ,$multimediaObject)) {
+                if(!isset($mySeriesResult[$seriesId])) {
+                    $series = $multimediaObject->getSeries();
+                    $mySeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
+                    $mySeriesResult[$seriesId]['children'][] = $mmobjResult;
+                }
+            }
+            //If video is public, add to public list.
+            if($mmobjService->canBeDisplayed($multimediaObject, 'PUCHWEBTV')){
+                if(!isset($publicSeriesResult[$seriesId])) {
+                    $series = $multimediaObject->getSeries();
+                    $publicSeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
+                    $publicSeriesResult[$seriesId]['children'][] = $mmobjResult;
+                }
+            }
             ++$numberMultimediaObjects;
         }
 
         $playlists =  $this->getRepositoryPlaylists($multimediaObjects);
-        $playlistsResult = array();
+        $myPlaylistsResult = array();
         foreach($playlists as $playlist) {
             $playlistId = $playlist->getId();
-            if(!isset($playlistResult[$playlistId])) {
-                $playlistsResult[$playlistId] = $this->playlistToArray($playlist, $locale);
+            if(in_array($professor && $professor->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
+                $myPlaylistsResult[$playlistId] = $this->playlistToArray($playlist, $locale);
             }
         }
 
         $out['status'] = 'OK';
         $out['status_txt'] = $numberMultimediaObjects;
-        //Dividing the results in 'series' and 'playlists'.
+
         $out['out'] = array(
             array(
-                'title' => 'series',
-                'children' => $seriesResult,
+                'title' => 'Series',
+                'children' => array(
+                    array(
+                        'title' => 'My Series',
+                        'children' => $mySeriesResult,
+                    ),
+                    array(
+                        'title' => 'Public Series',
+                        'children' => $publicSeriesResult,
+                    ),
+                ),
             ),
             array(
-                'title' => 'playlists',
-                'children' => $playlistsResult,
+                'title' => 'Playlists',
+                'children' => array(
+                    array(
+                        'title' => 'My Playlists',
+                        'children' =>  $myPlaylistsResult,
+                    ),
+                ),
             ),
         );
 
