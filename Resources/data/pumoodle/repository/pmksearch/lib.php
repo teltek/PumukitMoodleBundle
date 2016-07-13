@@ -56,7 +56,15 @@ class repository_pmksearch extends repository {
         // TO DO: implement user authentication between moodle and pmksearch
         $list = $this->init_list_params();
         $list['list'] = $this->retrieve_pmksearchs_and_create_list();
+        $list['path'] = $this->generate_current_path($path, $list['list']);
         return $list;
+    }
+
+    private function generate_current_path($path = '', $list = array())
+    {
+        return array(
+            array('name'=> 'Pumukit Videos', 'path'=> '/'),
+        );
     }
 
     /**
@@ -75,10 +83,6 @@ class repository_pmksearch extends repository {
         // the management interface url (using the pumukit block).
         $list['dynload'] = false; // dynamically loading. False as the entire list is created in one query.
         // the current path of this list.
-        $list['path'] = array(
-            array('name'=>'Course list', 'path'=>'')
-                // array('name'=>'sub_dir', 'path'=>'/sub_dir')
-        );
         $list['nologin'] = true; // set to true, the login link will be removed
         $list['nosearch'] = false; // set to false, the search box will appear
         $list['norefresh'] = false; // set to true, the refresh button will be removed
@@ -101,6 +105,7 @@ class repository_pmksearch extends repository {
             $list['path'] = null;
 
         $list['list'] = $search_results;
+        $list['path'] = $this->generate_current_path();
         return $list;
 
     }
@@ -242,7 +247,7 @@ class repository_pmksearch extends repository {
             $url .=  $action . '?' . http_build_query($parameters, '', '&');
         }
         // Debug - uncomment the next line to view the query sent to pmksearch.
-        // echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
+        // error_log('Debug - sending petition:  '.$url);
         $ch   = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -259,7 +264,6 @@ class repository_pmksearch extends repository {
             die ("\nError - review http status\n"); // to do excepcion
 
         }
-
         return $sal["var"];
     }
 
@@ -286,7 +290,6 @@ class repository_pmksearch extends repository {
         $height = 105;
 
         // TO DO: implement some kind of ldap authentication with user (teacher) instead of email check.
-
         $pmksearch_out = json_decode ($this->pmksearch_curl_action_parameters('search_repository',
                                                                               array('professor_email' => $USER->email,
                                                                                     'ticket'    => $this->pmksearch_create_ticket($USER->email),
