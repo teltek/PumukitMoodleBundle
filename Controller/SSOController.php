@@ -108,8 +108,9 @@ class SSOController extends Controller
             throw new \RuntimeException('user not found!');
         }
         //TODO Move to a service
-        // isset($info["eduPersonPrimaryAffiliation"][0]) && in_array($info["eduPersonPrimaryAffiliation"][0], array('PAS', 'PDI'))
-        if (true) {
+        if (isset($info["edupersonprimaryaffiliation"][0]) &&
+            in_array($info["edupersonprimaryaffiliation"][0], array('PAS', 'PDI'))) {
+
             throw new \RuntimeException('user not valid');
         }
 
@@ -125,7 +126,7 @@ class SSOController extends Controller
         $user->setEnabled(true);
 
         $userService->create($user);
-        $group = $this->getGroup($info["eduPersonPrimaryAffiliation"][0]);
+        $group = $this->getGroup($info["edupersonprimaryaffiliation"][0]);
         $userService->addGroup($group, $user, true, false);
         $personService->referencePersonIntoUser($user);
 
