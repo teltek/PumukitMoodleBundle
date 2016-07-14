@@ -48,29 +48,15 @@ class filter_pumukit extends moodle_text_filter
     private function replaceUrlsWithIframes($regexResults)
     {
         global $CFG;
-        //Extracts the urls from the results (if any)
-        $parsedRegexResults = array();
-        foreach ($regexResults as $url) {
-            //Only add valid urls
-            if (!filter_var($url, FILTER_VALIDATE_URL)) {
-                continue;
-            }
-            $parsedUrls[] = $url;
-        }
+        $originalUrl = $regexResults[1];
+        $iframeUrl = $this->generateIframeUrl($originalUrl);
+        list($iframeWidth, $iframeHeight) = $this->calcIframeSize($originalUrl);
 
-        $replacingText = '';
-        foreach ($parsedUrls as $originalUrl) {
-            $iframeUrl = $this->generateIframeUrl($originalUrl);
-            list($iframeWidth, $iframeHeight) = $this->calcIframeSize($originalUrl);
-
-            $iframeHtml = '<iframe src="'.$iframeUrl.'"'.
-                          '        style="border:0px #FFFFFF none; width:'.$iframeWidth.'; height:'.$iframeHeight.';"'.
-                          '        scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" >'.
-                          '</iframe>';
-            $replacingText .= $iframeHtml;
-        }
-
-        return $replacingText;
+        $iframeHtml = '<iframe src="'.$iframeUrl.'"'.
+                      '        style="border:0px #FFFFFF none; width:'.$iframeWidth.'; height:'.$iframeHeight.';"'.
+                      '        scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" >'.
+                      '</iframe>';
+        return $iframeHtml;
     }
 
     /**
