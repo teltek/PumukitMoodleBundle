@@ -63,7 +63,7 @@ class SSOController extends Controller
         $user = $repo->findOneBy(array('email' => $email));
         if (!$user) {
             try {
-                $this->createUser($email);
+                $user = $this->createUser($email);
             } catch (\Exception $e) {
                 throw $this->createNotFoundException($e->getMessage());
             }
@@ -108,8 +108,8 @@ class SSOController extends Controller
             throw new \RuntimeException('user not found!');
         }
         //TODO Move to a service
-        if (isset($info["edupersonprimaryaffiliation"][0]) &&
-            in_array($info["edupersonprimaryaffiliation"][0], array('PAS', 'PDI'))) {
+        if (!isset($info["edupersonprimaryaffiliation"][0]) ||
+            !in_array($info["edupersonprimaryaffiliation"][0], array('PAS', 'PDI'))) {
 
             throw new \RuntimeException('user not valid');
         }
