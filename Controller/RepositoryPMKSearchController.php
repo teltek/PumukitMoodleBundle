@@ -61,7 +61,7 @@ class RepositoryPMKSearchController extends Controller
         $myPlaylistsResult = array();
         foreach($playlists as $playlist) {
             $playlistId = $playlist->getId();
-            if(in_array($professor && $professor->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
+            if($professor && in_array($professor->getUser()->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
                 $myPlaylistsResult[$playlistId] = $this->playlistToArray($playlist, $locale);
             }
         }
