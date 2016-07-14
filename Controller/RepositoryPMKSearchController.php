@@ -219,7 +219,7 @@ class RepositoryPMKSearchController extends Controller
             $mmobjsArray[] = $newMmobj;
 
         }
-        if(count($mmobjsArray) <= 1)
+        if(count($mmobjsArray) < 1)
             $mmobjsArray = array();
 
         $picService = $this->get('pumukitschema.pic');
