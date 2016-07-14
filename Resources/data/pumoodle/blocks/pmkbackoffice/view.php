@@ -17,7 +17,7 @@ require_login($course);
 $PAGE->set_url('/blocks/pmkbackoffice/view.php', array('id' => $course_id));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading(get_string('pagetitle', 'block_pmkbackoffice'));
-
+$PAGE->set_title('Moodle: PuMuKIT Media Manager');
 $pmk2_url = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearch_managerurl'));
 if(!$pmk2_url)
     send_header_404();
