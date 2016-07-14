@@ -28,6 +28,8 @@ class filter_pumukit extends moodle_text_filter
         if (stripos($text, '<a') === false) {
             return $text;
         }
+
+        $text = $this->parseHrefs($text);
         // Look for '/pumoodle/embed', replace the entire <a... </a> tag and send the url as $link[1]
         $search = '/<a\\s[^>]*href=\"(https?:\\/\\/[^>]*?\\/pumoodle\\/embed.*?)\">.*?<\\/a>/is';
         $newtext = preg_replace_callback($search, array($this, 'replaceUrlsWithIframes'), $text);
@@ -126,5 +128,24 @@ class filter_pumukit extends moodle_text_filter
         $ticket = md5($pumukitsecret.$date.$id.$email);
 
         return $ticket;
+    }
+
+    private function parseHrefs($text)
+    {
+        $regex = "/(<a.*?>.*?)<a/is";
+        $text = preg_replace_callback($regex, function($i){
+            if(strpos($i[1], "</a>"))
+                return $i[0];
+            else
+                return $i[1]."</a><a";
+        }, $text);
+        $regex = "/(<\\/a>.*?>.*?)<\\/a>/is";
+        $text = preg_replace_callback($regex, function($i){
+            if(strpos($i[1], "<a "))
+                return $i[0];
+            else
+                return $i[1]."<a></a>";
+        }, $text);
+        return $text;
     }
 }
