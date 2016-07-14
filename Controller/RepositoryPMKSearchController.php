@@ -196,6 +196,7 @@ class RepositoryPMKSearchController extends Controller
         $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true);
         return array(
             'title' => $playlist->getTitle(),
+            'shorttitle' => $playlist->getTitle(),
             'thumbnail' => $thumbnail,
             'thumbnail_width' => $width,
             'thumbnail_height' => $height,
@@ -229,10 +230,10 @@ class RepositoryPMKSearchController extends Controller
         $folderThumbnail = $picService->getDefaultSeriesUrlPic(true);
         $playlistArray = array(
             array(
-                'title' => 'Insert playlist "'.$playlist->getTitle().'"',
+                'title' => 'Insert playlist "'.$playlist->getTitle().'".mp4',
+                'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
                 'thumbnail' => $playlistThumbnail,
                 'icon' => $playlistThumbnail,
-                'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
                 'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
             ),
             array(
