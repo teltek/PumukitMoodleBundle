@@ -43,16 +43,16 @@ class RepositoryPMKSearchController extends Controller
                 if(!isset($mySeriesResult[$seriesId])) {
                     $series = $multimediaObject->getSeries();
                     $mySeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
-                    $mySeriesResult[$seriesId]['children'][] = $mmobjResult;
                 }
+                $mySeriesResult[$seriesId]['children'][] = $mmobjResult;
             }
             //If video is public, add to public list.
             if($mmobjService->canBeDisplayed($multimediaObject, 'PUCHWEBTV')){
                 if(!isset($publicSeriesResult[$seriesId])) {
                     $series = $multimediaObject->getSeries();
                     $publicSeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
-                    $publicSeriesResult[$seriesId]['children'][] = $mmobjResult;
                 }
+                $publicSeriesResult[$seriesId]['children'][] = $mmobjResult;
             }
             ++$numberMultimediaObjects;
         }
