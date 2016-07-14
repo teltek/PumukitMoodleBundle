@@ -39,7 +39,7 @@ class RepositoryPMKSearchController extends Controller
             $seriesId = $multimediaObject->getSeries()->getId();
             $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
             //If video is owned, add to owned list.
-            if($professor && $mmobjService->isUserOwner($professor->getUser() ,$multimediaObject)) {
+            if($professor && $professor->getUser() && $mmobjService->isUserOwner($professor->getUser() ,$multimediaObject)) {
                 if(!isset($mySeriesResult[$seriesId])) {
                     $series = $multimediaObject->getSeries();
                     $mySeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
@@ -61,7 +61,7 @@ class RepositoryPMKSearchController extends Controller
         $myPlaylistsResult = array();
         foreach($playlists as $playlist) {
             $playlistId = $playlist->getId();
-            if($professor && in_array($professor->getUser()->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
+            if($professor && $professor->getUser() && in_array($professor->getUser()->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
                 $myPlaylistsResult[$playlistId] = $this->playlistToArray($playlist, $locale);
             }
         }
