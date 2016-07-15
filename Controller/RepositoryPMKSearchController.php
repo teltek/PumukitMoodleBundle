@@ -57,7 +57,7 @@ class RepositoryPMKSearchController extends Controller
             ++$numberMultimediaObjects;
         }
 
-        $playlists =  $this->getRepositoryPlaylists($multimediaObjects);
+        $playlists =  $this->getRepositoryPlaylists($multimediaObjects, $searchText);
         $myPlaylistsResult = array();
         foreach($playlists as $playlist) {
             $playlistId = $playlist->getId();
@@ -290,7 +290,7 @@ class RepositoryPMKSearchController extends Controller
         return $qb->getQuery()->execute();
     }
 
-    protected function getRepositoryPlaylists($mmobjs)
+    protected function getRepositoryPlaylists($mmobjs, $searchText = '')
     {
         $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
                            ->getRepository('PumukitSchemaBundle:Series');
@@ -298,7 +298,19 @@ class RepositoryPMKSearchController extends Controller
         foreach($mmobjs as $q) {
             $mmobjIds[] = new \MongoId($q->getId());
         };
-        $qb = $seriesRepo->createQueryBuilder()->field('playlist.multimedia_objects')->in($mmobjIds);
+        $qb = $seriesRepo->createQueryBuilder();
+        $qb->addOr(
+            $qb->expr()->field('playlist.multimedia_objects')->in($mmobjIds)
+        );
+
+        if($searchText) {
+            /* The following does not work. See: https://docs.mongodb.com/manual/reference/operator/query/or/#or-and-text-queries
+               $qb->addOr($qb->expr()->field('$text')->equals(array('$search' => $searchText)));
+             */
+            //First we take the ids of the $text search and then we add an 'or' to the original query.
+            $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array('$search' => $searchText))->distinct('_id')->getQuery()->execute()->toArray();
+            $qb->addOr($qb->expr()->field('id')->in($playlistSearchIds));
+        }
         return $qb->getQuery()->execute();
     }
 
