@@ -299,6 +299,7 @@ class RepositoryPMKSearchController extends Controller
             $mmobjIds[] = new \MongoId($q->getId());
         };
         $qb = $seriesRepo->createQueryBuilder();
+        $qb->field('type')->equals(Series::TYPE_PLAYLIST);
         $qb->addOr(
             $qb->expr()->field('playlist.multimedia_objects')->in($mmobjIds)
         );
