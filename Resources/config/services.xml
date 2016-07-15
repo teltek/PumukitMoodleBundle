@@ -11,5 +11,11 @@
           <argument type="service" id="doctrine_mongodb.odm.document_manager" />
           <tag name="kernel.event_listener" event="kernel.request" />
         </service>
+
+        <service id="pumukit_moodle.loader" class="Pumukit\MoodleBundle\Routing\Loader">
+          <argument type="expression">container.hasParameter('pumukit2.naked_backoffice_domain') ? parameter('pumukit2.naked_backoffice_domain') : null</argument>
+          <argument type="expression">container.hasParameter('router.request_context.host') ? parameter('router.request_context.host') : null</argument>
+          <tag name="routing.loader" />
+        </service>
     </services>
 </container>

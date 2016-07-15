@@ -2,3 +2,7 @@ pumukit_moodle_bundle:
     resource: "@PumukitMoodleBundle/Controller/"
     type:     annotation
     prefix:   /
+
+pumukit_moodle_bundle_redirect:
+    resource: .
+    type:     moodle_redirect
