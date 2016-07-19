@@ -4,6 +4,7 @@ namespace Pumukit\MoodleBundle\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,7 +29,12 @@ class SSOController extends Controller
     {
         //TODO Disable by default
         if (!$this->container->hasParameter('pumukit2.naked_backoffice_domain')) {
-            throw $this->createNotFoundException('Naked backoffice domain not conf');
+            $message = 'The domain "pumukit2.naked_backoffice_domain" is not configured.';
+            $response = new Response(
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                404
+            );
+            return $response;
         }
 
         $repo = $this
@@ -41,22 +47,37 @@ class SSOController extends Controller
 
         //Check domain
         if ($domain != $request->getHost()) {
-            throw $this->createNotFoundException('invalid domain!');
+            $message = 'Invalid Domain!';
+            $response = new Response(
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                404
+            );
+            return $response;
         }
 
         /*
-        //Check referer //TODO
-        var_dump($request->headers->get('referer'));exit;
-        */
+           //Check referer //TODO
+           var_dump($request->headers->get('referer'));exit;
+         */
 
         //Check hash
         if ($request->get('hash') != $this->getHash($email, $password, $domain)) {
-            throw $this->createNotFoundException('hash not valid!');
+            $message = 'The hash is not valid.';
+            $response = new Response(
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                404
+            );
+            return $response;
         }
 
         //Only HTTPs
         if (!$request->isSecure()) {
-            throw $this->createNotFoundException('Only HTTPs');
+            $message = 'Only HTTPS connections are allowed.';
+            $response = new Response(
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                404
+            );
+            return $response;
         }
 
         //Find User
@@ -65,16 +86,21 @@ class SSOController extends Controller
             try {
                 $user = $this->createUser($email);
             } catch (\Exception $e) {
-                throw $this->createNotFoundException($e->getMessage());
+                $message = $e->getMessage();
+                $response = new Response(
+                    $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                    404
+                );
+                return $response;
             }
         }
 
         /*
-        //Only PERSONAL_SCOPE //TODO
-        if(!$user->getPermissionProfile() || $user->getPermissionProfile()->getScope() != PermissionProfile::SCOPE_PERSONAL) {
-            throw $this->createNotFoundException('Only valid for users with personal scope');
-        }
-        */
+           //Only PERSONAL_SCOPE //TODO
+           if(!$user->getPermissionProfile() || $user->getPermissionProfile()->getScope() != PermissionProfile::SCOPE_PERSONAL) {
+           return new Response('Only valid for users with personal scope');
+           }
+         */
 
         $this->login($user, $request);
 
@@ -105,13 +131,13 @@ class SSOController extends Controller
         $info = $ldapSerive->getInfoFromEmail($email);
 
         if (!$info) {
-            throw new \RuntimeException('user not found!');
+            throw new \RuntimeException('User not found.');
         }
         //TODO Move to a service
         if (!isset($info["edupersonprimaryaffiliation"][0]) ||
             !in_array($info["edupersonprimaryaffiliation"][0], array('PAS', 'PDI'))) {
 
-            throw new \RuntimeException('user not valid');
+            throw new \RuntimeException('User invalid.');
         }
 
         //TODO create createDefaultUser in UserService.
