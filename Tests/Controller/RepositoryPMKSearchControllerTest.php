@@ -1,6 +1,6 @@
 <?php
 
-namespace Pumukit\WebTVBundle\Tests\Controller;
+namespace Pumukit\MoodleBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Pumukit\SchemaBundle\Document\MultimediaObject;
@@ -199,7 +199,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
                     'id' => $multimediaObject->getId(),
                     'lang' => $locale,
                     'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
-		    'autostart' => false,
+            'autostart' => false,
                 ),
                 true
             ),
