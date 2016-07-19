@@ -99,60 +99,22 @@ class SSOController extends Controller
     {
         $ldapSerive = $this->get('pumukit_ldap.ldap');
         $permissionProfileService = $this->get('pumukitschema.permissionprofile');
-        $userService = $this->container->get('pumukitschema.user');
-        $personService = $this->container->get('pumukitschema.person');
-
+        $loginService = $this->get('pumukit.security.login');
         $info = $ldapSerive->getInfoFromEmail($email);
 
         if (!$info) {
             throw new \RuntimeException('user not found!');
         }
-        //TODO Move to a service
+
         if (!isset($info["edupersonprimaryaffiliation"][0]) ||
             !in_array($info["edupersonprimaryaffiliation"][0], array('PAS', 'PDI'))) {
 
             throw new \RuntimeException('user not valid');
         }
-
-        //TODO create createDefaultUser in UserService.
-        //$this->userService->createDefaultUser($user);
-        $user = new User();
-        $user->setUsername($info["cn"][0]);
-        $user->setEmail($info["mail"][0]);
-
-        $permissionProfile = $permissionProfileService->getByName("Auto Publisher");
-        $user->setPermissionProfile($permissionProfile);
-        $user->setOrigin('moodle');
-        $user->setEnabled(true);
-
-        $userService->create($user);
-        $group = $this->getGroup($info["edupersonprimaryaffiliation"][0]);
-        $userService->addGroup($group, $user, true, false);
-        $personService->referencePersonIntoUser($user);
-
-        return $user;
-    }
-
-    private function getGroup($key)
-    {
-        $dm = $this->get('doctrine_mongodb.odm.document_manager');
-        $repo = $dm->getRepository('PumukitSchemaBundle:Group');
-        $groupService = $this->get('pumukitschema.group');
-
-        $cleanKey = preg_replace('/\W/', '', $key);
-
-        $group = $repo->findOneByKey($cleanKey);
-        if ($group) {
-            return $group;
-        }
-
-        $group = new Group();
-        $group->setKey($cleanKey);
-        $group->setName($key);
-        $group->setOrigin('cas');
-        $groupService->create($group);
-
-        return $group;
-
+        $username = $info["cn"][0];
+        $email = $info["mail"][0];
+        $origin = 'moodle';
+        $group = $loginService->getGroup($info["edupersonprimaryaffiliation"][0], $origin);
+        return $loginService->createDefaultUser($username, $email, $origin, $group);
     }
 }
