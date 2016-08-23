@@ -61,7 +61,8 @@ echo $OUTPUT->header();
           onload="requestIframeHeight(this)"
           scrolling="no"
           border="0"
-          frameborder="0">
+          frameborder="0"
+          allowfullscreen>
   </iframe>
 <?php else: ?>
 <h2>404 - Not Found</h2>
