@@ -31,9 +31,10 @@ class SSOController extends Controller
         if (!$this->container->hasParameter('pumukit2.naked_backoffice_domain')) {
             $message = 'The domain "pumukit2.naked_backoffice_domain" is not configured.';
             $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
                 404
             );
+
             return $response;
         }
 
@@ -49,9 +50,10 @@ class SSOController extends Controller
         if ($domain != $request->getHost()) {
             $message = 'Invalid Domain!';
             $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
                 404
             );
+
             return $response;
         }
 
@@ -64,9 +66,10 @@ class SSOController extends Controller
         if ($request->get('hash') != $this->getHash($email, $password, $domain)) {
             $message = 'The hash is not valid.';
             $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
                 404
             );
+
             return $response;
         }
 
@@ -74,25 +77,30 @@ class SSOController extends Controller
         if (!$request->isSecure()) {
             $message = 'Only HTTPS connections are allowed.';
             $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
                 404
             );
+
             return $response;
         }
 
         //Find User
-        $user = $repo->findOneBy(array('email' => $email));
-        if (!$user) {
-            try {
+        try {
+            $user = $repo->findOneBy(array('email' => $email));
+            if (!$user) {
                 $user = $this->createUser($email);
-            } catch (\Exception $e) {
-                $message = $e->getMessage();
-                $response = new Response(
-                    $this->renderView('PumukitMoodleBundle:SSO:error.html.twig',array('message' => $message)),
-                    404
-                );
-                return $response;
+            } else {
+                //Promote User from Viewer to Auto Publisher
+                $this->promoteUser($user);
             }
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $response = new Response(
+                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
+                404
+            );
+
+            return $response;
         }
 
         /*
@@ -110,6 +118,7 @@ class SSOController extends Controller
     private function getHash($email, $password, $domain)
     {
         $date = date('d/m/Y');
+
         return md5($email.$password.$date.$domain);
     }
 
@@ -134,25 +143,24 @@ class SSOController extends Controller
             throw new \RuntimeException('User not found.');
         }
         //TODO Move to a service
-        if (!isset($info["edupersonprimaryaffiliation"][0]) ||
-            !in_array($info["edupersonprimaryaffiliation"][0], array('PAS', 'PDI'))) {
-
+        if (!isset($info['edupersonprimaryaffiliation'][0]) ||
+            !in_array($info['edupersonprimaryaffiliation'][0], array('PAS', 'PDI'))) {
             throw new \RuntimeException('User invalid.');
         }
 
         //TODO create createDefaultUser in UserService.
         //$this->userService->createDefaultUser($user);
         $user = new User();
-        $user->setUsername($info["cn"][0]);
-        $user->setEmail($info["mail"][0]);
+        $user->setUsername($info['cn'][0]);
+        $user->setEmail($info['mail'][0]);
 
-        $permissionProfile = $permissionProfileService->getByName("Auto Publisher");
+        $permissionProfile = $permissionProfileService->getByName('Auto Publisher');
         $user->setPermissionProfile($permissionProfile);
         $user->setOrigin('moodle');
         $user->setEnabled(true);
 
         $userService->create($user);
-        $group = $this->getGroup($info["edupersonprimaryaffiliation"][0]);
+        $group = $this->getGroup($info['edupersonprimaryaffiliation'][0]);
         $userService->addGroup($group, $user, true, false);
         $personService->referencePersonIntoUser($user);
 
@@ -179,6 +187,33 @@ class SSOController extends Controller
         $groupService->create($group);
 
         return $group;
+    }
 
+    //Promote User from Viewer to Auto Publisher
+    private function promoteUser(User $user)
+    {
+        $dm = $this->get('doctrine_mongodb.odm.document_manager');
+        $permissionProfileService = $this->get('pumukitschema.permissionprofile');
+        $ldapSerive = $this->get('pumukit_ldap.ldap');
+
+        $permissionProfileViewer = $permissionProfileService->getByName('Viewer');
+        $permissionProfileAutoPub = $permissionProfileService->getByName('Auto Publisher');
+
+        if ($permissionProfileViewer == $user->getPermissionProfile()) {
+            $info = $ldapSerive->getInfoFromEmail($email);
+
+            if (!$info) {
+                throw new \RuntimeException('User not found.');
+            }
+            //TODO Move to a service
+            if (!isset($info['edupersonprimaryaffiliation'][0]) ||
+                !in_array($info['edupersonprimaryaffiliation'][0], array('PAS', 'PDI'))) {
+                throw new \RuntimeException('User invalid.');
+            }
+
+            $user->setPermissionProfile($permissionProfileAutoPub);
+            $dm->persist($user);
+            $dm->flush();
+        }
     }
 }
