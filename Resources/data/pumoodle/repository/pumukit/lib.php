@@ -61,7 +61,7 @@ class repository_pumukit extends repository {
         $list['dynload'] = false;
         // the current path of this list.
         $list['path'] = array(
-                array('name'=>'Course list', 'path'=>'')
+                array('name'=>'Videos', 'path'=>'')
                 // array('name'=>'sub_dir', 'path'=>'/sub_dir')
                 );
         // set to true, the login link will be removed
@@ -164,13 +164,13 @@ class repository_pumukit extends repository {
         $mform->addElement('text', 'pumukitrepositoryurl',
                      get_string('pumukiturl', 'repository_pumukit'),
                      array('value'=>$pumukitrepositoryurl,'size' => '40'));
-	$mform->setType('pumukitrepositoryurl', PARAM_TEXT);
+    $mform->setType('pumukitrepositoryurl', PARAM_TEXT);
         $mform->addElement('static', 'pumukiturldefault', '', get_string('pumukiturldefault', 'repository_pumukit') . PUMUKITREPOSITORYURL);
 
         $mform->addElement('text', 'pumukitrepositorysecret',
                      get_string('pumukitsecret', 'repository_pumukit'),
                      array('value'=>'','size' => '40'));
-	$mform->setType('pumukitrepositorysecret', PARAM_TEXT);
+    $mform->setType('pumukitrepositorysecret', PARAM_TEXT);
         $mform->addElement('static', 'pumukitsecretdefault', '', get_string('pumukitsecretdefault', 'repository_pumukit') . PUMUKITREPOSITORYSECRET);
         return true;
     }
@@ -270,7 +270,7 @@ class repository_pumukit extends repository {
         $sal["var"]    = curl_exec($ch);
         $sal["error"]  = curl_error($ch);
         $sal["status"] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	$sal["url"] = $url;
+    $sal["url"] = $url;
         curl_close($ch);
         if ($sal["status"] !== 200  && !isset($sal['var'])){
             var_dump($sal);
