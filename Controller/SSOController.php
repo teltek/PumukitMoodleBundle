@@ -200,7 +200,7 @@ class SSOController extends Controller
         $permissionProfileAutoPub = $permissionProfileService->getByName('Auto Publisher');
 
         if ($permissionProfileViewer == $user->getPermissionProfile()) {
-            $info = $ldapSerive->getInfoFromEmail($email);
+            $info = $ldapSerive->getInfoFromEmail($user->getEmail());
 
             if (!$info) {
                 throw new \RuntimeException('User not found.');
