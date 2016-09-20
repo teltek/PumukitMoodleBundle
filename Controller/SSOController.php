@@ -195,6 +195,7 @@ class SSOController extends Controller
         $dm = $this->get('doctrine_mongodb.odm.document_manager');
         $permissionProfileService = $this->get('pumukitschema.permissionprofile');
         $ldapSerive = $this->get('pumukit_ldap.ldap');
+        $userService = $this->get('pumukitschema.user');
 
         $permissionProfileViewer = $permissionProfileService->getByName('Viewer');
         $permissionProfileAutoPub = $permissionProfileService->getByName('Auto Publisher');
@@ -212,8 +213,7 @@ class SSOController extends Controller
             }
 
             $user->setPermissionProfile($permissionProfileAutoPub);
-            $dm->persist($user);
-            $dm->flush();
+            $userService->update($user, true, false);
         }
     }
 }
