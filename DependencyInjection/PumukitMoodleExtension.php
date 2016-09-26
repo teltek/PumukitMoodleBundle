@@ -46,6 +46,10 @@ class PumukitMoodleExtension extends Extension implements PrependExtensionInterf
         if ($config['naked_backoffice_background']) {
             $container->setParameter('pumukit2.naked_backoffice_background', $config['naked_backoffice_background']);
         }
+
+        if ($config['naked_backoffice_color']) {
+            $container->setParameter('pumukit2.naked_backoffice_color', $config['naked_backoffice_color']);
+        }
     }
 
 }
