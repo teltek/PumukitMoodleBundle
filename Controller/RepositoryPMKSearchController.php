@@ -28,18 +28,53 @@ class RepositoryPMKSearchController extends Controller
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
+
+        $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
+        $playlists =  $this->getRepositoryPlaylists($multimediaObjects, $searchText);
+
+        if($searchText) {
+            return $this->getPlainResponse($multimediaObjects, $playlists, $locale, $professor);
+        } else {
+            return $this->getTreeResponse($multimediaObjects, $playlists, $locale, $professor);
+        }
+    }
+
+
+    private function getPlainResponse($multimediaObjects, $playlists, $locale, $professor)
+    {
+        $out = array();
+        $out['out'] = array();
+
+        foreach($multimediaObjects as $multimediaObject) {
+            $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
+            $out['out'][] = $mmobjResult;
+        }
+
+        foreach($playlists as $playlist) {
+            if($professor && $professor->getUser() && in_array($professor->getUser()->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
+                $mmobjResult = $this->playlistToArray($playlist, $locale);
+                $out['out'][] = $mmobjResult;
+            }
+        }
+
+        $out['status'] = 'OK';
+        $out['status_txt'] = count($out['out']);
+        return new JsonResponse($out, 200);
+    }
+
+    private function getTreeResponse($multimediaObjects, $playlists, $locale, $professor)
+    {
         $mmobjService = $this->get('pumukitschema.multimedia_object');
         $userService = $this->get('pumukitschema.user');
 
         $mySeriesResult = array();
         $publicSeriesResult = array();
         $numberMultimediaObjects = 0;
-        $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
         foreach ($multimediaObjects as $multimediaObject) {
             $seriesId = $multimediaObject->getSeries()->getId();
             $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
             //If video is owned, add to owned list.
-            if($professor && $professor->getUser() && $mmobjService->isUserOwner($professor->getUser() ,$multimediaObject)) {
+            if($professor && $professor->getUser() && $mmobjService->isUserOwner($professor->getUser(), $multimediaObject)) {
                 if(!isset($mySeriesResult[$seriesId])) {
                     $series = $multimediaObject->getSeries();
                     $mySeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
@@ -57,7 +92,6 @@ class RepositoryPMKSearchController extends Controller
             ++$numberMultimediaObjects;
         }
 
-        $playlists =  $this->getRepositoryPlaylists($multimediaObjects, $searchText);
         $myPlaylistsResult = array();
         foreach($playlists as $playlist) {
             $playlistId = $playlist->getId();
@@ -66,6 +100,7 @@ class RepositoryPMKSearchController extends Controller
             }
         }
 
+        $out = array();
         $out['status'] = 'OK';
         $out['status_txt'] = $numberMultimediaObjects;
 
@@ -167,7 +202,7 @@ class RepositoryPMKSearchController extends Controller
                     'id' => $multimediaObject->getId(),
                     'lang' => $locale,
                     'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
-		    'autostart' => false,
+            'autostart' => false,
                 ),
                 true
             ),
