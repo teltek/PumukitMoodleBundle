@@ -66,11 +66,11 @@ function filter_pumukit_callback($link) {
     //Prepare and return iframe with correct sizes to embed on webpage.
     if($opencast) {
         $iframe_width = $CFG->iframe_multivideo_width?:'100%';
-        $iframe_height = $CFG->iframe_multivideo_height?:'400px';
+        $iframe_height = $CFG->iframe_multivideo_height?:'333px';
     }
     else {
-        $iframe_width = $CFG->iframe_singlevideo_width?:'600px';
-        $iframe_height = $CFG->iframe_singlevideo_height?:'400px' ;
+        $iframe_width = $CFG->iframe_singlevideo_width?:'592px';
+        $iframe_height = $CFG->iframe_singlevideo_height?:'333px' ;
     }
     $iframe_html = '<iframe src="' . $url . '"' .
                    '        style="border:0px #FFFFFF none; width:' . $iframe_width . '; height:' . $iframe_height . ';"' .

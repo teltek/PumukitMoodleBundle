@@ -95,11 +95,11 @@ $url = $pmkpersonalvideos->embed_url . $concatChar . http_build_query($parameter
 
 if($opencast) {
     $iframe_width = '100%';
-    $iframe_height = '600px' ;
+    $iframe_height = '592px' ;
 }
 else {
-    $iframe_width = '600px';
-    $iframe_height = '400px' ;
+    $iframe_width = '592px';
+    $iframe_height = '333px' ;
 }
 $iframe_html = '<iframe src="' . $url . '"' .
                '        style="border:0px #FFFFFF none; width:' . $iframe_width . '; height:' . $iframe_height . ';"' .
