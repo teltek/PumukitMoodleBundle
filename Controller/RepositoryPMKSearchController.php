@@ -52,7 +52,7 @@ class RepositoryPMKSearchController extends Controller
 
         foreach($playlists as $playlist) {
             if($professor && $professor->getUser() && in_array($professor->getUser()->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
-                $mmobjResult = $this->playlistToArray($playlist, $locale);
+                $mmobjResult = $this->playlistToPlainArray($playlist, $locale);
                 $out['out'][] = $mmobjResult;
             }
         }
@@ -202,7 +202,7 @@ class RepositoryPMKSearchController extends Controller
                     'id' => $multimediaObject->getId(),
                     'lang' => $locale,
                     'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
-            'autostart' => false,
+                    'autostart' => false,
                 ),
                 true
             ),
@@ -240,6 +240,25 @@ class RepositoryPMKSearchController extends Controller
             'children' => $this->playlistMmobjsToArray($playlist),
         );
     }
+
+    protected function playlistToPlainArray(Series $playlist, $locale = null)
+    {
+        $picService = $this->get('pumukitschema.pic');
+        $width  = 140;
+        $height = 105;
+        $thumbnail = $picService->getDefaultUrlPicForObject($playlist, true, false);
+        $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true);
+        return array(
+            'title' => $playlist->getTitle().'.mp4',
+            'shorttitle' => $playlist->getTitle(),
+            'thumbnail' => $thumbnail,
+            'thumbnail_width' => $width,
+            'thumbnail_height' => $height,
+            'icon' => $thumbnail,
+            'source' => $source
+        );
+    }
+
     protected function playlistMmobjsToArray(Series $playlist, $locale = null)
     {
         $picService = $this->get('pumukitschema.pic');
