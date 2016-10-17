@@ -29,13 +29,7 @@ class SSOController extends Controller
     {
         //TODO Disable by default
         if (!$this->container->hasParameter('pumukit2.naked_backoffice_domain')) {
-            $message = 'The domain "pumukit2.naked_backoffice_domain" is not configured.';
-            $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
-                404
-            );
-
-            return $response;
+            return $this->genError('The domain "pumukit2.naked_backoffice_domain" is not configured.');
         }
 
         $repo = $this
@@ -48,13 +42,7 @@ class SSOController extends Controller
 
         //Check domain
         if ($domain != $request->getHost()) {
-            $message = 'Invalid Domain!';
-            $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
-                404
-            );
-
-            return $response;
+            return $this->genError('Invalid Domain!');
         }
 
         /*
@@ -64,24 +52,12 @@ class SSOController extends Controller
 
         //Check hash
         if ($request->get('hash') != $this->getHash($email, $password, $domain)) {
-            $message = 'The hash is not valid.';
-            $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
-                404
-            );
-
-            return $response;
+            return $this->genError('The hash is not valid.');
         }
 
         //Only HTTPs
         if (!$request->isSecure()) {
-            $message = 'Only HTTPS connections are allowed.';
-            $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
-                404
-            );
-
-            return $response;
+            return $this->genError('Only HTTPS connections are allowed.');
         }
 
         //Find User
@@ -94,13 +70,7 @@ class SSOController extends Controller
                 $this->promoteUser($user);
             }
         } catch (\Exception $e) {
-            $message = $e->getMessage();
-            $response = new Response(
-                $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
-                404
-            );
-
-            return $response;
+            return $this->genError($e->getMessage());
         }
 
         /*
@@ -215,5 +185,14 @@ class SSOController extends Controller
             $user->setPermissionProfile($permissionProfileAutoPub);
             $userService->update($user, true, false);
         }
+    }
+
+
+    private function genError($message = 'Not Found', $status = 404)
+    {
+        return new Response(
+            $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
+            $status
+        );
     }
 }
