@@ -122,7 +122,7 @@ class SSOController extends Controller
         if (array_key_exists('email', $info)) {
             $info = $ldapSerive->getInfoFromEmail($info['email']);
         } elseif (array_key_exists('username', $info)) {
-            $info = $ldapSerive->getInfoFrom(self::LDAP_ID_KEY, $info['username'])
+            $info = $ldapSerive->getInfoFrom(self::LDAP_ID_KEY, $info['username']);
         }
 
         if (!isset($info) || !$info) {
