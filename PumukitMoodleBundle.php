@@ -6,4 +6,5 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class PumukitMoodleBundle extends Bundle
 {
+    statis;
 }
