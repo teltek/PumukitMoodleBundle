@@ -137,7 +137,7 @@ class SSOController extends Controller
         //TODO create createDefaultUser in UserService.
         //$this->userService->createDefaultUser($user);
         $user = new User();
-        $user->setUsername($info['cn'][0]);
+        $user->setUsername($info[self::LDAP_ID_KEY][0]);
         $user->setEmail($info['mail'][0]);
 
         $permissionProfile = $permissionProfileService->getByName('Auto Publisher');
