@@ -18,9 +18,12 @@ use Pumukit\SchemaBundle\Document\Group;
  */
 class SSOController extends Controller
 {
+
+    const LDAP_ID_KEY = 'uid';
+
     /**
      * Parametes:
-     *   - email
+     *   - email o usename
      *   - hash.
      *
      * @Route("/sso")
@@ -36,7 +39,16 @@ class SSOController extends Controller
             ->get('doctrine_mongodb.odm.document_manager')
             ->getRepository('PumukitSchemaBundle:User');
 
-        $email = $request->get('email');
+        if ($request->get('email')) {
+            $type = 'email';
+            $value = $request->get('email');
+        } elseif ($request->get('username')) {
+            $type = 'username';
+            $value = $request->get('username');
+        } else {
+            return $this->genError('Not email or username parameter.');
+        }
+
         $password = $this->container->getParameter('pumukit_moodle.password');
         $domain = $this->container->getParameter('pumukit2.naked_backoffice_domain');
 
@@ -51,7 +63,7 @@ class SSOController extends Controller
          */
 
         //Check hash
-        if ($request->get('hash') != $this->getHash($email, $password, $domain)) {
+        if ($request->get('hash') != $this->getHash($value, $password, $domain)) {
             return $this->genError('The hash is not valid.');
         }
 
@@ -62,9 +74,9 @@ class SSOController extends Controller
 
         //Find User
         try {
-            $user = $repo->findOneBy(array('email' => $email));
+            $user = $repo->findOneBy(array($type => $value));
             if (!$user) {
-                $user = $this->createUser($email);
+                $user = $this->createUser(array($type => $value));
             } else {
                 //Promote User from Viewer to Auto Publisher
                 $this->promoteUser($user);
@@ -100,16 +112,20 @@ class SSOController extends Controller
         $this->get('event_dispatcher')->dispatch('security.interactive_login', $event);
     }
 
-    private function createUser($email)
+    private function createUser($info)
     {
         $ldapSerive = $this->get('pumukit_ldap.ldap');
         $permissionProfileService = $this->get('pumukitschema.permissionprofile');
         $userService = $this->container->get('pumukitschema.user');
         $personService = $this->container->get('pumukitschema.person');
 
-        $info = $ldapSerive->getInfoFromEmail($email);
+        if (array_key_exists('email', $info)) {
+            $info = $ldapSerive->getInfoFromEmail($info['email']);
+        } elseif (array_key_exists('username', $info)) {
+            $info = $ldapSerive->getInfoFrom(self::LDAP_ID_KEY, $info['username'])
+        }
 
-        if (!$info) {
+        if (!isset($info) || !$info) {
             throw new \RuntimeException('User not found.');
         }
         //TODO Move to a service
@@ -186,7 +202,6 @@ class SSOController extends Controller
             $userService->update($user, true, false);
         }
     }
-
 
     private function genError($message = 'Not Found', $status = 404)
     {
