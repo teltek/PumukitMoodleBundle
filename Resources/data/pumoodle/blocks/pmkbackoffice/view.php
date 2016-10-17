@@ -28,11 +28,11 @@ else {
         $secret = $db_secret->value;
     else
         $secret = '';
-    $email = $USER->email;
+    $username = $USER->username;
     $date = date('d/m/Y');
     $domain = parse_url($pmk2_url)['host'];
-    $hash = md5($email.$secret.$date.$domain);
-    $pmk2_url .= '?hash='.$hash.'&email='.rawurlencode($email);
+    $hash = md5($username.$secret.$date.$domain);
+    $pmk2_url .= '?hash='.$hash.'&username='.rawurlencode($username);
 }
 echo $OUTPUT->header();
 
