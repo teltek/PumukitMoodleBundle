@@ -26,6 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016071400;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2016102100;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2011120504;        // Requires this Moodle version (2.2)
 $plugin->component = 'repository_pmksearch'; // Full name of the plugin (used for diagnostics)

@@ -130,7 +130,7 @@ class repository_pmksearch extends repository {
      */
     public static function get_instance_option_names()
     {
-        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret', 'pmksearch_managerurl');
+        return array('pmksearchrepositoryurl', 'pmksearchrepositorysecret', 'pmksearch_managerurl', 'pmksearch_ticket_field');
     }
 
     /**
@@ -155,6 +155,12 @@ class repository_pmksearch extends repository {
                            array('value' => '','size' => '40'));
 	$mform->setType('pmksearch_managerurl', PARAM_TEXT);
 
+        $ticketFieldRadio = array();
+        $ticketFieldRadio[] = $mform->createElement('radio', 'pmksearch_ticket_field', '', get_string('username'), 'username');
+        $ticketFieldRadio[] = $mform->createElement('radio', 'pmksearch_ticket_field', '', get_string('email'), 'email');
+
+        $mform->addGroup($ticketFieldRadio, 'pmksearch_ticket_field', get_string('pmksearch_ticket_field', 'repository_pmksearch'), array('value' => '') , false);
+        $mform->setDefault('pmksearch_ticket_field', 'email');
         return true;
     }
 

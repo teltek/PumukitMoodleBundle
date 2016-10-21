@@ -30,3 +30,4 @@ $string['pmksearchsecret'] = 'Pumukit shared secret';
 $string['pmksearch_managerurl'] = 'Pumukit Management URL';
 $string['pmksearchurldefault'] = 'Default server URL: ';
 $string['pmksearchsecretdefault'] = 'Default pumukit secret: ';
+$string['pmksearch_ticket_field'] = 'Ticket parameter: ';

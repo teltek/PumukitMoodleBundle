@@ -29,3 +29,4 @@ $string['pmksearchsecret'] = 'Secreto compartido con Pumukit';
 $string['pmksearch_managerurl'] = 'URL de Administración de PuMuKIT';
 $string['pmksearchurldefault'] = 'URL por defecto: ';
 $string['pmksearchsecretdefault'] = 'Secreto por defecto: ';
+$string['pmksearch_ticket_field'] = 'Parámetro ticket: ';
