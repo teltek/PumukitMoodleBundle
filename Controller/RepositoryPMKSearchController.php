@@ -22,13 +22,18 @@ class RepositoryPMKSearchController extends Controller
     {
         $this->enableFilter();
         $email = $request->get('professor_email');
+        $username = $request->get('professor_username');
         $ticket = $request->get('ticket');
         $locale = $this->getLocale($request->get('lang'));
         $searchText = $request->get('search');
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
-        $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
-
+        $professor = null;
+        if($username){
+            $professor = $this->findProfessorUsernameTicket($username, $ticket, $roleCode);
+        } elseif($email) {
+            $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
+        }
         $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
         $playlists =  $this->getRepositoryPlaylists($multimediaObjects, $searchText);
 
@@ -164,6 +169,18 @@ class RepositoryPMKSearchController extends Controller
         }
 
         return;
+    }
+
+    private function findProfessorUsernameTicket($username, $ticket, $roleCode)
+    {
+        //Because we need a 'person', but the 'username' is part of the user
+        $userRepo = $this->get('doctrine_mongodb.odm.document_manager')
+                     ->getRepository('PumukitSchemaBundle:User');
+        $user = $userRepo->findOneByUsername($username);
+        $professor = $user->getPerson();
+        //Instead of directly using the person, we call the original function with its email to keep the functionality exactly the same.
+        $email = $professor ?$professor->getEmail():'';
+        return $this->findProfessorEmailTicket($email, $ticket, $roleCode);
     }
 
     private function getLocale($queryLocale)
