@@ -253,7 +253,7 @@ class repository_pmksearch extends repository {
             $url .=  $action . '?' . http_build_query($parameters, '', '&');
         }
         // Debug - uncomment the next line to view the query sent to pmksearch.
-         error_log('Debug - sending petition:  '.$url);
+        //error_log('Debug - sending petition:  '.$url);
         $ch   = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
