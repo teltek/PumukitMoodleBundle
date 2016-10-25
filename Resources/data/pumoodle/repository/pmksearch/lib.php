@@ -227,7 +227,6 @@ class repository_pmksearch extends repository {
         // At the moment, the IP is not checked on Pmksearch's side
         $ip     = $_SERVER["REMOTE_ADDR"];
         $ticket = md5($secret . $date . $id);
-
         return $ticket;
     }
 
@@ -313,7 +312,7 @@ class repository_pmksearch extends repository {
         else {
             //TODO: Sanity check failed. Log error.
         }
-        $curlparameters['ticket'] = $this->pmksearch_create_ticket($ticketValue);
+        $curlParameters['ticket'] = $this->pmksearch_create_ticket($ticketValue);
 
         $pmksearch_out = json_decode ($this->pmksearch_curl_action_parameters('search_repository', $curlParameters), true);
         if (!$pmksearch_out) {
