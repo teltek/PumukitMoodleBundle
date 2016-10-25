@@ -30,10 +30,17 @@ class RepositoryPMKSearchController extends Controller
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $professor = null;
         if($username){
-            $professor = $this->findProfessorUsernameTicket($username, $ticket, $roleCode);
+            $ticketValue = $username;
+            $professor = $this->findProfessorUsername($username, $ticket, $roleCode);
         } elseif($email) {
-            $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
+            $ticketValue = $email;
+            $professor = $this->findProfessorEmail($email, $ticket, $roleCode);
         }
+
+        if (!$this->checkFieldTicket($ticketValue, $ticket)) {
+            $professor = null;
+        }
+
         $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
         $playlists =  $this->getRepositoryPlaylists($multimediaObjects, $searchText);
 
@@ -158,20 +165,16 @@ class RepositoryPMKSearchController extends Controller
         return ($check === $ticket);
     }
 
-    private function findProfessorEmailTicket($email, $ticket, $roleCode)
+    private function findProfessorEmail($email, $ticket, $roleCode)
     {
         $repo = $this->get('doctrine_mongodb.odm.document_manager')
                      ->getRepository('PumukitSchemaBundle:Person');
 
         $professor = $repo->findByRoleCodAndEmail($roleCode, $email);
-        if ($this->checkFieldTicket($email, $ticket)) {
-            return $professor;
-        }
-
-        return;
+        return $professor;
     }
 
-    private function findProfessorUsernameTicket($username, $ticket, $roleCode)
+    private function findProfessorUsername($username, $ticket, $roleCode)
     {
         //Because we need a 'person', but the 'username' is part of the user
         $userRepo = $this->get('doctrine_mongodb.odm.document_manager')
@@ -180,7 +183,7 @@ class RepositoryPMKSearchController extends Controller
         $professor = $user->getPerson();
         //Instead of directly using the person, we call the original function with its email to keep the functionality exactly the same.
         $email = $professor ?$professor->getEmail():'';
-        return $this->findProfessorEmailTicket($email, $ticket, $roleCode);
+        return $this->findProfessorEmail($email, $ticket, $roleCode);
     }
 
     private function getLocale($queryLocale)
