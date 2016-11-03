@@ -17,7 +17,7 @@ require_login($course);
 $PAGE->set_url('/blocks/pmkbackoffice/view.php', array('id' => $course_id));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading(get_string('pagetitle', 'block_pmkbackoffice'));
-
+$PAGE->set_title('Moodle: PuMuKIT Media Manager');
 $pmk2_url = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearch_managerurl'));
 if(!$pmk2_url)
     send_header_404();
@@ -28,11 +28,11 @@ else {
         $secret = $db_secret->value;
     else
         $secret = '';
-    $email = $USER->email;
+    $username = $USER->username;
     $date = date('d/m/Y');
     $domain = parse_url($pmk2_url)['host'];
-    $hash = md5($email.$secret.$date.$domain);
-    $pmk2_url .= '?hash='.$hash.'&email='.rawurlencode($email);
+    $hash = md5($username.$secret.$date.$domain);
+    $pmk2_url .= '?hash='.$hash.'&username='.rawurlencode($username);
 }
 echo $OUTPUT->header();
 
@@ -61,7 +61,8 @@ echo $OUTPUT->header();
           onload="requestIframeHeight(this)"
           scrolling="no"
           border="0"
-          frameborder="0">
+          frameborder="0"
+          allowfullscreen>
   </iframe>
 <?php else: ?>
 <h2>404 - Not Found</h2>

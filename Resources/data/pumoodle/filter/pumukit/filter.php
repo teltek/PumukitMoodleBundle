@@ -101,10 +101,10 @@ class filter_pumukit extends moodle_text_filter
         global $CFG;
         if ($isOpencast) {
             $iframeWidth = $CFG->iframe_multivideo_width ?: '100%';
-            $iframeHeight = $CFG->iframe_multivideo_height ?: '400px';
+            $iframeHeight = $CFG->iframe_multivideo_height ?: '333px';
         } else {
-            $iframeWidth = $CFG->iframe_singlevideo_width ?: '600px';
-            $iframeHeight = $CFG->iframe_singlevideo_height ?: '400px';
+            $iframeWidth = $CFG->iframe_singlevideo_width ?: '592px';
+            $iframeHeight = $CFG->iframe_singlevideo_height ?: '333px';
         }
 
         return array($iframeWidth, $iframeHeight);

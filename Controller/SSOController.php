@@ -4,71 +4,93 @@ namespace Pumukit\MoodleBundle\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Pumukit\SchemaBundle\Services\UserService;
+use Pumukit\SchemaBundle\Document\User;
+use Pumukit\SchemaBundle\Document\Group;
 
 /**
  * @Route("/pumoodle")
  */
 class SSOController extends Controller
 {
+
+    const LDAP_ID_KEY = 'uid';
+
     /**
      * Parametes:
-     *   - email
+     *   - email o usename
      *   - hash.
      *
      * @Route("/sso")
      */
     public function ssoAction(Request $request)
     {
-
         //TODO Disable by default
         if (!$this->container->hasParameter('pumukit2.naked_backoffice_domain')) {
-            throw $this->createNotFoundException('Naked backoffice domain not conf');
+            return $this->genError('The domain "pumukit2.naked_backoffice_domain" is not configured.');
         }
 
         $repo = $this
             ->get('doctrine_mongodb.odm.document_manager')
             ->getRepository('PumukitSchemaBundle:User');
 
-        $email = $request->get('email');
+        if ($request->get('email')) {
+            $type = 'email';
+            $value = $request->get('email');
+        } elseif ($request->get('username')) {
+            $type = 'username';
+            $value = $request->get('username');
+        } else {
+            return $this->genError('Not email or username parameter.');
+        }
+
         $password = $this->container->getParameter('pumukit_moodle.password');
         $domain = $this->container->getParameter('pumukit2.naked_backoffice_domain');
 
         //Check domain
         if ($domain != $request->getHost()) {
-            throw $this->createNotFoundException('invalid domain!');
+            return $this->genError('Invalid Domain!');
         }
 
         /*
-        //Check referer //TODO
-        var_dump($request->headers->get('referer'));exit;
-        */
+           //Check referer //TODO
+           var_dump($request->headers->get('referer'));exit;
+         */
 
         //Check hash
-        if ($request->get('hash') != $this->getHash($email, $password, $domain)) {
-            throw $this->createNotFoundException('hash not valid!');
+        if ($request->get('hash') != $this->getHash($value, $password, $domain)) {
+            return $this->genError('The hash is not valid.');
         }
 
         //Only HTTPs
         if (!$request->isSecure()) {
-            throw $this->createNotFoundException('Only HTTPs');
+            return $this->genError('Only HTTPS connections are allowed.');
         }
 
         //Find User
-        $user = $repo->findOneBy(array('email' => $email));
-        if (!$user) {
-            throw $this->createNotFoundException('user not found!');
+        try {
+            $user = $repo->findOneBy(array($type => $value));
+            if (!$user) {
+                $user = $this->createUser(array($type => $value));
+            } else {
+                //Promote User from Viewer to Auto Publisher
+                $this->promoteUser($user);
+            }
+        } catch (\Exception $e) {
+            return $this->genError($e->getMessage());
         }
 
         /*
-        //Only PERSONAL_SCOPE //TODO
-        if(!$user->getPermissionProfile() || $user->getPermissionProfile()->getScope() != PermissionProfile::SCOPE_PERSONAL) {
-            throw $this->createNotFoundException('Only valid for users with personal scope');
-        }
-        */
+           //Only PERSONAL_SCOPE //TODO
+           if(!$user->getPermissionProfile() || $user->getPermissionProfile()->getScope() != PermissionProfile::SCOPE_PERSONAL) {
+           return new Response('Only valid for users with personal scope');
+           }
+         */
 
         $this->login($user, $request);
 
@@ -78,6 +100,7 @@ class SSOController extends Controller
     private function getHash($email, $password, $domain)
     {
         $date = date('d/m/Y');
+
         return md5($email.$password.$date.$domain);
     }
 
@@ -87,5 +110,104 @@ class SSOController extends Controller
         $this->get('security.token_storage')->setToken($token);
         $event = new InteractiveLoginEvent($request, $token);
         $this->get('event_dispatcher')->dispatch('security.interactive_login', $event);
+    }
+
+    private function createUser($info)
+    {
+        $ldapSerive = $this->get('pumukit_ldap.ldap');
+        $permissionProfileService = $this->get('pumukitschema.permissionprofile');
+        $userService = $this->container->get('pumukitschema.user');
+        $personService = $this->container->get('pumukitschema.person');
+
+        if (array_key_exists('email', $info)) {
+            $info = $ldapSerive->getInfoFromEmail($info['email']);
+        } elseif (array_key_exists('username', $info)) {
+            $info = $ldapSerive->getInfoFrom(self::LDAP_ID_KEY, $info['username']);
+        }
+
+        if (!isset($info) || !$info) {
+            throw new \RuntimeException('User not found.');
+        }
+        //TODO Move to a service
+        if (!isset($info['edupersonprimaryaffiliation'][0]) ||
+            !in_array($info['edupersonprimaryaffiliation'][0], array('PAS', 'PDI'))) {
+            throw new \RuntimeException('User invalid.');
+        }
+
+        //TODO create createDefaultUser in UserService.
+        //$this->userService->createDefaultUser($user);
+        $user = new User();
+        $user->setUsername($info[self::LDAP_ID_KEY][0]);
+        $user->setEmail($info['mail'][0]);
+
+        $permissionProfile = $permissionProfileService->getByName('Auto Publisher');
+        $user->setPermissionProfile($permissionProfile);
+        $user->setOrigin('moodle');
+        $user->setEnabled(true);
+
+        $userService->create($user);
+        $group = $this->getGroup($info['edupersonprimaryaffiliation'][0]);
+        $userService->addGroup($group, $user, true, false);
+        $personService->referencePersonIntoUser($user);
+
+        return $user;
+    }
+
+    private function getGroup($key)
+    {
+        $dm = $this->get('doctrine_mongodb.odm.document_manager');
+        $repo = $dm->getRepository('PumukitSchemaBundle:Group');
+        $groupService = $this->get('pumukitschema.group');
+
+        $cleanKey = preg_replace('/\W/', '', $key);
+
+        $group = $repo->findOneByKey($cleanKey);
+        if ($group) {
+            return $group;
+        }
+
+        $group = new Group();
+        $group->setKey($cleanKey);
+        $group->setName($key);
+        $group->setOrigin('cas');
+        $groupService->create($group);
+
+        return $group;
+    }
+
+    //Promote User from Viewer to Auto Publisher
+    private function promoteUser(User $user)
+    {
+        $dm = $this->get('doctrine_mongodb.odm.document_manager');
+        $permissionProfileService = $this->get('pumukitschema.permissionprofile');
+        $ldapSerive = $this->get('pumukit_ldap.ldap');
+        $userService = $this->get('pumukitschema.user');
+
+        $permissionProfileViewer = $permissionProfileService->getByName('Viewer');
+        $permissionProfileAutoPub = $permissionProfileService->getByName('Auto Publisher');
+
+        if ($permissionProfileViewer == $user->getPermissionProfile()) {
+            $info = $ldapSerive->getInfoFromEmail($user->getEmail());
+
+            if (!$info) {
+                throw new \RuntimeException('User not found.');
+            }
+            //TODO Move to a service
+            if (!isset($info['edupersonprimaryaffiliation'][0]) ||
+                !in_array($info['edupersonprimaryaffiliation'][0], array('PAS', 'PDI'))) {
+                throw new \RuntimeException('User invalid.');
+            }
+
+            $user->setPermissionProfile($permissionProfileAutoPub);
+            $userService->update($user, true, false);
+        }
+    }
+
+    private function genError($message = 'Not Found', $status = 404)
+    {
+        return new Response(
+            $this->renderView('PumukitMoodleBundle:SSO:error.html.twig', array('message' => $message)),
+            $status
+        );
     }
 }

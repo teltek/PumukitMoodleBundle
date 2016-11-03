@@ -22,48 +22,129 @@ class RepositoryPMKSearchController extends Controller
     {
         $this->enableFilter();
         $email = $request->get('professor_email');
+        $username = $request->get('professor_username');
         $ticket = $request->get('ticket');
         $locale = $this->getLocale($request->get('lang'));
         $searchText = $request->get('search');
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
-        $professor = $this->findProfessorEmailTicket($email, $ticket, $roleCode);
-        $picService = $this->get('pumukitschema.pic');
-
-        $seriesResult = array();
-        $numberMultimediaObjects = 0;
-        $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
-        foreach ($multimediaObjects as $multimediaObject) {
-            $seriesId = $multimediaObject->getSeries()->getId();
-            if(!isset($seriesResult[$seriesId])) {
-                $series = $multimediaObject->getSeries();
-                $seriesResult[$seriesId] = $this->seriesToArray($series, $locale);
-            }
-            $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
-            $seriesResult[$seriesId]['children'][] = $mmobjResult;
-            ++$numberMultimediaObjects;
+        $professor = null;
+        if($username){
+            $ticketValue = $username;
+            $professor = $this->findProfessorUsername($username, $ticket, $roleCode);
+        } elseif($email) {
+            $ticketValue = $email;
+            $professor = $this->findProfessorEmail($email, $ticket, $roleCode);
         }
 
-        $playlists =  $this->getRepositoryPlaylists($multimediaObjects);
-        $playlistsResult = array();
+        if (!$this->checkFieldTicket($ticketValue, $ticket)) {
+            $professor = null;
+        }
+
+        $multimediaObjects = $this->getRepositoryMmobjs($professor, $roleCode, $searchText);
+        $playlists =  $this->getRepositoryPlaylists($multimediaObjects, $searchText);
+
+        if($searchText) {
+            return $this->getPlainResponse($multimediaObjects, $playlists, $locale, $professor);
+        } else {
+            return $this->getTreeResponse($multimediaObjects, $playlists, $locale, $professor);
+        }
+    }
+
+
+    private function getPlainResponse($multimediaObjects, $playlists, $locale, $professor)
+    {
+        $out = array();
+        $out['out'] = array();
+
+        foreach($multimediaObjects as $multimediaObject) {
+            $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
+            $out['out'][] = $mmobjResult;
+        }
+
         foreach($playlists as $playlist) {
-            $playlistId = $playlist->getId();
-            if(!isset($playlistResult[$playlistId])) {
-                $playlistsResult[$playlistId] = $this->playlistToArray($playlist, $locale);
+            if($professor && $professor->getUser() && in_array($professor->getUser()->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
+                $mmobjResult = $this->playlistToPlainArray($playlist, $locale);
+                $out['out'][] = $mmobjResult;
             }
         }
 
         $out['status'] = 'OK';
+        $out['status_txt'] = count($out['out']);
+        return new JsonResponse($out, 200);
+    }
+
+    private function getTreeResponse($multimediaObjects, $playlists, $locale, $professor)
+    {
+        $mmobjService = $this->get('pumukitschema.multimedia_object');
+        $userService = $this->get('pumukitschema.user');
+
+        $mySeriesResult = array();
+        $publicSeriesResult = array();
+        $numberMultimediaObjects = 0;
+        foreach ($multimediaObjects as $multimediaObject) {
+            $seriesId = $multimediaObject->getSeries()->getId();
+            $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
+            //If video is owned, add to owned list.
+            if($professor && $professor->getUser() && $mmobjService->isUserOwner($professor->getUser(), $multimediaObject)) {
+                if(!isset($mySeriesResult[$seriesId])) {
+                    $series = $multimediaObject->getSeries();
+                    $mySeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
+                }
+                $mySeriesResult[$seriesId]['children'][] = $mmobjResult;
+            }
+            //If video is public, add to public list.
+            if($mmobjService->canBeDisplayed($multimediaObject, 'PUCHWEBTV')){
+                if(!isset($publicSeriesResult[$seriesId])) {
+                    $series = $multimediaObject->getSeries();
+                    $publicSeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
+                }
+                $publicSeriesResult[$seriesId]['children'][] = $mmobjResult;
+            }
+            ++$numberMultimediaObjects;
+        }
+
+        $myPlaylistsResult = array();
+        foreach($playlists as $playlist) {
+            $playlistId = $playlist->getId();
+            if($professor && $professor->getUser() && in_array($professor->getUser()->getId(), $playlist->getProperty('owners'))){// && !isset($playlistResult[$playlistId])) {
+                $myPlaylistsResult[$playlistId] = $this->playlistToArray($playlist, $locale);
+            }
+        }
+
+        $out = array();
+        $out['status'] = 'OK';
         $out['status_txt'] = $numberMultimediaObjects;
-        //Dividing the results in 'series' and 'playlists'.
+
+        $picService = $this->get('pumukitschema.pic');
+        $folderThumbnail = $picService->getDefaultSeriesUrlPic(true);
         $out['out'] = array(
             array(
-                'title' => 'series',
-                'children' => $seriesResult,
+                'title' => 'Series',
+                'icon' => $folderThumbnail,
+                'children' => array(
+                    array(
+                        'title' => 'My Series',
+                        'icon' => $folderThumbnail,
+                        'children' => $mySeriesResult,
+                    ),
+                    array(
+                        'title' => 'Public Series',
+                        'icon' => $folderThumbnail,
+                        'children' => $publicSeriesResult,
+                    ),
+                ),
             ),
             array(
-                'title' => 'playlists',
-                'children' => $playlistsResult,
+                'title' => 'Playlists',
+                'icon' => $folderThumbnail,
+                'children' => array(
+                    array(
+                        'title' => 'My Playlists',
+                        'icon' => $folderThumbnail,
+                        'children' =>  $myPlaylistsResult,
+                    ),
+                ),
             ),
         );
 
@@ -84,17 +165,25 @@ class RepositoryPMKSearchController extends Controller
         return ($check === $ticket);
     }
 
-    private function findProfessorEmailTicket($email, $ticket, $roleCode)
+    private function findProfessorEmail($email, $ticket, $roleCode)
     {
         $repo = $this->get('doctrine_mongodb.odm.document_manager')
                      ->getRepository('PumukitSchemaBundle:Person');
 
         $professor = $repo->findByRoleCodAndEmail($roleCode, $email);
-        if ($this->checkFieldTicket($email, $ticket)) {
-            return $professor;
-        }
+        return $professor;
+    }
 
-        return;
+    private function findProfessorUsername($username, $ticket, $roleCode)
+    {
+        //Because we need a 'person', but the 'username' is part of the user
+        $userRepo = $this->get('doctrine_mongodb.odm.document_manager')
+                     ->getRepository('PumukitSchemaBundle:User');
+        $user = $userRepo->findOneByUsername($username);
+        $professor = $user->getPerson();
+        //Instead of directly using the person, we call the original function with its email to keep the functionality exactly the same.
+        $email = $professor ?$professor->getEmail():'';
+        return $this->findProfessorEmail($email, $ticket, $roleCode);
     }
 
     private function getLocale($queryLocale)
@@ -133,7 +222,7 @@ class RepositoryPMKSearchController extends Controller
                     'id' => $multimediaObject->getId(),
                     'lang' => $locale,
                     'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
-		    'autostart' => false,
+                    'autostart' => false,
                 ),
                 true
             ),
@@ -162,6 +251,7 @@ class RepositoryPMKSearchController extends Controller
         $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true);
         return array(
             'title' => $playlist->getTitle(),
+            'shorttitle' => $playlist->getTitle(),
             'thumbnail' => $thumbnail,
             'thumbnail_width' => $width,
             'thumbnail_height' => $height,
@@ -170,17 +260,32 @@ class RepositoryPMKSearchController extends Controller
             'children' => $this->playlistMmobjsToArray($playlist),
         );
     }
+
+    protected function playlistToPlainArray(Series $playlist, $locale = null)
+    {
+        $picService = $this->get('pumukitschema.pic');
+        $width  = 140;
+        $height = 105;
+        $thumbnail = $picService->getDefaultUrlPicForObject($playlist, true, false);
+        $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true);
+        return array(
+            'title' => $playlist->getTitle().'.mp4',
+            'shorttitle' => $playlist->getTitle(),
+            'thumbnail' => $thumbnail,
+            'thumbnail_width' => $width,
+            'thumbnail_height' => $height,
+            'icon' => $thumbnail,
+            'source' => $source
+        );
+    }
+
     protected function playlistMmobjsToArray(Series $playlist, $locale = null)
     {
         $picService = $this->get('pumukitschema.pic');
         $playlistService = $this->get('pumukit_baseplayer.seriesplaylist');
         $playlistMmobjs = $playlistService->getPlaylistMmobjs($playlist);
         $mmobjsArray = array();
-        $mmobjsArray[] = array(
-            'title' => 'Insert playlist "'.$playlist->getTitle().'".avi',
-            'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
-            'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
-        );
+
         foreach($playlistMmobjs as $mmobj) {
             $newMmobj = $this->mmobjToArray($mmobj, $locale);
             //Workaround to prevent playlist mmobjs from being selected.
@@ -189,9 +294,35 @@ class RepositoryPMKSearchController extends Controller
             $mmobjsArray[] = $newMmobj;
 
         }
-        if(count($mmobjsArray) <= 1)
+        if(count($mmobjsArray) < 1)
             $mmobjsArray = array();
-        return $mmobjsArray;
+
+        $picService = $this->get('pumukitschema.pic');
+        $playlistThumbnail = $picService->getDefaultUrlPicForObject($playlist, true, false);//$picService->getFirstUrlPic($playlist, true);
+        //TODO: Get img for description. Get default mmobj img.
+        $defaultThumbnail = $picService->getDefaultUrlPicForObject(new MultimediaObject(), true, false);
+        $folderThumbnail = $picService->getDefaultSeriesUrlPic(true);
+        $playlistArray = array(
+            array(
+                'title' => 'Insert playlist "'.$playlist->getTitle().'".mp4',
+                'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
+                'thumbnail' => $playlistThumbnail,
+                'icon' => $playlistThumbnail,
+                'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
+            ),
+            array(
+                'title' => 'Description: '.$playlist->getDescription(),
+                'icon' => $defaultThumbnail,
+                'children' => array(),
+            ),
+            array(
+                'title' => 'Videos in this playlist',
+                'icon' => $folderThumbnail,
+                'children' => $mmobjsArray,
+            ),
+        );
+
+        return $playlistArray;
     }
 
     protected function getRepositoryMmobjs($professor, $roleCode, $searchText)
@@ -233,7 +364,7 @@ class RepositoryPMKSearchController extends Controller
         return $qb->getQuery()->execute();
     }
 
-    protected function getRepositoryPlaylists($mmobjs)
+    protected function getRepositoryPlaylists($mmobjs, $searchText = '')
     {
         $seriesRepo = $this->get('doctrine_mongodb.odm.document_manager')
                            ->getRepository('PumukitSchemaBundle:Series');
@@ -241,7 +372,20 @@ class RepositoryPMKSearchController extends Controller
         foreach($mmobjs as $q) {
             $mmobjIds[] = new \MongoId($q->getId());
         };
-        $qb = $seriesRepo->createQueryBuilder()->field('playlist.multimedia_objects')->in($mmobjIds);
+        $qb = $seriesRepo->createQueryBuilder();
+        $qb->field('type')->equals(Series::TYPE_PLAYLIST);
+        $qb->addOr(
+            $qb->expr()->field('playlist.multimedia_objects')->in($mmobjIds)
+        );
+
+        if($searchText) {
+            /* The following does not work. See: https://docs.mongodb.com/manual/reference/operator/query/or/#or-and-text-queries
+               $qb->addOr($qb->expr()->field('$text')->equals(array('$search' => $searchText)));
+             */
+            //First we take the ids of the $text search and then we add an 'or' to the original query.
+            $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array('$search' => $searchText))->distinct('_id')->getQuery()->execute()->toArray();
+            $qb->addOr($qb->expr()->field('id')->in($playlistSearchIds));
+        }
         return $qb->getQuery()->execute();
     }
 

@@ -56,3 +56,22 @@ Step 4: Install PuMoodle extension into Moodle
 
 Follow the steps at [PuMoodleInstallationGuide.md](PuMoodleInstallationGuide.md)
 to install the PuMoodle extension into your Moodle instance.
+
+Step 5: [Optional] Update encoder profiles
+----------------------------------------------
+
+To generate the broadcast copy of the media  automatically update the encoder profiles.
+Modify the `app/config/encoder.yml` file adding `PUCHMOODLE` as target of `video_h264` and `audio_aac` profiles.
+
+
+
+```yml
+pumukit_encoder:
+    profiles:
+        video_h264:
+            target: PUCHWEBTV PUCHMOODLE PUCHPODCAST
+...
+        audio_aac:
+            target: PUCHWEBTV PUCHMOODLE PUCHPODCAST*
+
+```
