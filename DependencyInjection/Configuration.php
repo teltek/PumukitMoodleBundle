@@ -45,6 +45,10 @@ class Configuration implements ConfigurationInterface
               ->defaultValue('#ED6D00')
               ->info('CSS color used in the naked backoffice as main color')
             ->end()
+            ->scalarNode('naked_custom_css_url')
+              ->defaultValue(null)
+              ->info('Custom CSS URL')
+            ->end()
           ->end()
         ;
 
