@@ -180,6 +180,9 @@ class RepositoryPMKSearchController extends Controller
         $userRepo = $this->get('doctrine_mongodb.odm.document_manager')
                      ->getRepository('PumukitSchemaBundle:User');
         $user = $userRepo->findOneByUsername($username);
+
+        if (!$user) return null;
+
         $professor = $user->getPerson();
         //Instead of directly using the person, we call the original function with its email to keep the functionality exactly the same.
         $email = $professor ?$professor->getEmail():'';
