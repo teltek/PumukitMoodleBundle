@@ -20,7 +20,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
     private $roleCode;
     private $series;
 
-    public function __construct()
+    public function setUp()
     {
         $options = array('environment' => 'test');
         static::bootKernel($options);
@@ -41,6 +41,31 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $this->client = static::createClient();
         $this->router = $this->client->getContainer()->get('router');
         $this->roleCode = $this->client->getContainer()->getParameter('pumukit_moodle.role');
+
+        $this->dm->getDocumentCollection('PumukitSchemaBundle:MultimediaObject')->remove(array());
+        $this->dm->getDocumentCollection('PumukitSchemaBundle:Series')->remove(array());
+        $this->dm->getDocumentCollection('PumukitSchemaBundle:Broadcast')->remove(array());
+        $this->dm->getDocumentCollection('PumukitSchemaBundle:Tag')->remove(array());
+        $this->dm->getDocumentCollection('PumukitSchemaBundle:Person')->remove(array());
+        $this->dm->flush();
+        $this->series = $this->addContent();
+        $this->dm->flush();
+    }
+
+    public function tearDown()
+    {
+        $this->dm->close();
+        $this->dm = null;
+        $this->mmobjRepo = null;
+        $this->factory = null;
+        $this->mmsService = null;
+        $this->personService = null;
+        $this->picService = null;
+        $this->client = null;
+        $this->router = null;
+        $this->roleCode = null;
+        gc_collect_cycles();
+        parent::tearDown();
     }
 
     public function testSearchRepository()
@@ -85,18 +110,6 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
             $this->mmobjToArray($this->series['mms']['moodlepubowned'], $locale),
         );
         $this->assertEquals($returnedMmobjs, $responseMmobjs);
-    }
-
-    public function setUp()
-    {
-        $this->dm->getDocumentCollection('PumukitSchemaBundle:MultimediaObject')->remove(array());
-        $this->dm->getDocumentCollection('PumukitSchemaBundle:Series')->remove(array());
-        $this->dm->getDocumentCollection('PumukitSchemaBundle:Broadcast')->remove(array());
-        $this->dm->getDocumentCollection('PumukitSchemaBundle:Tag')->remove(array());
-        $this->dm->getDocumentCollection('PumukitSchemaBundle:Person')->remove(array());
-        $this->dm->flush();
-        $this->series = $this->addContent();
-        $this->dm->flush();
     }
 
     private function addContent()
