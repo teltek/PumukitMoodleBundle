@@ -8,6 +8,7 @@ use Pumukit\SchemaBundle\Document\Person;
 use Pumukit\SchemaBundle\Document\Role;
 use Pumukit\SchemaBundle\Document\Tag;
 use Pumukit\SchemaBundle\Document\Track;
+use Pumukit\SchemaBundle\Document\Series;
 
 class RepositoryPMKSearchControllerTest extends WebTestCase
 {
@@ -48,8 +49,6 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $this->dm->getDocumentCollection('PumukitSchemaBundle:Tag')->remove(array());
         $this->dm->getDocumentCollection('PumukitSchemaBundle:Person')->remove(array());
         $this->dm->flush();
-        $this->series = $this->addContent();
-        $this->dm->flush();
     }
 
     public function tearDown()
@@ -64,12 +63,15 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $this->client = null;
         $this->router = null;
         $this->roleCode = null;
+        $this->series = null;
         gc_collect_cycles();
         parent::tearDown();
     }
 
     public function testSearchRepository()
     {
+        $this->series = $this->addContent();
+
         $password = 'ThisIsASecretPasswordChangeMe';
         $email = 'tester@pumukit.es';
         $ticket = md5($password.date('Y-m-d').$email);
@@ -78,14 +80,23 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/pumoodle/search_repository');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $content = json_decode($this->client->getResponse()->getContent(), true);
+        var_dump($content);
         //Test that the content of the response is correct.
         $this->assertEquals("OK", $content['status']);
         $this->assertCount(2, $content['out']);
-        $this->assertEquals('series', $content['out'][0]['title']);
-        $this->assertEquals('playlists', $content['out'][1]['title']);
-        $this->assertEquals(1, count($content['out'][0]['children']));
-        $this->assertEquals(true, isset($content['out'][0]['children'][$this->series['id']]));
-        $outSeries = $content['out'][0]['children'][$this->series['id']];
+        $this->assertEquals('Series', $content['out'][0]['title']);
+        $this->assertEquals('Playlists', $content['out'][1]['title']);
+        $this->assertEquals(2, count($content['out'][0]['children']));
+        $this->assertEquals(1, count($content['out'][1]['children']));
+        $this->assertEquals(true, isset($content['out'][0]['children'][0]['title']));
+        $this->assertEquals('My Series', $content['out'][0]['children'][0]['title']);
+        $this->assertEquals(true, isset($content['out'][0]['children'][1]['title']));
+        $this->assertEquals('Public Series', $content['out'][0]['children'][1]['title']);
+        $this->assertEquals(true, isset($content['out'][1]['children'][0]['title']));
+        $this->assertEquals('My Playlists', $content['out'][1]['children'][0]['title']);
+        $this->assertEquals(false, isset($content['out'][0]['children'][0]['children'][$this->series['id']]));
+        $this->assertEquals(true, isset($content['out'][0]['children'][1]['children'][$this->series['id']]));
+        $outSeries = $content['out'][0]['children'][1]['children'][$this->series['id']];
         $this->assertEquals("New", $outSeries['title']);
         $this->assertEquals(1, count($outSeries['children']));
         $webtvMmobj = $this->mmobjToArray($this->series['mms']['webtvpub'], $locale);
@@ -123,6 +134,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $tagMoodle = new Tag();
         $tagMoodle->setCod('PUCHMOODLE');
         $this->dm->persist($tagMoodle);
+
         //Create person to assign to videos:
         $owner = new Person();
         $owner = $this->personService->savePerson($owner);
@@ -130,58 +142,118 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $owner->setName('Tester');
         $owner = $this->personService->updatePerson($owner);
         $this->dm->persist($owner);
+
         $role = new Role();
         $role->setDisplay(true);
         $role->setCod($roleCode);
         $role->setXml($roleCode);
         $role->setName($roleCode);
         $this->dm->persist($role);
+
+        $this->dm->flush();
+
+        //$series = $this->factory->createSeries();
+        $series = new Series();
+        $series->setTitle('New');
+        $this->dm->persist($series);
+        $this->dm->flush();
+
+        //$mmWebTVPub = $this->factory->createMultimediaObject($series, true);
+        $mmWebTVPub = new MultimediaObject();
+        $mmWebTVPub->setTitle('PUBLISHED ON WEBTV');
+        $mmWebTVPub->setStatus(MultimediaObject::STATUS_PUBLISHED);
+        $mmWebTVPub->addTag($tagWebTV);
+
+        $tagWebTV->increaseNumberMultimediaObjects();
+
+        //$mmMoodlePub = $this->factory->createMultimediaObject($series, true);
+        $mmMoodlePub = new MultimediaObject();
+        $mmMoodlePub->setTitle('PUBLISHED ON MOODLE');
+        $mmMoodlePub->setStatus(MultimediaObject::STATUS_PUBLISHED);
+        $mmMoodlePub->addTag($tagMoodle);
+
+        $tagMoodle->increaseNumberMultimediaObjects();
+
+        //$mmMoodlePubOwned = $this->factory->createMultimediaObject($series, true);
+        $mmMoodlePubOwned = new MultimediaObject();
+        $mmMoodlePubOwned = $this->personService->createRelationPerson($owner, $role, $mmMoodlePubOwned);
+        $mmMoodlePubOwned->setTitle('PUBLISHED ON MOODLE AND OWNED');
+        $mmMoodlePubOwned->setStatus(MultimediaObject::STATUS_PUBLISHED);
+        $mmMoodlePubOwned->addTag($tagMoodle);
+
+        $tagMoodle->increaseNumberMultimediaObjects();
+
+        //$mmBlocked = $this->factory->createMultimediaObject($series, true);
+        $mmBlocked = new MultimediaObject();
+        $mmBlocked = $this->personService->createRelationPerson($owner, $role, $mmBlocked);
+        $mmBlocked->setTitle('BLOCKED');
+        $mmBlocked->setStatus(MultimediaObject::STATUS_BLOQ);
+        $mmBlocked->addTag($tagWebTV);
+
+        $tagWebTV->increaseNumberMultimediaObjects();
+
+        $mmBlocked->addTag($tagMoodle);
+
+        $tagMoodle->increaseNumberMultimediaObjects();
+
+        //$mmPub = $this->factory->createMultimediaObject($series, true);
+        $mmPub = new MultimediaObject();
+        $mmPub = $this->personService->createRelationPerson($owner, $role, $mmPub);
+        $mmPub->setTitle('PUBLISHED WITHOUT CHANNELS');
+        $mmPub->setStatus(MultimediaObject::STATUS_PUBLISHED);
+
+        //$mmWebTVHidden = $this->factory->createMultimediaObject($series, true);
+        $mmWebTVHidden = new MultimediaObject();
+        $mmWebTVHidden = $this->personService->createRelationPerson($owner, $role, $mmWebTVHidden);
+        $mmWebTVHidden->setTitle('HIDDEN ON WEBTV');
+        $mmWebTVHidden->setStatus(MultimediaObject::STATUS_HIDE);
+        $mmWebTVHidden->addTag($tagWebTV);
+
+        $tagWebTV->increaseNumberMultimediaObjects();
+
+        $this->dm->persist($mmWebTVPub);
+        $this->dm->persist($mmMoodlePub);
+        $this->dm->persist($mmMoodlePubOwned);
+        $this->dm->persist($mmBlocked);
+        $this->dm->persist($mmPub);
+        $this->dm->persist($mmWebTVHidden);
+        $this->dm->persist($tagWebTV);
+        $this->dm->persist($tagMoodle);
+        $this->dm->flush();
+
+        $mmobjs = array();
+        $mmobjs['webtvpub'] = $mmWebTVPub;
+        $mmobjs['moodlepub'] = $mmMoodlePub;
+        $mmobjs['moodlepubowned'] = $mmMoodlePubOwned;
+        $mmobjs['blocked'] = $mmBlocked;
+        $mmobjs['pub'] = $mmPub;
+        $mmobjs['webtvhidden'] = $mmWebTVHidden;
+
         //Create mmobjs to be assigned
         $track = new Track();
         $track->addTag('display');
-        $series = $this->factory->createSeries();
-        $mmobjs = array();
-        $mmobjs['webtvpub'] = $this->factory->createMultimediaObject($series, true);
-        $mmobjs['webtvpub']->setTitle('PUBLISHED ON WEBTV');
-        $mmobjs['webtvpub']->setStatus(MultimediaObject::STATUS_PUBLISHED);
-        $mmobjs['webtvpub']->addTag($tagWebTV);
-        $tagWebTV->increaseNumberMultimediaObjects();
-        $mmobjs['moodlepub'] = $this->factory->createMultimediaObject($series, true);
-        $mmobjs['moodlepub']->setTitle('PUBLISHED ON MOODLE');
-        $mmobjs['moodlepub']->setStatus(MultimediaObject::STATUS_PUBLISHED);
-        $mmobjs['moodlepub']->addTag($tagMoodle);
-        $tagMoodle->increaseNumberMultimediaObjects();
-        $mmobjs['moodlepubowned'] = $this->factory->createMultimediaObject($series, true);
-        $mmobjs['moodlepubowned'] = $this->personService->createRelationPerson($owner, $role, $mmobjs['moodlepubowned']);
-        $mmobjs['moodlepubowned']->setTitle('PUBLISHED ON MOODLE AND OWNED');
-        $mmobjs['moodlepubowned']->setStatus(MultimediaObject::STATUS_PUBLISHED);
-        $mmobjs['moodlepubowned']->addTag($tagMoodle);
-        $tagMoodle->increaseNumberMultimediaObjects();
-        $mmobjs['blocked'] = $this->factory->createMultimediaObject($series, true);
-        $mmobjs['blocked'] = $this->personService->createRelationPerson($owner, $role, $mmobjs['blocked']);
-        $mmobjs['blocked']->setTitle('BLOCKED');
-        $mmobjs['blocked']->setStatus(MultimediaObject::STATUS_BLOQ);
-        $mmobjs['blocked']->addTag($tagWebTV);
-        $tagWebTV->increaseNumberMultimediaObjects();
-        $mmobjs['blocked']->addTag($tagMoodle);
-        $tagMoodle->increaseNumberMultimediaObjects();
-        $mmobjs['pub'] = $this->factory->createMultimediaObject($series, true);
-        $mmobjs['pub'] = $this->personService->createRelationPerson($owner, $role, $mmobjs['pub']);
-        $mmobjs['pub']->setTitle('PUBLISHED WITHOUT CHANNELS');
-        $mmobjs['pub']->setStatus(MultimediaObject::STATUS_PUBLISHED);
-        $mmobjs['webtvhidden'] = $this->factory->createMultimediaObject($series, true);
-        $mmobjs['webtvhidden'] = $this->personService->createRelationPerson($owner, $role, $mmobjs['webtvhidden']);
-        $mmobjs['webtvhidden']->setTitle('HIDDEN ON WEBTV');
-        $mmobjs['webtvhidden']->setStatus(MultimediaObject::STATUS_HIDE);
-        $mmobjs['webtvhidden']->addTag($tagWebTV);
-        $tagWebTV->increaseNumberMultimediaObjects();
+
         foreach ($mmobjs as $mmobj) {
+            $mmobj->setSeries($series);
+            $series->addMultimediaObject($mmobj);
             $mmobj->addTrack($track);
             $this->dm->persist($mmobj);
         }
-        $series2 = $this->factory->createSeries();
-        $mmobjExtra  = $this->factory->createMultimediaObject($series2, true);
+
+        $series2 = new Series();
+        $series2->setTitle('New');
+        $this->dm->persist($series2);
+        $this->dm->flush();
+        $mmobjExtra = new MultimediaObject();
+        $mmobjExtra->setTitle('New');
         $this->dm->persist($mmobjExtra);
+        $this->dm->flush();
+        $mmobjExtra->setSeries($series2);
+        $series2->addMultimediaObject($mmobj);
+        $this->dm->persist($series2);
+        $this->dm->persist($mmobjExtra);
+        $this->dm->flush();
+
         return array(
             'title' => $series->getTitle(),
             'url' => $this->router->generate('pumukit_webtv_series_index', array('id' => $series->getId()), true),
