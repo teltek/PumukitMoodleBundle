@@ -29,6 +29,7 @@ class RepositoryPMKSearchController extends Controller
 
         $roleCode = $this->container->getParameter('pumukit_moodle.role');
         $professor = null;
+        $ticketValue = '';
         if($username){
             $ticketValue = $username;
             $professor = $this->findProfessorUsername($username, $ticket, $roleCode);
