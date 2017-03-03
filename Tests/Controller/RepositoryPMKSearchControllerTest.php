@@ -80,7 +80,6 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/pumoodle/search_repository');
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $content = json_decode($this->client->getResponse()->getContent(), true);
-        var_dump($content);
         //Test that the content of the response is correct.
         $this->assertEquals("OK", $content['status']);
         $this->assertCount(2, $content['out']);
@@ -107,7 +106,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $url);
         $content = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertEquals("OK", $content['status']);
-        $responseSeries = $content['out'][0]['children'][$this->series['id']];
+        $responseSeries = $content['out'][0]['children'][1]['children'][$this->series['id']];
         $responseMmobjs = $responseSeries['children'];
         ///Check that series are correct.
         $this->assertCount(2, $content['out']);
@@ -115,10 +114,9 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $this->assertEquals($this->series['url'], $responseSeries['url']);
         $this->assertEquals($this->series['pic'], $responseSeries['thumbnail']);
         //Check that mms are correct.
-        $this->assertCount(2,  $responseMmobjs);
+        $this->assertCount(1,  $responseMmobjs);
         $returnedMmobjs = array(
             $this->mmobjToArray($this->series['mms']['webtvpub'], $locale),
-            $this->mmobjToArray($this->series['mms']['moodlepubowned'], $locale),
         );
         $this->assertEquals($returnedMmobjs, $responseMmobjs);
     }
@@ -152,63 +150,64 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
 
         $this->dm->flush();
 
-        //$series = $this->factory->createSeries();
         $series = new Series();
         $series->setTitle('New');
         $this->dm->persist($series);
         $this->dm->flush();
 
-        //$mmWebTVPub = $this->factory->createMultimediaObject($series, true);
         $mmWebTVPub = new MultimediaObject();
         $mmWebTVPub->setTitle('PUBLISHED ON WEBTV');
         $mmWebTVPub->setStatus(MultimediaObject::STATUS_PUBLISHED);
-        $mmWebTVPub->addTag($tagWebTV);
 
-        $tagWebTV->increaseNumberMultimediaObjects();
-
-        //$mmMoodlePub = $this->factory->createMultimediaObject($series, true);
         $mmMoodlePub = new MultimediaObject();
         $mmMoodlePub->setTitle('PUBLISHED ON MOODLE');
         $mmMoodlePub->setStatus(MultimediaObject::STATUS_PUBLISHED);
-        $mmMoodlePub->addTag($tagMoodle);
 
-        $tagMoodle->increaseNumberMultimediaObjects();
-
-        //$mmMoodlePubOwned = $this->factory->createMultimediaObject($series, true);
         $mmMoodlePubOwned = new MultimediaObject();
-        $mmMoodlePubOwned = $this->personService->createRelationPerson($owner, $role, $mmMoodlePubOwned);
         $mmMoodlePubOwned->setTitle('PUBLISHED ON MOODLE AND OWNED');
         $mmMoodlePubOwned->setStatus(MultimediaObject::STATUS_PUBLISHED);
-        $mmMoodlePubOwned->addTag($tagMoodle);
 
-        $tagMoodle->increaseNumberMultimediaObjects();
-
-        //$mmBlocked = $this->factory->createMultimediaObject($series, true);
         $mmBlocked = new MultimediaObject();
-        $mmBlocked = $this->personService->createRelationPerson($owner, $role, $mmBlocked);
         $mmBlocked->setTitle('BLOCKED');
         $mmBlocked->setStatus(MultimediaObject::STATUS_BLOQ);
-        $mmBlocked->addTag($tagWebTV);
 
-        $tagWebTV->increaseNumberMultimediaObjects();
-
-        $mmBlocked->addTag($tagMoodle);
-
-        $tagMoodle->increaseNumberMultimediaObjects();
-
-        //$mmPub = $this->factory->createMultimediaObject($series, true);
         $mmPub = new MultimediaObject();
-        $mmPub = $this->personService->createRelationPerson($owner, $role, $mmPub);
         $mmPub->setTitle('PUBLISHED WITHOUT CHANNELS');
         $mmPub->setStatus(MultimediaObject::STATUS_PUBLISHED);
 
-        //$mmWebTVHidden = $this->factory->createMultimediaObject($series, true);
         $mmWebTVHidden = new MultimediaObject();
-        $mmWebTVHidden = $this->personService->createRelationPerson($owner, $role, $mmWebTVHidden);
         $mmWebTVHidden->setTitle('HIDDEN ON WEBTV');
         $mmWebTVHidden->setStatus(MultimediaObject::STATUS_HIDE);
-        $mmWebTVHidden->addTag($tagWebTV);
 
+        $this->dm->persist($mmWebTVPub);
+        $this->dm->persist($mmMoodlePub);
+        $this->dm->persist($mmMoodlePubOwned);
+        $this->dm->persist($mmBlocked);
+        $this->dm->persist($mmPub);
+        $this->dm->persist($mmWebTVHidden);
+        $this->dm->flush();
+
+        $mmWebTVPub->addTag($tagWebTV);
+        $tagWebTV->increaseNumberMultimediaObjects();
+
+        $mmMoodlePub->addTag($tagMoodle);
+        $tagMoodle->increaseNumberMultimediaObjects();
+
+        $mmMoodlePubOwned = $this->personService->createRelationPerson($owner, $role, $mmMoodlePubOwned);
+        $mmMoodlePubOwned->addTag($tagMoodle);
+        $tagMoodle->increaseNumberMultimediaObjects();
+
+        $mmBlocked = $this->personService->createRelationPerson($owner, $role, $mmBlocked);
+        $mmBlocked->addTag($tagWebTV);
+        $tagWebTV->increaseNumberMultimediaObjects();
+
+        $mmBlocked->addTag($tagMoodle);
+        $tagMoodle->increaseNumberMultimediaObjects();
+
+        $mmPub = $this->personService->createRelationPerson($owner, $role, $mmPub);
+
+        $mmWebTVHidden = $this->personService->createRelationPerson($owner, $role, $mmWebTVHidden);
+        $mmWebTVHidden->addTag($tagWebTV);
         $tagWebTV->increaseNumberMultimediaObjects();
 
         $this->dm->persist($mmWebTVPub);
@@ -284,7 +283,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
                     'id' => $multimediaObject->getId(),
                     'lang' => $locale,
                     'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
-            'autostart' => false,
+                    'autostart' => false,
                 ),
                 true
             ),
