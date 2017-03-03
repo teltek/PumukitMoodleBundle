@@ -81,7 +81,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $content = json_decode($this->client->getResponse()->getContent(), true);
         //Test that the content of the response is correct.
-        $this->assertEquals("OK", $content['status']);
+        $this->assertEquals('OK', $content['status']);
         $this->assertCount(2, $content['out']);
         $this->assertEquals('Series', $content['out'][0]['title']);
         $this->assertEquals('Playlists', $content['out'][1]['title']);
@@ -96,16 +96,16 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $this->assertEquals(false, isset($content['out'][0]['children'][0]['children'][$this->series['id']]));
         $this->assertEquals(true, isset($content['out'][0]['children'][1]['children'][$this->series['id']]));
         $outSeries = $content['out'][0]['children'][1]['children'][$this->series['id']];
-        $this->assertEquals("New", $outSeries['title']);
+        $this->assertEquals('New', $outSeries['title']);
         $this->assertEquals(1, count($outSeries['children']));
         $webtvMmobj = $this->mmobjToArray($this->series['mms']['webtvpub'], $locale);
         $this->assertEquals($webtvMmobj, $outSeries['children'][0]);
         //We now include the ticket, now we should get objects as return.
         $url = '/pumoodle/search_repository?professor_email='.urlencode($email);
-        $url = $url .'&ticket='.$ticket;
+        $url = $url.'&ticket='.$ticket;
         $crawler = $this->client->request('GET', $url);
         $content = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertEquals("OK", $content['status']);
+        $this->assertEquals('OK', $content['status']);
         $responseSeries = $content['out'][0]['children'][1]['children'][$this->series['id']];
         $responseMmobjs = $responseSeries['children'];
         ///Check that series are correct.
@@ -265,13 +265,13 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
     private function mmobjToArray(MultimediaObject $multimediaObject, $locale = null)
     {
         $picService = $this->picService;
-        $width  = 140;
+        $width = 140;
         $height = 105;
         $url = $this->router->generate('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
         $thumbnail = $picService->getFirstUrlPic($multimediaObject, true, false);
         $mmArray = array(
-            'title' => $multimediaObject->getTitle($locale) . ".mp4",
-            'shorttitle'=> $multimediaObject->getTitle($locale),
+            'title' => $multimediaObject->getTitle($locale).'.mp4',
+            'shorttitle' => $multimediaObject->getTitle($locale),
             'url' => $url,
             'thumbnail' => $thumbnail,
             'thumbnail_width' => $width,
@@ -288,6 +288,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
                 true
             ),
         );
+
         return $mmArray;
     }
 }

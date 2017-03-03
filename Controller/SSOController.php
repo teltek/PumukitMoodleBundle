@@ -18,7 +18,6 @@ use Pumukit\SchemaBundle\Document\Group;
  */
 class SSOController extends Controller
 {
-
     const LDAP_ID_KEY = 'uid';
 
     /**

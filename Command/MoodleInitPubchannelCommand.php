@@ -17,7 +17,7 @@ class MoodleInitPubchannelCommand extends ContainerAwareCommand
         $this
           ->setName('moodle:init:pubchannel')
           ->setDescription('Loads the moodle pubchannel to your database')
-          ->setHelp(<<<EOT
+          ->setHelp(<<<'EOT'
 Command to load the PUCHMOODLE pubchannel to the db. Required to publish objects exclusively on the Moodle platform.
 EOT
         );
