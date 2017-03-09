@@ -20,6 +20,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
     private $router;
     private $roleCode;
     private $series;
+    private $context;
 
     public function setUp()
     {
@@ -39,7 +40,12 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
                                               ->get('pumukitschema.person');
         $this->picService = static::$kernel->getContainer()
                                               ->get('pumukitschema.pic');
-        $this->client = static::createClient();
+        $this->context = static::$kernel->getContainer()->get('router.request_context');
+        $server = array();
+        if ($this->context->getScheme() === 'https') {
+            $server = array('HTTPS' => true);
+        }
+        $this->client = static::createClient($options, $server);
         $this->router = $this->client->getContainer()->get('router');
         $this->roleCode = $this->client->getContainer()->getParameter('pumukit_moodle.role');
 
@@ -64,6 +70,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $this->router = null;
         $this->roleCode = null;
         $this->series = null;
+        $this->context = null;
         gc_collect_cycles();
         parent::tearDown();
     }
