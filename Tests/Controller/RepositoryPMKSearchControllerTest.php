@@ -14,7 +14,8 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
 {
     private $dm;
     private $mmobjRepo;
-    private $mmobjService;
+    private $mmsService;
+    private $personService;
     private $factory;
     private $client;
     private $router;
@@ -45,7 +46,8 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         if ($this->context->getScheme() === 'https') {
             $server = array('HTTPS' => true);
         }
-        $this->client = static::createClient($options, $server);
+        $this->client = static::$kernel->getContainer()->get('test.client');
+        $this->client->setServerParameters($server);
         $this->router = $this->client->getContainer()->get('router');
         $this->roleCode = $this->client->getContainer()->getParameter('pumukit_moodle.role');
 
