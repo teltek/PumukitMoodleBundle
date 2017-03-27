@@ -144,6 +144,7 @@ class MoodleController extends Controller
     public function embedPlaylistAction(Request $request)
     {
         $seriesId = $request->get('id');
+
         return $this->redirect($this->generateUrl('pumukit_playlistplayer_index', array('id' => $seriesId)));
     }
 
@@ -192,7 +193,7 @@ class MoodleController extends Controller
         $password = $this->container->getParameter('pumukit_moodle.password');
         $check = md5($password.date('Y-m-d').$id.$email);
 
-        return ($check === $ticket);
+        return $check === $ticket;
     }
 
     private function findProfessorEmailTicket($email, $ticket, $roleCode)
@@ -284,9 +285,10 @@ class MoodleController extends Controller
                                                    'id' => $multimediaObject->getId(),
                                                    'lang' => $locale,
                                                    'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
-						   'autostart' => false,
+                                                   'autostart' => false,
                                                ),
                                                true);
+
         return $mmArray;
     }
 }

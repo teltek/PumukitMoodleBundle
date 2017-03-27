@@ -8,8 +8,6 @@ use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-
-
 /**
  * This is the class that loads and manages your bundle configuration.
  *
@@ -25,7 +23,6 @@ class PumukitMoodleExtension extends Extension implements PrependExtensionInterf
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
     }
-
 
     /**
      * {@inheritdoc}
@@ -55,5 +52,4 @@ class PumukitMoodleExtension extends Extension implements PrependExtensionInterf
             $container->setParameter('pumukit2.naked_custom_css_url', $config['naked_custom_css_url']);
         }
     }
-
 }
