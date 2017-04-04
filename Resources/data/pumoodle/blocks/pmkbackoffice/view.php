@@ -28,11 +28,21 @@ else {
         $secret = $db_secret->value;
     else
         $secret = '';
-    $username = $USER->username;
+
     $date = date('d/m/Y');
-    $domain = parse_url($pmk2_url)['host'];
-    $hash = md5($username.$secret.$date.$domain);
-    $pmk2_url .= '?hash='.$hash.'&username='.rawurlencode($username);
+    $aux = parse_url($pmk2_url);
+    $domain = $aux['host'];
+
+    $db_ticket_field = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearch_ticket_field'));
+    if ($db_ticket_field && 'username' == $db_ticket_field->value) {
+        $username = $USER->username;
+        $hash = md5($username.$secret.$date.$domain);
+        $pmk2_url .= '?hash='.$hash.'&username='.rawurlencode($username);
+    } else {
+        $email = $USER->email;
+        $hash = md5($email.$secret.$date.$domain);
+        $pmk2_url .= '?hash='.$hash.'&email='.rawurlencode($email);
+    }
 }
 echo $OUTPUT->header();
 
