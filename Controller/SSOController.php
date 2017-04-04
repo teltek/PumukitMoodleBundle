@@ -179,13 +179,13 @@ class SSOController extends Controller
     {
         $dm = $this->get('doctrine_mongodb.odm.document_manager');
         $permissionProfileService = $this->get('pumukitschema.permissionprofile');
-        $ldapSerive = $this->get('pumukit_ldap.ldap');
         $userService = $this->get('pumukitschema.user');
 
         $permissionProfileViewer = $permissionProfileService->getByName('Viewer');
         $permissionProfileAutoPub = $permissionProfileService->getByName('Auto Publisher');
 
-        if ($permissionProfileViewer == $user->getPermissionProfile()) {
+        if ($permissionProfileViewer == $user->getPermissionProfile() && $this->has('pumukit_ldap.ldap')) {
+            $ldapSerive = $this->get('pumukit_ldap.ldap');
             $info = $ldapSerive->getInfoFromEmail($user->getEmail());
 
             if (!$info) {
