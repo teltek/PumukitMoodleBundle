@@ -113,15 +113,15 @@ class SSOController extends Controller
 
     private function createUser($info)
     {
-        $ldapSerive = $this->get('pumukit_ldap.ldap');
+        $ldapService = $this->get('pumukit_ldap.ldap');
         $permissionProfileService = $this->get('pumukitschema.permissionprofile');
         $userService = $this->container->get('pumukitschema.user');
         $personService = $this->container->get('pumukitschema.person');
 
         if (array_key_exists('email', $info)) {
-            $info = $ldapSerive->getInfoFromEmail($info['email']);
+            $info = $ldapService->getInfoFromEmail($info['email']);
         } elseif (array_key_exists('username', $info)) {
-            $info = $ldapSerive->getInfoFrom(self::LDAP_ID_KEY, $info['username']);
+            $info = $ldapService->getInfoFrom(self::LDAP_ID_KEY, $info['username']);
         }
 
         if (!isset($info) || !$info) {
@@ -179,14 +179,14 @@ class SSOController extends Controller
     {
         $dm = $this->get('doctrine_mongodb.odm.document_manager');
         $permissionProfileService = $this->get('pumukitschema.permissionprofile');
-        $ldapSerive = $this->get('pumukit_ldap.ldap');
         $userService = $this->get('pumukitschema.user');
 
         $permissionProfileViewer = $permissionProfileService->getByName('Viewer');
         $permissionProfileAutoPub = $permissionProfileService->getByName('Auto Publisher');
 
-        if ($permissionProfileViewer == $user->getPermissionProfile()) {
-            $info = $ldapSerive->getInfoFromEmail($user->getEmail());
+        if ($permissionProfileViewer == $user->getPermissionProfile() && $this->has('pumukit_ldap.ldap')) {
+            $ldapService = $this->get('pumukit_ldap.ldap');
+            $info = $ldapService->getInfoFromEmail($user->getEmail());
 
             if (!$info) {
                 throw new \RuntimeException('User not found.');
