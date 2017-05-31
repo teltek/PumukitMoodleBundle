@@ -141,19 +141,19 @@ class repository_pmksearch extends repository {
         $mform->addElement('text', 'pmksearchrepositoryurl',
                            get_string('pmksearchurl', 'repository_pmksearch'),
                            array('value' => '','size' => '40'));
-	$mform->setType('pmksearchrepositoryurl', PARAM_TEXT);
+    $mform->setType('pmksearchrepositoryurl', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchurldefault', '', get_string('pmksearchurldefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYURL);
 
         $mform->addElement('text', 'pmksearchrepositorysecret',
                            get_string('pmksearchsecret', 'repository_pmksearch'),
                            array('value' => '','size' => '40'));
-	$mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
+    $mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
         $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYSECRET);
 
         $mform->addElement('text', 'pmksearch_managerurl',
                            get_string('pmksearch_managerurl', 'repository_pmksearch'),
                            array('value' => '','size' => '40'));
-	$mform->setType('pmksearch_managerurl', PARAM_TEXT);
+    $mform->setType('pmksearch_managerurl', PARAM_TEXT);
 
         $ticketFieldRadio = array();
         $ticketFieldRadio[] = $mform->createElement('radio', 'pmksearch_ticket_field', '', get_string('username'), 'username');
@@ -262,7 +262,7 @@ class repository_pmksearch extends repository {
         $sal["var"]    = curl_exec($ch);
         $sal["error"]  = curl_error($ch);
         $sal["status"] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	$sal["url"] = $url;
+    $sal["url"] = $url;
         curl_close($ch);
         if ($sal["status"] !== 200  && !isset($sal['var'])){
             var_dump($sal);
@@ -328,5 +328,14 @@ class repository_pmksearch extends repository {
         }
 
         return $pmksearch_list;
+    }
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
     }
 }

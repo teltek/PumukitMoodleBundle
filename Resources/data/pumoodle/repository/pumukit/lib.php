@@ -350,4 +350,14 @@ class repository_pumukit extends repository {
 
         return $list;
     }
+
+
+    /**
+     * Is this repository accessing private data?
+     *
+     * @return bool
+     */
+    public function contains_private_data() {
+        return false;
+    }
 }
