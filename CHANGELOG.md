@@ -1,10 +1,11 @@
 #CHANGELOG
 
-## [Unreleased][Unreleased]
+## [1.2.0][1.2.0] (2017-05-12)
 - Created new repository, *pmksearch*, based on the original *pumukit* repository:
 	* Added search filter.
 	* Added management button (with a configurable link on 'Settings').
 	* Added pumukit *series playlist* support.
+- Add new blocks, *pmkbackoffice*, which allow accessing to backoffice from Moodle.
 
 ## [1.1.0][1.1.0] (2016-05-02)
 - Refactored Moodle modules, repository and filter code.
@@ -26,4 +27,5 @@
 [1.0.1]: https://github.com/teltek/PuMuKIT2-moodle-bundle/compare/1.0.0...1.0.1
 [1.0.2]: https://github.com/teltek/PuMuKIT2-moodle-bundle/compare/1.0.1...1.0.2
 [1.1.0]: https://github.com/teltek/PuMuKIT2-moodle-bundle/compare/1.0.2...1.1.0
-[Unreleased]: https://github.com/teltek/PuMuKIT2-moodle-bundle/compare/1.1.0...HEAD
+[1.2.0]: https://github.com/teltek/PuMuKIT2-moodle-bundle/compare/1.1.0...1.2.0
+[Unreleased]: https://github.com/teltek/PuMuKIT2-moodle-bundle/compare/1.2.0...HEAD
