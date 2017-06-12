@@ -1,4 +1,4 @@
-#CHANGELOG
+# CHANGELOG
 
 ## [1.2.0][1.2.0] (2017-05-12)
 - Created new repository, *pmksearch*, based on the original *pumukit* repository:
