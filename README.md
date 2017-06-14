@@ -1,6 +1,8 @@
 PuMuKIT2 Moodle Bundle
 =======================
 
+*This page is updated to the PuMoodle 1.2.0 version*
+
 Bundle based on [Symfony](http://symfony.com/) to work with the [PuMuKIT2 Video Platform](https://github.com/campusdomar/PuMuKIT2/blob/2.1.x/README.md).
 
 PumukitMoodleBundle allows to share PuMuKIT2 videos whitin a Moodle.
@@ -26,6 +28,6 @@ We would like to thank to the [University of the Basque Country](http://www.ehu.
 for their contribution to the initial development of the bundle.
 
 We would also like to thank to [Campus do Mar](http://campusdomar.es/en/)/[Universidade de Vigo](http://uvigo.es/uvigo_en/index.html), to
-the [London College of Fashion](http://www.arts.ac.uk/fashion/) and to the
+the [London College of Fashion](http://www.arts.ac.uk/fashion/), to the [Universidad Rey Juan Carlos](http://www.urjc.es/en/) and to the
 [University of Granada](http://www.ugr.es/en/) for all the improvements
 contributed into this bundle.
