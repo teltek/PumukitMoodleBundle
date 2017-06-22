@@ -184,7 +184,13 @@ class MoodleController extends Controller
      */
     private function renderIframe(MultimediaObject $multimediaObject, Request $request)
     {
-        return $this->forward('PumukitBasePlayerBundle:BasePlayer:index', array('request' => $request, 'multimediaObject' => $multimediaObject));
+        if ($multimediaObject->getProperty('iframeable') === true) {
+            return $this->redirect($multimediaObject->getProperty('iframe_url'));
+        } else {
+            return $this->forward('PumukitWebTVBundle:MultimediaObject:iframe', array('request' => $request, 'multimediaObject' => $multimediaObject));
+        }
+
+
     }
 
     private function checkFieldTicket($email, $ticket, $id = '')
