@@ -174,7 +174,6 @@ class RepositoryPMKSearchController extends Controller
             $qb->expr()
                ->field('tags.cod')->equals('PUCHWEBTV')
                ->field('properties.redirect')->equals(false)
-               ->field('properties.iframeable')->equals(false)
                ->field('status')->equals(MultimediaObject::STATUS_PUBLISHED)
         );
 
