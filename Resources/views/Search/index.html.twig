@@ -1,0 +1,40 @@
+{% extends 'PumukitWebTVBundle::layout.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('bundles/pumukitwebtv/css/bootstrap-datetimepicker.min.css') }}" type="text/css" rel="stylesheet" media="screen"/>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('bundles/pumukitwebtv/js/moment-with-locales.min.js') }}" type="text/javascript"></script>
+  <script src="{{ asset('bundles/pumukitwebtv/js/bootstrap-datetimepicker.min.js') }}" type="text/javascript"></script>
+  <script src="{{ asset('bundles/pumukitwebtv/js/modernizr-custom.js') }}" type="text/javascript"></script>
+
+  <script>
+  $(function(){
+    $('.search-form').find('a:last').hide(); // hide 'Search by series'
+
+    $('.pumukit_mmobj').on('click', function(e) {
+      e.preventDefault();
+      if (window.parent && e.currentTarget.parentElement.href) {
+        var url = e.currentTarget.parentElement.href.replace('/video/', '/iframe/');
+        window.parent.postMessage({type:"atto_pumukit", url:'<iframe src="' + url + '" style="border:0px #FFFFFF none;" scrolling="no" frameborder="1" height="270" width="480" allowfullscreen></iframe>'}, '*');
+      }
+    });
+  });
+  </script>
+{% endblock %}
+
+{% block body_base %}
+  <div>
+    <div class="col-xs-12">
+      <div class="row">
+        {% include 'PumukitWebTVBundle:Search:list.html.twig' %}
+      </div>
+      <div class="row">
+        {% include 'PumukitWebTVBundle:Misc:pager.html.twig' %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
