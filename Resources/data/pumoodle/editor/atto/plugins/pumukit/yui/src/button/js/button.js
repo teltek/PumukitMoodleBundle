@@ -33,7 +33,7 @@
 
 
 
-var PUMUKITURL = 'http://localhost/app_dev.php/searchmultimediaobjects';
+var PUMUKITURL = 'http://localhost/app_dev.php/pumoodle/searchmultimediaobjects';
 
 var COMPONENTNAME = 'atto_pumukit';
 var FLAVORCONTROL = 'pumukit_flavor';
@@ -59,6 +59,9 @@ var TEMPLATE = '' +
     '</form>';
 
 Y.namespace('M.atto_pumukit').Button = Y.Base.create('button', Y.M.editor_atto.EditorPlugin, [], {
+
+
+    _receiveMessageBind: null,
 
     /**
      * Initialize the button
@@ -103,7 +106,8 @@ Y.namespace('M.atto_pumukit').Button = Y.Base.create('button', Y.M.editor_atto.E
         e.preventDefault();
         var width=900;
 
-        window.addEventListener('message', this._receiveMessage.bind(this), {once: true}); // once Edge 15
+        this._receiveMessageBind = this._receiveMessage.bind(this);
+        window.addEventListener('message', this._receiveMessageBind);
 
         var dialogue = this.getDialogue({
             headerContent: M.util.get_string('dialogtitle', COMPONENTNAME),
@@ -190,12 +194,13 @@ Y.namespace('M.atto_pumukit').Button = Y.Base.create('button', Y.M.editor_atto.E
             focusAfterHide: null
         }).hide();
 
-
         // If no file is there to insert, don't do it.
         if (!e.data.url){
             Y.log('No URL from pumukit value could be found.', 'warn', LOGNAME);
             return;
         }
+
+        window.removeEventListener('message', this._receiveMessageBind);
 
         this.editor.focus();
         this.get('host').insertContentAtFocusPoint(e.data.url);

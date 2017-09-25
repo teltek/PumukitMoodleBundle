@@ -31,25 +31,7 @@ function atto_pumukit_strings_for_js() {
     global $PAGE;
 
     $strings = array(
-        'alignment',
-        'alignment_bottom',
-        'alignment_left',
-        'alignment_middle',
-        'alignment_right',
-        'alignment_top',
-        'browserepositories',
-        'constrain',
-        'saveimage',
-        'pumukitproperties',
-        'customstyle',
-        'enterurl',
-        'enteralt',
-        'height',
-        'presentation',
-        'presentationoraltrequired',
-        'size',
-        'width',
-        'uploading',
+        'dialogtitle',
     );
 
     $PAGE->requires->strings_for_js($strings, 'atto_pumukit');
