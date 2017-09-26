@@ -33,7 +33,8 @@
 
 
 
-var PUMUKITURL = 'http://localhost/app_dev.php/pumoodle/searchmultimediaobjects';
+//var PUMUKITURL = 'http://localhost/app_dev.php/pumoodle/searchmultimediaobjects';
+var PUMUKITURL = 'https://snf-683722.vm.okeanos.grnet.gr/pumoodle/searchmultimediaobjects';
 
 var COMPONENTNAME = 'atto_pumukit';
 var FLAVORCONTROL = 'pumukit_flavor';
@@ -75,8 +76,9 @@ Y.namespace('M.atto_pumukit').Button = Y.Base.create('button', Y.M.editor_atto.E
         }
 
         this.addButton({
-            icon: 'icon',
-            iconComponent: 'atto_pumukit',
+            icon: 'e/insert_edit_video',
+            //icon: 'icon',
+            //iconComponent: 'atto_pumukit',
             buttonName: 'pumukit',
             callback: this._displayDialogue,
             callbackArgs: 'iconone'
