@@ -23,4 +23,4 @@
  */
 
 $string['pluginname'] = 'PuMuKIT (Atto)';
-$string['dialogtitle'] = 'Add UP2U video';
+$string['dialogtitle'] = 'Add eduOER video';
