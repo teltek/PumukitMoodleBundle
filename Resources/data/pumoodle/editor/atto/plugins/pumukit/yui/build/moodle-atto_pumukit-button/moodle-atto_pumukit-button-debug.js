@@ -35,9 +35,6 @@ YUI.add('moodle-atto_pumukit-button', function (Y, NAME) {
 
 
 
-//var PUMUKITURL = 'http://localhost/app_dev.php/pumoodle/searchmultimediaobjects';
-var PUMUKITURL = 'https://snf-683722.vm.okeanos.grnet.gr/pumoodle/searchmultimediaobjects';
-
 var COMPONENTNAME = 'atto_pumukit';
 var FLAVORCONTROL = 'pumukit_flavor';
 var LOGNAME = 'atto_pumukit';
@@ -114,7 +111,7 @@ Y.namespace('M.atto_pumukit').Button = Y.Base.create('button', Y.M.editor_atto.E
         window.addEventListener('message', this._receiveMessageBind);
 
         var dialogue = this.getDialogue({
-            headerContent: M.util.get_string('dialogtitle', COMPONENTNAME),
+            headerContent: this.get('dialogtitle'),
             width: width + 'px',
             focusAfterHide: clickedicon
         });
@@ -151,7 +148,7 @@ Y.namespace('M.atto_pumukit').Button = Y.Base.create('button', Y.M.editor_atto.E
                 elementid: this.get('host').get('elementid'),
                 CSS: CSS,
                 FLAVORCONTROL: FLAVORCONTROL,
-                PUMUKITURL: PUMUKITURL,
+                PUMUKITURL: this.get('pumukiturl'),
                 component: COMPONENTNAME,
                 defaultflavor: this.get('defaultflavor'),
                 clickedicon: clickedicon
@@ -209,6 +206,15 @@ Y.namespace('M.atto_pumukit').Button = Y.Base.create('button', Y.M.editor_atto.E
         this.editor.focus();
         this.get('host').insertContentAtFocusPoint(e.data.url);
         this.markUpdated();
+    }
+}, {
+    ATTRS: {
+        pumukiturl: {
+            value: ''
+        },
+        dialogtitle: {
+            value: ''
+        }
     }
 });
 

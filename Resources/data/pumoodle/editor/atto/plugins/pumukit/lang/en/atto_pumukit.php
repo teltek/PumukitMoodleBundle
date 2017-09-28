@@ -23,4 +23,9 @@
  */
 
 $string['pluginname'] = 'PuMuKIT (Atto)';
-$string['dialogtitle'] = 'Add eduOER video';
+$string['settings'] = 'PuMuKIT (Atto)';
+$string['dialogtitle'] = 'Modal dialog title';
+$string['dialogtitledesc'] = 'Modal dialog title';
+$string['dialogtitledefval'] = 'Add eduOER video';
+$string['pumukiturl'] = 'Pumukit URL';
+$string['pumukiturldesc'] = 'Pumukit URL, like https://pumukit.host/pumoodle/searchmultimediaobjects';
