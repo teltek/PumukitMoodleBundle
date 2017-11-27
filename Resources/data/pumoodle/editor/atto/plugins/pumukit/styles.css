@@ -68,3 +68,7 @@
     max-width: calc(100% - 1em);
 }
 /*rtl:end:ignore*/
+
+.atto_pumukit_button_pumukit {
+    color: #f7941e;
+}
