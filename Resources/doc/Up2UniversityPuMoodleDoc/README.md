@@ -1,55 +1,88 @@
 # Moodle Integration with eduOER
 
-*Version: WIP*
+## Contents
 
-## Upgrade Moodle database.
+1. [Introduction](#introduction)
 
-Plugins check.
-![admin-index](admin-index-php-1498215095854.png)
+2. [Module](#module)
 
-Upgrading to new version.
-![admin-index](admin-index-php-1498215178802.png)
+    2.1. [Module installation](#module-installation-and-configuration)
 
-Upgrade Pumukit filter settings.
-![admin-upgradesettings](admin-upgradesettings-php-1498215209051.png)
+    2.2. [Module configuration](#module-configuration)
 
+    2.3. [Installation check](#installation-check)
 
 
-## Enable repository
+## Introduction
 
-Manage repositories.
-![admin-repository](admin-repository-php-1498215509282.png)
+Follow the next steps to integrate Moodle with eduOER.
 
-Config repository.
-![admin-repository](admin-repository-php-1498215563823.png)
+## Module
 
-Manage repositories.
-![admin-repository](admin-repository-php-1498215583699.png)
+The module allow us to embed videos directly into the Moodle course as a resource.
+* The 'PuMuKIT (Atto)' module will show the search page to list all the available videos and add them to the Moodle course.
 
-Create a new instance of the site.
-![admin-repository](admin-repository-php-1498215641867.png)
+### Module installation
 
-Configure repository instance.
-![admin-repositoryinstance](admin-repositoryinstance-php-1498216597075.png)
+The process to install the module is as follows. The only difference will be the name of the '.zip' file that has to be uploaded to the Moodle platform.
 
-New repository instance configured.
-![admin-repository](admin-repository-php-1498216611636.png)
+*Note: To begin the installation, we need to have a Moodle administrator account.*
 
-## Enable filter
+* Login on Moodle as administrator.
 
-Active the PuMuKIT filter.
-![admin-filters](admin-filters-php-1498217139484.png)
+* Go to *Administration -> Site Administration -> Plugins -> Install plugins* on the left-side
+menu.
+
+* Select *Atto HTML editor / Atto plugin (atto)* in *Plugin Type*. (If the *Plugin Type* option does not appear, click on 'Show more...').
+
+* Upload the file named *pumukit.zip* with the "Zip Package" field from the `Resources/data/pumoodle/editor/atto/plugins` folder. A window opens to select the file.
+
+* Choose the file and click on *"Upload this file"*.
+
+* Mark the checkbox and click on *Install plugin from the ZIP file* (previous image).
+
+A validation window is shown.
+
+* Press "Install add-on".
+
+Here we see all the plugins that require update or are pending to install. The Pumukit module
+should be listed here.
+
+* To continue the installation click on "Upgrade Moodle Database now".
+
+A message will be shown indicating the successful result of the installation.
+
+* Click on “Continue”. The Module Configuration will be loaded.
 
 
-## Example
-Add a new page into a course.
-![course-view](course-view-php-1498217009737.png)
+### Module configuration
 
-Insert media in the page
-![course-modedit](course-modedit-php-1498217030581.png)
+To configure each module we need to set up the following parameters:
+- Pumukit URL: Pumukit server address followed by “/pumoodle/searchmultimediaobjects”
+(http://URL/pumoodle/searchmultimediaobjects)
+- Modal dialog title: Add eduOER video
 
-Use the new Pumukit repository and select a video
-![course-modedit](course-modedit-php-1498217064015.png)
+Then click on “Save changes”. The module will be ready to use.
 
-Play the video in the page.
-![mod-page-view](mod-page-view-php-1498217151149.png)
+### Enable module
+
+* Go to *Administration -> Site Administration -> Plugins -> Text editors -> Atto HTML editor* and enable the PuMuKIT (Atto) Plugin for all courses in *Toolbar config*:
+```
+files = image, media, managefiles, pumukit
+```
+
+### Installation check
+
+To check the correct installation of the module we just have to upload a video.
+
+Login on Moodle as a teacher or using a user account.
+
+Go to any course, or create a new course for testing.
+
+To upload videos into a course, activate the edition on “Turn editing on” and click on "Add an
+activity or a resource." Select “Page” and click on "Add".
+
+In the editor, click on the orange icon of a camera to add vieos fro Pumukit.
+
+After saving changes you can click on the video link to watch the video.
+
