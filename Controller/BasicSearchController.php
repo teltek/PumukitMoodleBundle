@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Pumukit\SchemaBundle\Document\MultimediaObject;
 use Pumukit\SchemaBundle\Document\Series;
 use Pumukit\SchemaBundle\Document\Tag;
-use Pumukit\WebTVBundle\Controller\SearchController;
+use Pumukit\Up2u\WebTVBundle\Controller\SearchController;
 
 /**
  * @Route("/pumoodle")
