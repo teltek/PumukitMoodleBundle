@@ -2,14 +2,10 @@
 
 namespace Pumukit\MoodleBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Pumukit\SchemaBundle\Document\MultimediaObject;
-use Pumukit\SchemaBundle\Document\Series;
 use Pumukit\SchemaBundle\Document\Tag;
 use Pumukit\Up2u\WebTVBundle\Controller\SearchController;
 
@@ -28,7 +24,7 @@ class BasicSearchController extends SearchController
         return parent::multimediaObjectsAction($request, $blockedTag, $useTagAsGeneral);
     }
 
-    protected function createMultimediaObjectQueryBuilder()
+    /*protected function createMultimediaObjectQueryBuilder()
     {
         $repo = $this->get('doctrine_mongodb')->getRepository('PumukitSchemaBundle:MultimediaObject');
         $request = $this->get('request_stack')->getMasterRequest();
@@ -44,5 +40,5 @@ class BasicSearchController extends SearchController
         }
 
         return $queryBuilder;
-    }    
+    } */
 }
