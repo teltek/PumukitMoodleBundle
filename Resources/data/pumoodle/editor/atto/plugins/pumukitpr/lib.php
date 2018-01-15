@@ -50,6 +50,7 @@ function atto_pumukitpr_params_for_js($elementid, $options, $fpoptions) {
     $params['pumukitprurl'] = get_config('atto_pumukitpr', 'pumukitprurl');
     $params['dialogtitle'] = get_config('atto_pumukitpr', 'dialogtitle');
     $params['username'] = $USER->username;
+    $params['email'] = $USER->email;
 
     $date = date('d/m/Y');
     $password = get_config('atto_pumukitpr', 'password');

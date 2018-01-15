@@ -132,7 +132,8 @@ Y.namespace('M.atto_pumukitpr').Button = Y.Base.create('button', Y.M.editor_atto
             iframe.style.display = "none";
             iframe.src = this.get('pumukitprurl') + "/openedx/sso/manager?hash=" +
                 this.get('hash') + "&username=" +
-                this.get('username') + "&lang=en";
+                this.get('username') + "&email="+
+                this.get('email') + "&lang=en";
             document.getElementsByTagName('body')[0].appendChild(iframe);
         }
 
@@ -277,6 +278,9 @@ Y.namespace('M.atto_pumukitpr').Button = Y.Base.create('button', Y.M.editor_atto
             value: ''
         },
         username: {
+            value: ''
+        },
+        email: {
             value: ''
         },
         dialogtitle: {
