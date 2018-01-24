@@ -78,9 +78,13 @@ class repository_pmksearch extends repository {
     {
         global $COURSE;
         $list = array();
-        $manager_block = new moodle_url('/blocks/pmkbackoffice/view.php', array('course_id' => $COURSE->id, 'instance_id' => $this->instance->id));
-        $list['manage'] = $manager_block->out(false); //Prints the url.
-        // the management interface url (using the pumukit block).
+        if (isset($this->options['pmksearch_managerurl']) && $this->options['pmksearch_managerurl']) {
+            $manager_block = new moodle_url('/blocks/pmkbackoffice/view.php', array('course_id' => $COURSE->id, 'instance_id' => $this->instance->id));
+            $list['manage'] = $manager_block->out(false); //Prints the url.
+            // the management interface url (using the pumukit block).
+        } else {
+            $list['manage'] = false;
+        }
         $list['dynload'] = false; // dynamically loading. False as the entire list is created in one query.
         // the current path of this list.
         $list['nologin'] = true; // set to true, the login link will be removed

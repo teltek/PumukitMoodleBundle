@@ -119,13 +119,19 @@ class SSOController extends Controller
         $personService = $this->container->get('pumukitschema.person');
 
         if (array_key_exists('email', $info)) {
-            $info = $ldapService->getInfoFromEmail($info['email']);
+            $key = 'mail';
+            $value = $info['email'];
         } elseif (array_key_exists('username', $info)) {
-            $info = $ldapService->getInfoFrom(self::LDAP_ID_KEY, $info['username']);
+            $key = self::LDAP_ID_KEY;
+            $value = $info['username'];
+        } else {
+            throw new \RuntimeException('No email or username given');
         }
 
+        $info = $ldapService->getInfoFrom($key, $value);
+
         if (!isset($info) || !$info) {
-            throw new \RuntimeException('User not found.');
+            throw new \RuntimeException('User "'.$value.'" not found in LDAP on creating (using LDAP '.$key.' attribute).');
         }
         //TODO Move to a service
         if (!isset($info['edupersonprimaryaffiliation'][0]) ||
@@ -189,7 +195,7 @@ class SSOController extends Controller
             $info = $ldapService->getInfoFromEmail($user->getEmail());
 
             if (!$info) {
-                throw new \RuntimeException('User not found.');
+                throw new \RuntimeException('User "'.$user->getEmail().'" not found in LDAP on promoting (using LDAP mail attribute).');
             }
             //TODO Move to a service
             if (!isset($info['edupersonprimaryaffiliation'][0]) ||
