@@ -31,10 +31,10 @@ class RepositoryPMKSearchController extends Controller
         $ticketValue = '';
         if ($username) {
             $ticketValue = $username;
-            $professor = $this->findProfessorUsername($username, $ticket, $roleCode);
+            $professor = $this->findProfessorUsername($username);
         } elseif ($email) {
             $ticketValue = $email;
-            $professor = $this->findProfessorEmail($email, $ticket, $roleCode);
+            $professor = $this->findProfessorEmail($email);
         }
 
         if (!$this->checkFieldTicket($ticketValue, $ticket)) {
@@ -166,17 +166,20 @@ class RepositoryPMKSearchController extends Controller
         return $check === $ticket;
     }
 
-    private function findProfessorEmail($email, $ticket, $roleCode)
+    private function findProfessorEmail($email)
     {
-        $repo = $this->get('doctrine_mongodb.odm.document_manager')
-                     ->getRepository('PumukitSchemaBundle:Person');
+        $userRepo = $this->get('doctrine_mongodb.odm.document_manager')
+                     ->getRepository('PumukitSchemaBundle:User');
+        $user = $userRepo->findOneByEmail($email);
 
-        $professor = $repo->findByRoleCodAndEmail($roleCode, $email);
+        if (!$user && !$user->getPerson()) {
+            return $this->findProfessorByRoleCodAndEmail($email);
+        }
 
-        return $professor;
+        return $user->getPerson();
     }
 
-    private function findProfessorUsername($username, $ticket, $roleCode)
+    private function findProfessorUsername($username)
     {
         //Because we need a 'person', but the 'username' is part of the user
         $userRepo = $this->get('doctrine_mongodb.odm.document_manager')
@@ -188,10 +191,25 @@ class RepositoryPMKSearchController extends Controller
         }
 
         $professor = $user->getPerson();
-        //Instead of directly using the person, we call the original function with its email to keep the functionality exactly the same.
-        $email = $professor ? $professor->getEmail() : '';
+        if (!$professor) {
+            return null;
+        }
 
-        return $this->findProfessorEmail($email, $ticket, $roleCode);
+        return $professor;
+    }
+
+    private function findProfessorByRoleCodAndEmail($email)
+    {
+        $roleCode = $this->container->getParameter('pumukit_moodle.role');
+        $repo = $this->get('doctrine_mongodb.odm.document_manager')
+                     ->getRepository('PumukitSchemaBundle:Person');
+
+        $professor = $repo->findByRoleCodAndEmail($roleCode, $email);
+        if (!$professor) {
+            return null;
+        }
+
+        return $professor;
     }
 
     private function getLocale($queryLocale)
