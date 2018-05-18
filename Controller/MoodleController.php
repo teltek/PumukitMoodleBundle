@@ -43,8 +43,8 @@ class MoodleController extends Controller
                     if ($multimediaObject->getSubtitle($locale) != '') {
                         $multimediaObjectTitle .= ' - '.$multimediaObject->getSubtitle($locale);
                     }
-                    $opencast = ($multimediaObject->getProperty('opencast') ? '1' : '0');
-                    $multimediaObjectsArray[$seriesTitle][$multimediaObjectTitle] = $this->generateUrl('pumukit_moodle_moodle_embed', array('id' => $multimediaObject->getId(), 'lang' => $locale, 'opencast' => $opencast), true);
+                    $multistream = ($multimediaObject->isMultistream() ? '1' : '0');
+                    $multimediaObjectsArray[$seriesTitle][$multimediaObjectTitle] = $this->generateUrl('pumukit_moodle_moodle_embed', array('id' => $multimediaObject->getId(), 'lang' => $locale, 'multistream' => $multistream), true);
                     ++$numberMultimediaObjects;
                 }
             }
@@ -284,7 +284,7 @@ class MoodleController extends Controller
                                                array(
                                                    'id' => $multimediaObject->getId(),
                                                    'lang' => $locale,
-                                                   'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
+                                                   'multistream' => ($multimediaObject->isMultistream() ? '1' : '0'),
                                                    'autostart' => false,
                                                ),
                                                true);
