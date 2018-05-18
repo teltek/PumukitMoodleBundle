@@ -85,7 +85,7 @@ $link_params = array();
 parse_str(html_entity_decode(parse_url($pmkpersonalvideos->embed_url, PHP_URL_QUERY)), $link_params);
 $mm_id = isset($link_params['id']) ? $link_params['id'] : null;
 $lang = isset($link_params['lang']) ? $link_params['lang'] : null;
-$opencast = isset($link_params['opencast']) ? ($link_params['opencast'] == '1') : false;
+$multistream = isset($link_params['multistream']) ? ($link_params['multistream'] == '1') : false;
 $concatChar = ($mm_id || $lang) ? '&': '?';
 $parameters = array(
     'professor_email' => $pmkpersonalvideos->professor_email,
@@ -93,7 +93,7 @@ $parameters = array(
 );
 $url = $pmkpersonalvideos->embed_url . $concatChar . http_build_query($parameters, '', '&');
 
-if($opencast) {
+if($multistream) {
     $iframe_width = '100%';
     $iframe_height = '592px' ;
 }

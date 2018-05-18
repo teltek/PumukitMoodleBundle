@@ -31,6 +31,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016230900;    // The current module version (Date: YYYYMMDDXX)
+$plugin->version   = 2018051800;    // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2011051000;    // Requires this Moodle version
 $plugin->component = 'mod_pmkpersonalvideos'; // To check on upgrade, that module sits in correct place
