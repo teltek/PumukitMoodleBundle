@@ -72,7 +72,8 @@ echo $OUTPUT->header();
           scrolling="no"
           border="0"
           frameborder="0"
-          allowfullscreen>
+          allowfullscreen
+          allow="microphone; camera">
   </iframe>
 <?php else: ?>
 <h2>404 - Not Found</h2>
