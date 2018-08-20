@@ -5,14 +5,6 @@ namespace Pumukit\MoodleBundle\Twig;
 class PumukitMoodleExtension extends \Twig_Extension
 {
     /**
-     * Get name.
-     */
-    public function getName()
-    {
-        return 'pumukit_moodle_extension';
-    }
-
-    /**
      * Get functions.
      */
     public function getFunctions()
