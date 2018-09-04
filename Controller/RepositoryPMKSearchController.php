@@ -368,7 +368,16 @@ class RepositoryPMKSearchController extends Controller
         //   - Owner of video.
         //   - Belongs to the video group (to edit? to view? both?)
         if ($searchText) {
-            $qb = $qb->field('$text')->equals(array('$search' => $searchText));
+            if (class_exists('Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils')) {
+                $request = $this->get('request_stack')->getMasterRequest();
+
+                $qb = $qb->field('$text')->equals(array(
+                    '$search' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils\TextIndexUtils::cleanTextIndex($searchText),
+                    '$language' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils\TextIndexUtils::getCloseLanguage($request->getLocale()),
+                ));
+            } else {
+                $qb = $qb->field('$text')->equals(array('$search' => $searchText));
+            }
         }
         $qb->addOr(
             $qb->expr()
@@ -415,7 +424,17 @@ class RepositoryPMKSearchController extends Controller
                $qb->addOr($qb->expr()->field('$text')->equals(array('$search' => $searchText)));
              */
             //First we take the ids of the $text search and then we add an 'or' to the original query.
-            $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array('$search' => $searchText))->distinct('_id')->getQuery()->execute()->toArray();
+            if (class_exists('Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils')) {
+                $request = $this->get('request_stack')->getMasterRequest();
+
+                $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array(
+                    '$search' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils\TextIndexUtils::cleanTextIndex($searchText),
+                    '$language' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils\TextIndexUtils::getCloseLanguage($request->getLocale()),
+                ))->distinct('_id')->getQuery()->execute()->toArray();
+            } else {
+                $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array('$search' => $searchText))->distinct('_id')->getQuery()->execute()->toArray();
+            }
+
             $qb->addOr($qb->expr()->field('id')->in($playlistSearchIds));
         }
 
