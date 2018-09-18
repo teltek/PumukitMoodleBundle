@@ -16,7 +16,7 @@ class MultimediaObjectVoter extends Voter
     private $requestStack;
     private $password;
 
-    public function __construct(MultimediaObjectService $mmobjService, RequestStack $requestStack, array $password)
+    public function __construct(MultimediaObjectService $mmobjService, RequestStack $requestStack, $password)
     {
         $this->mmobjService = $mmobjService;
         $this->requestStack = $requestStack;
@@ -54,7 +54,7 @@ class MultimediaObjectVoter extends Voter
     {
         $req = $this->requestStack->getMasterRequest();
 
-        if (!$this->mmobjService->isHidden($multimediaObject, 'PUCH')) {
+        if (!$this->mmobjService->isHidden($multimediaObject, 'PUCHMOODLE')) {
             return false;
         }
 
@@ -63,18 +63,18 @@ class MultimediaObjectVoter extends Voter
             return false;
         }
 
-        $refererPath = parse_url($refererUrl, PHP_URL_PATH);
-        if (!$refererPath) {
+        $refererQuery = parse_url($refererUrl, PHP_URL_QUERY);
+        if (!$refererQuery) {
             return false;
         }
 
-        parse_str($parts['query'], $query);
+        parse_str($refererQuery, $query);
         if (!isset($query['ticket'])) {
             return false;
         }
 
         $ticket = $query['ticket'];
-        if (!$this->checkFieldTicket('', $ticket, $id)) {
+        if (!$this->checkFieldTicket('', $ticket, $multimediaObject->getId())) {
             return false;
         }
 
