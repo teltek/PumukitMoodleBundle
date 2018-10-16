@@ -29,7 +29,6 @@ EOT
         $this->tagRepo = $this->dm->getRepository('PumukitSchemaBundle:Tag');
 
         $moodlePublicationChannelTag = $this->createTagWithCode('PUCHMOODLE', 'Moodle', 'PUBCHANNELS', false);
-        $moodlePublicationChannelTag->setProperty('modal_path', 'pumukitmoodle_modal_index');
         $this->dm->persist($moodlePublicationChannelTag);
         $this->dm->flush();
 
