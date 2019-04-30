@@ -377,8 +377,8 @@ class RepositoryPMKSearchController extends Controller
                 $request = $this->get('request_stack')->getMasterRequest();
 
                 $qb = $qb->field('$text')->equals(array(
-                    '$search' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils\TextIndexUtils::cleanTextIndex($searchText),
-                    '$language' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils\TextIndexUtils::getCloseLanguage($request->getLocale()),
+                    '$search' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils::cleanTextIndex($searchText),
+                    '$language' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils::getCloseLanguage($request->getLocale()),
                 ));
             } else {
                 $qb = $qb->field('$text')->equals(array('$search' => $searchText));
@@ -433,8 +433,8 @@ class RepositoryPMKSearchController extends Controller
                 $request = $this->get('request_stack')->getMasterRequest();
 
                 $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array(
-                    '$search' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils\TextIndexUtils::cleanTextIndex($searchText),
-                    '$language' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils\TextIndexUtils::getCloseLanguage($request->getLocale()),
+                    '$search' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils::cleanTextIndex($searchText),
+                    '$language' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils::getCloseLanguage($request->getLocale()),
                 ))->distinct('_id')->getQuery()->execute()->toArray();
             } else {
                 $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array('$search' => $searchText))->distinct('_id')->getQuery()->execute()->toArray();
