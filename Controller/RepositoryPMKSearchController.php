@@ -14,6 +14,8 @@ use Pumukit\SchemaBundle\Document\Series;
  */
 class RepositoryPMKSearchController extends Controller
 {
+    const LIMIT_PUBLIC_OBJ_MM = 500;
+
     /**
      * @Route("/search_repository", defaults={"filter":false})
      */
@@ -83,6 +85,7 @@ class RepositoryPMKSearchController extends Controller
         $mySeriesResult = array();
         $publicSeriesResult = array();
         $numberMultimediaObjects = 0;
+        $numberPublicMultimediaObjects = 0;
         foreach ($multimediaObjects as $multimediaObject) {
             $seriesId = $multimediaObject->getSeries()->getId();
             $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
@@ -93,16 +96,18 @@ class RepositoryPMKSearchController extends Controller
                     $mySeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
                 }
                 $mySeriesResult[$seriesId]['children'][] = $mmobjResult;
+                ++$numberMultimediaObjects;
             }
             //If video is public, add to public list.
-            if ($mmobjService->canBeDisplayed($multimediaObject, 'PUCHWEBTV')) {
+            if ($numberPublicMultimediaObjects < self::LIMIT_PUBLIC_OBJ_MM && $mmobjService->canBeDisplayed($multimediaObject, 'PUCHWEBTV')) {
                 if (!isset($publicSeriesResult[$seriesId])) {
                     $series = $multimediaObject->getSeries();
                     $publicSeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
                 }
                 $publicSeriesResult[$seriesId]['children'][] = $mmobjResult;
+                ++$numberMultimediaObjects;
+                ++$numberPublicMultimediaObjects;
             }
-            ++$numberMultimediaObjects;
         }
 
         $myPlaylistsResult = array();
