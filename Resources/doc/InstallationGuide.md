@@ -18,7 +18,7 @@ From your project directory, execute the following command to download
 the latest stable version of this bundle:
 
 ```bash
-$ composer require teltek/pmk2-moodle-bundle dev-master
+$ composer require teltek/pumukit-moodle-bundle dev-master
 ```
 
 Step 2: Install the bundle
