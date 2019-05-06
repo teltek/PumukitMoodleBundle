@@ -40,7 +40,7 @@ class MoodleController extends Controller
                 $multimediaObjects = $mmobjRepo->findBySeriesAndPersonIdWithRoleCod($oneseries, $professor->getId(), $roleCode);
                 foreach ($multimediaObjects as $multimediaObject) {
                     $multimediaObjectTitle = $multimediaObject->getRecordDate()->format('Y-m-d').' '.$multimediaObject->getTitle($locale);
-                    if ($multimediaObject->getSubtitle($locale) != '') {
+                    if ('' != $multimediaObject->getSubtitle($locale)) {
                         $multimediaObjectTitle .= ' - '.$multimediaObject->getSubtitle($locale);
                     }
                     $multistream = ($multimediaObject->isMultistream() ? '1' : '0');
@@ -127,7 +127,7 @@ class MoodleController extends Controller
             if ($multimediaObject->containsTagWithCod('PUCHWEBTV') || $this->checkFieldTicket($email, $ticket, $id)) {
                 return $this->renderIframe($multimediaObject, $request);
             } else {
-                $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
+                $contactEmail = $this->container->getParameter('pumukit.info')['email'];
                 $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
 
                 return $response;
@@ -168,7 +168,7 @@ class MoodleController extends Controller
 
                 return new JsonResponse($out, 200);
             } else {
-                $contactEmail = $this->container->getParameter('pumukit2.info')['email'];
+                $contactEmail = $this->container->getParameter('pumukit.info')['email'];
                 $response = new Response($this->renderView('PumukitMoodleBundle:Moodle:403forbidden.html.twig', array('email' => $contactEmail, 'moodle_locale' => $locale)), 403);
 
                 return $response;
@@ -213,7 +213,7 @@ class MoodleController extends Controller
     {
         $locale = strtolower($queryLocale);
         $defaultLocale = $this->container->getParameter('locale');
-        $pumukitLocales = $this->container->getParameter('pumukit2.locales');
+        $pumukitLocales = $this->container->getParameter('pumukit.locales');
         if ((!$locale) || (!in_array($locale, $pumukitLocales))) {
             $locale = $defaultLocale;
         }
@@ -226,7 +226,7 @@ class MoodleController extends Controller
         $isOldBrowser = false;
         $webExplorer = $this->getWebExplorer($userAgent);
         $version = $this->getVersion($userAgent, $webExplorer);
-        if (($webExplorer == 'IE') || ($webExplorer == 'MSIE') || $webExplorer == 'Firefox' || $webExplorer == 'Opera' || ($webExplorer == 'Safari' && $version < 4)) {
+        if (('IE' == $webExplorer) || ('MSIE' == $webExplorer) || 'Firefox' == $webExplorer || 'Opera' == $webExplorer || ('Safari' == $webExplorer && $version < 4)) {
             $isOldBrowser = true;
         }
 
@@ -258,10 +258,10 @@ class MoodleController extends Controller
     {
         $version = null;
 
-        if ($webExplorer !== 'Opera' && preg_match('#('.strtolower($webExplorer).')[/ ]?([0-9.]*)#', $userAgent, $match)) {
+        if ('Opera' !== $webExplorer && preg_match('#('.strtolower($webExplorer).')[/ ]?([0-9.]*)#', $userAgent, $match)) {
             $version = floor($match[2]);
         }
-        if ($webExplorer == 'Opera' || $webExplorer == 'Safari' && preg_match('#(version)[/ ]?([0-9.]*)#', $userAgent, $match)) {
+        if ('Opera' == $webExplorer || 'Safari' == $webExplorer && preg_match('#(version)[/ ]?([0-9.]*)#', $userAgent, $match)) {
             $version = floor($match[2]);
         }
 

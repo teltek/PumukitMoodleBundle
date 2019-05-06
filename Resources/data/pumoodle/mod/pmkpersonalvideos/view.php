@@ -16,34 +16,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints a particular instance of pmkpersonalvideos
+ * Prints a particular instance of pmkpersonalvideos.
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
- * @package    mod
- * @subpackage pmkpersonalvideos
  * @copyright  2012 Andres Perez aperez@teltek.es
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require_once dirname(dirname(dirname(__FILE__))).'/config.php';
+require_once dirname(__FILE__).'/lib.php';
+require_once dirname(__FILE__).'/locallib.php';
 
 global $USER;
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$n  = optional_param('n', 0, PARAM_INT);  // pmkpersonalvideos instance ID - it should be named as the first character of the module
+$n = optional_param('n', 0, PARAM_INT);  // pmkpersonalvideos instance ID - it should be named as the first character of the module
 
 if ($id) {
-    $cm      = get_coursemodule_from_id('pmkpersonalvideos', $id, 0, false, MUST_EXIST);
-    $course  = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_id('pmkpersonalvideos', $id, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $pmkpersonalvideos = $DB->get_record('pmkpersonalvideos', array('id' => $cm->instance), '*', MUST_EXIST);
 } elseif ($n) {
     $pmkpersonalvideos = $DB->get_record('pmkpersonalvideos', array('id' => $n), '*', MUST_EXIST);
-    $course  = $DB->get_record('course', array('id' => $pmkpersonalvideos->course), '*', MUST_EXIST);
-    $cm      = get_coursemodule_from_instance('pmkpersonalvideos', $pmkpersonalvideos->id, $course->id, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $pmkpersonalvideos->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('pmkpersonalvideos', $pmkpersonalvideos->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
 }
@@ -59,7 +56,7 @@ $event = \mod_pmkpersonalvideos\event\course_module_viewed::create(array(
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 // Update 'viewed' state if required by completion system
-require_once($CFG->libdir . '/completionlib.php');
+require_once $CFG->libdir.'/completionlib.php';
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
@@ -85,24 +82,23 @@ $link_params = array();
 parse_str(html_entity_decode(parse_url($pmkpersonalvideos->embed_url, PHP_URL_QUERY)), $link_params);
 $mm_id = isset($link_params['id']) ? $link_params['id'] : null;
 $lang = isset($link_params['lang']) ? $link_params['lang'] : null;
-$multistream = isset($link_params['multistream']) ? ($link_params['multistream'] == '1') : false;
-$concatChar = ($mm_id || $lang) ? '&': '?';
+$multistream = isset($link_params['multistream']) ? ('1' == $link_params['multistream']) : false;
+$concatChar = ($mm_id || $lang) ? '&' : '?';
 $parameters = array(
     'professor_email' => $pmkpersonalvideos->professor_email,
-    'ticket' => pmkpersonalvideos_create_ticket($mm_id, $pmkpersonalvideos->professor_email)
+    'ticket' => pmkpersonalvideos_create_ticket($mm_id, $pmkpersonalvideos->professor_email),
 );
-$url = $pmkpersonalvideos->embed_url . $concatChar . http_build_query($parameters, '', '&');
+$url = $pmkpersonalvideos->embed_url.$concatChar.http_build_query($parameters, '', '&');
 
-if($multistream) {
+if ($multistream) {
     $iframe_width = '100%';
-    $iframe_height = '592px' ;
-}
-else {
+    $iframe_height = '592px';
+} else {
     $iframe_width = '592px';
-    $iframe_height = '333px' ;
+    $iframe_height = '333px';
 }
-$iframe_html = '<iframe src="' . $url . '"' .
-               '        style="border:0px #FFFFFF none; width:' . $iframe_width . '; height:' . $iframe_height . ';"' .
+$iframe_html = '<iframe src="'.$url.'"'.
+               '        style="border:0px #FFFFFF none; width:'.$iframe_width.'; height:'.$iframe_height.';"'.
                '        scrolling="no" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen="true" >'.
                '</iframe>';
 echo $iframe_html;

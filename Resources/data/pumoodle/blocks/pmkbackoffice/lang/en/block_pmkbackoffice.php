@@ -1,4 +1,5 @@
 <?php
+
 $string['linktopage'] = 'Go to PuMuKIT - Media Manager';
 $string['pagetitle'] = 'PuMuKIT - Media Manager';
 $string['pagenotfoundtext'] = 'The \'pmksearch\' repository instance was not found. Maybe the wrong id was added as \'instance_id\' parameter?';

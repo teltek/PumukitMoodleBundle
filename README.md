@@ -3,9 +3,9 @@ PuMuKIT2 Moodle Bundle
 
 *This page is updated to the PuMoodle 1.2.0 version*
 
-Bundle based on [Symfony](http://symfony.com/) to work with the [PuMuKIT2 Video Platform](https://github.com/campusdomar/PuMuKIT2/blob/2.1.x/README.md).
+Bundle based on [Symfony](http://symfony.com/) to work with the [PuMuKIT Video Platform](https://github.com/campusdomar/PuMuKIT2/blob/2.1.x/README.md).
 
-PumukitMoodleBundle allows to share PuMuKIT2 videos whitin a Moodle.
+PumukitMoodleBundle allows to share PuMuKIT videos whitin a Moodle.
 To accomplish this, the Moodle server also requires the installation of
 the PuMoodle tool. This tool consists of a Moodle module, a Moodle repository and
 a Moodle filter.

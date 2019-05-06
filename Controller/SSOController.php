@@ -30,8 +30,8 @@ class SSOController extends Controller
     public function ssoAction(Request $request)
     {
         //TODO Disable by default
-        if (!$this->container->hasParameter('pumukit2.naked_backoffice_domain')) {
-            return $this->genError('The domain "pumukit2.naked_backoffice_domain" is not configured.');
+        if (!$this->container->hasParameter('pumukit.naked_backoffice_domain')) {
+            return $this->genError('The domain "pumukit.naked_backoffice_domain" is not configured.');
         }
 
         $repo = $this
@@ -49,7 +49,7 @@ class SSOController extends Controller
         }
 
         $password = $this->container->getParameter('pumukit_moodle.password');
-        $domain = $this->container->getParameter('pumukit2.naked_backoffice_domain');
+        $domain = $this->container->getParameter('pumukit.naked_backoffice_domain');
 
         //Check domain
         if ($domain != $request->getHost()) {

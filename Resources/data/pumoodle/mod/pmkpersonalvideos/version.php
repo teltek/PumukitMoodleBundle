@@ -15,22 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of pmkpersonalvideos
+ * Defines the version of pmkpersonalvideos.
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
- * @package    mod
- * @subpackage pmkpersonalvideos
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @author     rubenrua@uvigo.es aperez@teltek.es
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018051800;    // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011051000;    // Requires this Moodle version
+$plugin->version = 2018051800;    // The current module version (Date: YYYYMMDDXX)
+$plugin->requires = 2011051000;    // Requires this Moodle version
 $plugin->component = 'mod_pmkpersonalvideos'; // To check on upgrade, that module sits in correct place

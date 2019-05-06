@@ -1,6 +1,6 @@
 <?php
 
-require_once('../../config.php');
+require_once '../../config.php';
 //require_once('pmkbackoffice_form.php');
 
 global $DB, $OUTPUT, $PAGE;
@@ -18,22 +18,23 @@ $PAGE->set_url('/blocks/pmkbackoffice/view.php', array('id' => $course_id));
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading(get_string('pagetitle', 'block_pmkbackoffice'));
 $PAGE->set_title('Moodle: PuMuKIT Media Manager');
-$pmk2_url = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearch_managerurl'));
-if(!$pmk2_url)
+$pmk2_url = $DB->get_record('repository_instance_config', array('instanceid' => $instance_id, 'name' => 'pmksearch_managerurl'));
+if (!$pmk2_url) {
     send_header_404();
-else {
+} else {
     $pmk2_url = $pmk2_url->value;
-    $db_secret = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearchrepositorysecret'));
-    if($db_secret)
+    $db_secret = $DB->get_record('repository_instance_config', array('instanceid' => $instance_id, 'name' => 'pmksearchrepositorysecret'));
+    if ($db_secret) {
         $secret = $db_secret->value;
-    else
+    } else {
         $secret = '';
+    }
 
     $date = date('d/m/Y');
     $aux = parse_url($pmk2_url);
     $domain = $aux['host'];
 
-    $db_ticket_field = $DB->get_record('repository_instance_config' , array('instanceid' => $instance_id, 'name' => 'pmksearch_ticket_field'));
+    $db_ticket_field = $DB->get_record('repository_instance_config', array('instanceid' => $instance_id, 'name' => 'pmksearch_ticket_field'));
     if ($db_ticket_field && 'username' == $db_ticket_field->value) {
         $username = $USER->username;
         $hash = md5($username.$secret.$date.$domain);
@@ -63,8 +64,8 @@ echo $OUTPUT->header();
      }
  }
 </script>
-<?php if($pmk2_url): ?>
-  <iframe src="<?php echo $pmk2_url ?>"
+<?php if ($pmk2_url): ?>
+  <iframe src="<?php echo $pmk2_url; ?>"
           id='pmk_iframe'
           width="100%"
           height="2200px"
@@ -78,9 +79,9 @@ echo $OUTPUT->header();
 <?php else: ?>
 <h2>404 - Not Found</h2>
 <p>
-<?php echo get_string('pagenotfoundtext', 'block_pmkbackoffice') ?>
+<?php echo get_string('pagenotfoundtext', 'block_pmkbackoffice'); ?>
 </p>
-<?php endif?>
+<?php endif; ?>
 <?php
 echo $OUTPUT->footer();
 ?>

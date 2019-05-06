@@ -16,19 +16,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This is a one-line short description of the file
+ * This is a one-line short description of the file.
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
- * @package    mod
- * @subpackage pmkpersonalvideos
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
+require_once dirname(dirname(dirname(__FILE__))).'/config.php';
+require_once dirname(__FILE__).'/lib.php';
 
 $id = required_param('id', PARAM_INT);   // course
 
@@ -38,8 +35,8 @@ require_course_login($course);
 
 //New 'all view' log event.
 $event = \pmkpersonalvideos\event\course_module_instance_list_viewed::create(array(
-									      'context' => context_course::instance($course->id)
-									      ));
+                                          'context' => context_course::instance($course->id),
+                                          ));
 $event->trigger();
 
 $coursecontext = context_course::instance($course->id);
@@ -51,18 +48,18 @@ $PAGE->set_context($coursecontext);
 
 echo $OUTPUT->header();
 
-if (! $pmkpersonalvideoss = get_all_instances_in_course('pmkpersonalvideos', $course)) {
+if (!$pmkpersonalvideoss = get_all_instances_in_course('pmkpersonalvideos', $course)) {
     notice(get_string('nopmkpersonalvideoss', 'pmkpersonalvideos'), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
-if ($course->format == 'weeks') {
-    $table->head  = array(get_string('week'), get_string('name'));
+if ('weeks' == $course->format) {
+    $table->head = array(get_string('week'), get_string('name'));
     $table->align = array('center', 'left');
-} else if ($course->format == 'topics') {
-    $table->head  = array(get_string('topic'), get_string('name'));
+} elseif ('topics' == $course->format) {
+    $table->head = array(get_string('topic'), get_string('name'));
     $table->align = array('center', 'left', 'left', 'left');
 } else {
-    $table->head  = array(get_string('name'));
+    $table->head = array(get_string('name'));
     $table->align = array('left', 'left', 'left');
 }
 
@@ -78,7 +75,7 @@ foreach ($pmkpersonalvideoss as $pmkpersonalvideos) {
             format_string($pmkpersonalvideos->name, true));
     }
 
-    if ($course->format == 'weeks' or $course->format == 'topics') {
+    if ('weeks' == $course->format or 'topics' == $course->format) {
         $table->data[] = array($pmkpersonalvideos->section, $link);
     } else {
         $table->data[] = array($link);

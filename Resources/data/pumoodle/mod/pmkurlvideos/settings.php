@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,25 +17,21 @@
 
 /**
  * Administration settings definitions for the quiz module.
- * Settings can be accessed from: 
+ * Settings can be accessed from:
  * Site Administration block -> Plugins -> Activity modules -> Recorded lecture
- * This form stores general settings into the site wide $CFG object
+ * This form stores general settings into the site wide $CFG object.
  *
- * @package    mod
- * @subpackage pmkurlvideos
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configtext('pmkurlvideos_pmkurlvideos',
+        get_string('pmkurlvideos', 'pmkurlvideos'),
+        get_string('configpmkurlvideos', 'pmkurlvideos'), 'http://cmarautopub/pumoodle/'));
 
-    $settings->add(new admin_setting_configtext('pmkurlvideos_pmkurlvideos', 
-    	get_string('pmkurlvideos', 'pmkurlvideos'),
-    	get_string('configpmkurlvideos', 'pmkurlvideos'), 'http://cmarautopub/pumoodle/'));
-
-    $settings->add(new admin_setting_configtext('pmkurlvideos_secret', 
-    	get_string('pumukitsecret', 'pmkurlvideos'),
-        get_string('configpumukitsecret', 'pmkurlvideos'), 'This is a PuMoodle secret!¡!'));	
+    $settings->add(new admin_setting_configtext('pmkurlvideos_secret',
+        get_string('pumukitsecret', 'pmkurlvideos'),
+        get_string('configpumukitsecret', 'pmkurlvideos'), 'This is a PuMoodle secret!¡!'));
 }

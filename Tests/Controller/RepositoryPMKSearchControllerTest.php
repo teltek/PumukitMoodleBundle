@@ -43,7 +43,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
                                               ->get('pumukitschema.pic');
         $this->context = static::$kernel->getContainer()->get('router.request_context');
         $server = array();
-        if ($this->context->getScheme() === 'https') {
+        if ('https' === $this->context->getScheme()) {
             $server = array('HTTPS' => true);
         }
         $this->client = static::$kernel->getContainer()->get('test.client');
@@ -123,7 +123,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $this->assertEquals($this->series['url'], $responseSeries['url']);
         $this->assertEquals($this->series['pic'], $responseSeries['thumbnail']);
         //Check that mms are correct.
-        $this->assertCount(1,  $responseMmobjs);
+        $this->assertCount(1, $responseMmobjs);
         $returnedMmobjs = array(
             $this->mmobjToArray($this->series['mms']['webtvpub'], $locale),
         );

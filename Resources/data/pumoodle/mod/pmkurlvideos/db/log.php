@@ -16,25 +16,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Definition of log events
+ * Definition of log events.
  *
  * NOTE: this is an example how to insert log event during installation/update.
  * It is not really essential to know about it, but these logs were created as example
  * in the previous 1.9 NEWMODULE.
  *
- * @package    mod
- * @subpackage pmkurlvideos
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 global $DB;
 
 $logs = array(
-    array('module'=>'pmkurlvideos', 'action'=>'add', 'mtable'=>'pumukit', 'field'=>'name'),
-    array('module'=>'pmkurlvideos', 'action'=>'update', 'mtable'=>'pumukit', 'field'=>'name'),
-    array('module'=>'pmkurlvideos', 'action'=>'view', 'mtable'=>'pumukit', 'field'=>'name'),
-    array('module'=>'pmkurlvideos', 'action'=>'view all', 'mtable'=>'pumukit', 'field'=>'name')
+    array('module' => 'pmkurlvideos', 'action' => 'add', 'mtable' => 'pumukit', 'field' => 'name'),
+    array('module' => 'pmkurlvideos', 'action' => 'update', 'mtable' => 'pumukit', 'field' => 'name'),
+    array('module' => 'pmkurlvideos', 'action' => 'view', 'mtable' => 'pumukit', 'field' => 'name'),
+    array('module' => 'pmkurlvideos', 'action' => 'view all', 'mtable' => 'pumukit', 'field' => 'name'),
 );

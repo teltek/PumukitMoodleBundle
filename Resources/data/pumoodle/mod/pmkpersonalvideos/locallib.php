@@ -16,37 +16,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Internal library of functions for module pmkpersonalvideos
+ * Internal library of functions for module pmkpersonalvideos.
  *
  * All the pmkpersonalvideos specific functions, needed to implement the module
  * logic, should go here. Never include this file from your lib.php!
  *
- * @package    mod
- * @subpackage pmkpersonalvideos
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 // These should be customized at Site Administration block -> Plugins -> Activity modules -> Recorded lecture
-define ('PMKPERSONALVIDEOSURL', 'http://cmarautopub/pumoodle/');
-define ('SECRET', 'This is a PuMoodle secret!¡!');
+define('PMKPERSONALVIDEOSURL', 'http://cmarautopub/pumoodle/');
+define('SECRET', 'This is a PuMoodle secret!¡!');
 
 /**
- * Creates a daily ticket to authenticate the serials+videos and embed requests
+ * Creates a daily ticket to authenticate the serials+videos and embed requests.
  *
- * @param integer $id - person or video id to be authenticated.
+ * @param int $id - person or video id to be authenticated
+ *
  * @return string $ticket
  */
-function pmkpersonalvideos_create_ticket($id, $email) {
+function pmkpersonalvideos_create_ticket($id, $email)
+{
     global $CFG;
 
     $pmkpersonalvideossecret = empty($CFG->pmkpersonalvideos_secret) ? SECRET : $CFG->pmkpersonalvideos_secret;
-    $date   = date("Y-m-d");
+    $date = date('Y-m-d');
     // At the moment, the IP is not checked on Pmkpersonalvideos's side
-    $ip     = $_SERVER["REMOTE_ADDR"];  
-    $ticket = md5($pmkpersonalvideossecret . $date . $id . $email);
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $ticket = md5($pmkpersonalvideossecret.$date.$id.$email);
+
     return $ticket;
 }
 
@@ -54,40 +54,42 @@ function pmkpersonalvideos_create_ticket($id, $email) {
  * Gets curl output for the pmkpersonalvideos host and the given url.
  * if $absoluteurl = true, it takes $action as final url and doesn't parse $parameters.
  *
- * @param string $action from pmkpersonalvideos module.
- * @param array $parameters (key => value)
+ * @param string $action     from pmkpersonalvideos module
+ * @param array  $parameters (key => value)
+ *
  * @return string $output
  */
-function pmkpersonalvideos_curl_action_parameters($action, $parameters = null, $absoluteurl = false){
+function pmkpersonalvideos_curl_action_parameters($action, $parameters = null, $absoluteurl = false)
+{
     global $CFG;
     if ($absoluteurl) {
         $url = $action;
-    } elseif (empty($CFG->pmkpersonalvideos_pmkpersonalvideosurl)){
-        $url = PMKPERSONALVIDEOSURL . $action . '?' . http_build_query($parameters, '', '&');
-    } else{       
+    } elseif (empty($CFG->pmkpersonalvideos_pmkpersonalvideosurl)) {
+        $url = PMKPERSONALVIDEOSURL.$action.'?'.http_build_query($parameters, '', '&');
+    } else {
         $url = trim($CFG->pmkpersonalvideos_pmkpersonalvideosurl);
         // Add the final slash if needed
-        $url .= (substr($url, -1) == '/') ? '' : '/';
-        $url .=  $action . '?' . http_build_query($parameters, '', '&');
+        $url .= ('/' == substr($url, -1)) ? '' : '/';
+        $url .= $action.'?'.http_build_query($parameters, '', '&');
     }
 
-// Debug - comment the next line.
-// echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
+    // Debug - comment the next line.
+    // echo 'Debug - sending petition:<br/>['. $url . ']<br/>';
 
-    $ch   = curl_init($url);
+    $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // needed for html5 player capability detection
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    $sal["var"]    = curl_exec($ch); 
-    $sal["error"]  = curl_error($ch);
-    $sal["status"] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $sal['var'] = curl_exec($ch);
+    $sal['error'] = curl_error($ch);
+    $sal['status'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    if ($sal["status"] !== 200 && !isset($sal["var"])){
+    if (200 !== $sal['status'] && !isset($sal['var'])) {
         var_dump($sal);
-        die ("\nError - review http status\n"); // to do excepcion
+        die("\nError - review http status\n"); // to do excepcion
     }
-    
-    return $sal["var"];
+
+    return $sal['var'];
 }

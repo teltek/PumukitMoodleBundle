@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file keeps track of upgrades to the pmkurlvideos module
+ * This file keeps track of upgrades to the pmkurlvideos module.
  *
  * Sometimes, changes between versions involve alterations to database
  * structures and other major things that may break installations. The upgrade
@@ -25,21 +25,20 @@
  * it cannot do itself, it will tell you what you need to do.  The commands in
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
- * @package    mod
- * @subpackage pmkurlvideos
  * @copyright  2012 Andres Perez
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Execute pmkurlvideos upgrade from the given old version
+ * Execute pmkurlvideos upgrade from the given old version.
  *
  * @param int $oldversion
+ *
  * @return bool
  */
-function xmldb_pmkurlvideos_upgrade($oldversion) {
+function xmldb_pmkurlvideos_upgrade($oldversion)
+{
     global $DB;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
@@ -71,7 +70,6 @@ function xmldb_pmkurlvideos_upgrade($oldversion) {
 
     // First example, some fields were added to install.xml on 2007/04/01
     if ($oldversion < 2007040100) {
-
         // Define field course to be added to pmkurlvideos
         $table = new xmldb_table('pmkurlvideos');
         $field = new xmldb_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
@@ -109,7 +107,6 @@ function xmldb_pmkurlvideos_upgrade($oldversion) {
     // two more fields and one index were added to install.xml (note the micro increment
     // "01" in the last two digits of the version
     if ($oldversion < 2007040101) {
-
         // Define field timecreated to be added to pmkurlvideos
         $table = new xmldb_table('pmkurlvideos');
         $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0',
@@ -146,16 +143,14 @@ function xmldb_pmkurlvideos_upgrade($oldversion) {
     // Third example, the next day, 2007/04/02 (with the trailing 00), some actions were performed to install.php,
     // related with the module
     if ($oldversion < 2007040200) {
-
         // insert here code to perform some actions (same as in install.php)
 
         upgrade_mod_savepoint(true, 2007040200, 'pmkurlvideos');
     }
 
-//------------------------------------------------------------
+    //------------------------------------------------------------
 
     if ($oldversion < 2012090500) {
-
         // Define field embed_url to be added to pmkurlvideos
         $table = new xmldb_table('pmkurlvideos');
         $field = new xmldb_field('embed_url', XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, 'name');
@@ -169,8 +164,7 @@ function xmldb_pmkurlvideos_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012090500, 'pmkurlvideos');
     }
 
-        if ($oldversion < 2012091700) {
-
+    if ($oldversion < 2012091700) {
         // Define field intro to be added to pmkurlvideos
         $table = new xmldb_table('pmkurlvideos');
         $field = new xmldb_field('intro', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'name');
@@ -189,7 +183,6 @@ function xmldb_pmkurlvideos_upgrade($oldversion) {
         // pmkurlvideos savepoint reached
         upgrade_mod_savepoint(true, 2012091700, 'pmkurlvideos');
     }
-
 
     // And that's all. Please, examine and understand the 3 example blocks above. Also
     // it's interesting to look how other modules are using this script. Remember that

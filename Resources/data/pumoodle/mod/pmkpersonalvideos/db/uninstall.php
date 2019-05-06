@@ -18,15 +18,14 @@
 /**
  * @see uninstall_plugin()
  *
- * @package    mod
- * @subpackage pmkpersonalvideos
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Custom uninstallation procedure
+ * Custom uninstallation procedure.
  */
-function xmldb_pmkpersonalvideos_uninstall() {
+function xmldb_pmkpersonalvideos_uninstall()
+{
     return true;
 }

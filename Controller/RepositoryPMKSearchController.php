@@ -221,7 +221,7 @@ class RepositoryPMKSearchController extends Controller
     {
         $locale = strtolower($queryLocale);
         $defaultLocale = $this->container->getParameter('locale');
-        $pumukitLocales = $this->container->getParameter('pumukit2.locales');
+        $pumukitLocales = $this->container->getParameter('pumukit.locales');
         if ((!$locale) || (!in_array($locale, $pumukitLocales))) {
             $locale = $defaultLocale;
         }

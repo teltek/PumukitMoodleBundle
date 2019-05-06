@@ -30,7 +30,7 @@ $ zip -r ../install/pmkbackoffice.zip pmkbackoffice
 
 NOTE: `/path/to/pumoodle` location:
 * In this Bundle: `Resources/data/pumoodle/`
-* In a PuMuKIT2 installation: `/path/to/pumukit2/vendor/teltek/pmk2-moodle-bundle/Resources/data/pumoodle/`
+* In a PuMuKIT2 installation: `/path/to/pumukit/vendor/teltek/pumukit-moodle-bundle/Resources/data/pumoodle/`
 
 
 Backwards Compatibility

@@ -21,7 +21,7 @@ class FilterListener
         $req = $event->getRequest();
         $routeParams = $req->attributes->get('_route_params');
 
-        if ($event->getRequestType() === HttpKernelInterface::MASTER_REQUEST
+        if (HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()
             && (false !== strpos($req->attributes->get('_controller'), 'MoodleBundle'))
             && (!isset($routeParams['filter']) || $routeParams['filter'])) {
             $filter = $this->dm->getFilterCollection()->enable('frontend');

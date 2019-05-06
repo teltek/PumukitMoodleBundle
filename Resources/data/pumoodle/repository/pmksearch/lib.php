@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,27 +18,27 @@
 /**
  * repository_pmksearch class
  * This is a subclass of repository class
- * http://docs.moodle.org/dev/Repository_plugins
+ * http://docs.moodle.org/dev/Repository_plugins.
  *
- * @package    repository_pmksearch
  * @category   repository
+ *
  * @copyright  Andres Perez <aperez@teltek.es>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // These should be customized for each repository instance at
 // Site administration ► Plugins ► Repositories ► Manage repositories
-define ('PMKSEARCHREPOSITORYURL', 'http://pumukit_host/pumoodle/');
-define ('PMKSEARCHREPOSITORYSECRET', 'This is a PuMoodle secret!¡!');
+define('PMKSEARCHREPOSITORYURL', 'http://pumukit_host/pumoodle/');
+define('PMKSEARCHREPOSITORYSECRET', 'This is a PuMoodle secret!¡!');
 
-class repository_pmksearch extends repository {
-
+class repository_pmksearch extends repository
+{
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param int $repositoryid
+     * @param int      $repositoryid
      * @param stdClass $context
-     * @param array $options
+     * @param array    $options
      */
     public function __construct($repositoryid, $context = SITEID, $options = array('ajax' => false))
     {
@@ -45,9 +46,10 @@ class repository_pmksearch extends repository {
     }
 
     /**
-     * Get file listing
+     * Get file listing.
      *
      * For more info: https://docs.moodle.org/dev/Repository_plugins#get_listing.28.24path.3D.22.22.2C_.24page.3D.22.22.29
+     *
      * @param string $path
      * @param string $page
      */
@@ -57,13 +59,14 @@ class repository_pmksearch extends repository {
         $list = $this->init_list_params();
         $list['list'] = $this->retrieve_pmksearchs_and_create_list();
         $list['path'] = $this->generate_current_path($path, $list['list']);
+
         return $list;
     }
 
     private function generate_current_path($path = '', $list = array())
     {
         return array(
-            array('name'=> 'Pumukit Videos', 'path'=> '/'),
+            array('name' => 'Pumukit Videos', 'path' => '/'),
         );
     }
 
@@ -95,7 +98,7 @@ class repository_pmksearch extends repository {
     }
 
     /**
-     * Search in external repository
+     * Search in external repository.
      *
      * @param string $text
      */
@@ -105,14 +108,16 @@ class repository_pmksearch extends repository {
         $list['issearchresult'] = true;
         // search result listing's format is the same as file listing
         $search_results = $this->retrieve_pmksearchs_and_create_list($text);
-        if(count($search_results) < 1)
+        if (count($search_results) < 1) {
             $list['path'] = null;
+        }
 
         $list['list'] = $search_results;
         $list['path'] = $this->generate_current_path();
-        return $list;
 
+        return $list;
     }
+
     /**
      * move file to local moodle
      * the default implementation will download the file by $url using curl,
@@ -128,7 +133,7 @@ class repository_pmksearch extends repository {
      */
 
     /**
-     * this function must be static
+     * this function must be static.
      *
      * @return array
      */
@@ -138,39 +143,41 @@ class repository_pmksearch extends repository {
     }
 
     /**
-     * Instance config form
+     * Instance config form.
      */
     public static function instance_config_form($mform)
     {
         $mform->addElement('text', 'pmksearchrepositoryurl',
                            get_string('pmksearchurl', 'repository_pmksearch'),
-                           array('value' => '','size' => '40'));
-    $mform->setType('pmksearchrepositoryurl', PARAM_TEXT);
-        $mform->addElement('static', 'pmksearchurldefault', '', get_string('pmksearchurldefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYURL);
+                           array('value' => '', 'size' => '40'));
+        $mform->setType('pmksearchrepositoryurl', PARAM_TEXT);
+        $mform->addElement('static', 'pmksearchurldefault', '', get_string('pmksearchurldefault', 'repository_pmksearch').PMKSEARCHREPOSITORYURL);
 
         $mform->addElement('text', 'pmksearchrepositorysecret',
                            get_string('pmksearchsecret', 'repository_pmksearch'),
-                           array('value' => '','size' => '40'));
-    $mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
-        $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch') . PMKSEARCHREPOSITORYSECRET);
+                           array('value' => '', 'size' => '40'));
+        $mform->setType('pmksearchrepositorysecret', PARAM_TEXT);
+        $mform->addElement('static', 'pmksearchsecretdefault', '', get_string('pmksearchsecretdefault', 'repository_pmksearch').PMKSEARCHREPOSITORYSECRET);
 
         $mform->addElement('text', 'pmksearch_managerurl',
                            get_string('pmksearch_managerurl', 'repository_pmksearch'),
-                           array('value' => '','size' => '40'));
-    $mform->setType('pmksearch_managerurl', PARAM_TEXT);
+                           array('value' => '', 'size' => '40'));
+        $mform->setType('pmksearch_managerurl', PARAM_TEXT);
 
         $ticketFieldRadio = array();
         $ticketFieldRadio[] = $mform->createElement('radio', 'pmksearch_ticket_field', '', get_string('username'), 'username');
         $ticketFieldRadio[] = $mform->createElement('radio', 'pmksearch_ticket_field', '', get_string('email'), 'email');
 
-        $mform->addGroup($ticketFieldRadio, 'pmksearch_ticket_field', get_string('pmksearch_ticket_field', 'repository_pmksearch'), array('value' => '') , false);
+        $mform->addGroup($ticketFieldRadio, 'pmksearch_ticket_field', get_string('pmksearch_ticket_field', 'repository_pmksearch'), array('value' => ''), false);
         $mform->setDefault('pmksearch_ticket_field', 'email');
+
         return true;
     }
 
     /**
      * Type option names - A common setting for all the moodle site (the same for all instances)
      * Not used.
+     *
      * @return array
      */
     // public static function get_type_option_names() {
@@ -186,7 +193,7 @@ class repository_pmksearch extends repository {
     // }
 
     /**
-     * will be called when installing a new plugin in admin panel
+     * will be called when installing a new plugin in admin panel.
      *
      * @return bool
      */
@@ -199,46 +206,49 @@ class repository_pmksearch extends repository {
 
     /**
      * Only supports external file linking
-     * see http://docs.moodle.org/dev/Repository_plugins#supported_returntypes.28.29
+     * see http://docs.moodle.org/dev/Repository_plugins#supported_returntypes.28.29.
+     *
      * @return int
      */
     public function supported_returntypes()
     {
-
         return FILE_EXTERNAL;
     }
+
     // Only use this repository with moodle media, not images
     public function supported_filetypes()
     {
         // return array('web_video');
-        return array('web_file','web_video');
+        return array('web_file', 'web_video');
         // return '*';
     }
 
     /**
-     * Creates a daily ticket to authenticate the serials+videos and embed requests
+     * Creates a daily ticket to authenticate the serials+videos and embed requests.
      *
-     * @param integer $id - person or video id to be authenticated.
+     * @param int $id - person or video id to be authenticated
+     *
      * @return string $ticket
      */
     private function pmksearch_create_ticket($id)
     {
-
         $instancesecret = $this->options['pmksearchrepositorysecret'];
         $secret = empty($instancesecret) ? PMKSEARCHREPOSITORYSECRET : $instancesecret;
 
-        $date   = date("Y-m-d");
+        $date = date('Y-m-d');
         // At the moment, the IP is not checked on Pmksearch's side
-        $ip     = $_SERVER["REMOTE_ADDR"];
-        $ticket = md5($secret . $date . $id);
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $ticket = md5($secret.$date.$id);
+
         return $ticket;
     }
 
     /**
      * Gets curl output for the pmksearch host and the given url.
      *
-     * @param string $action from pmksearch module.
-     * @param array $parameters (key => value)
+     * @param string $action     from pmksearch module
+     * @param array  $parameters (key => value)
+     *
      * @return string $output
      */
     private function pmksearch_curl_action_parameters($action, array $parameters = null,
@@ -247,47 +257,47 @@ class repository_pmksearch extends repository {
         $pmksearchrepositoryurl = $this->options['pmksearchrepositoryurl'];
         if ($absoluteurl) {
             $url = $action;
-        } elseif (empty($pmksearchrepositoryurl)){
-            $url = PMKSEARCHREPOSITORYURL . $action . '?' . http_build_query($parameters, '', '&');
-        } else{
+        } elseif (empty($pmksearchrepositoryurl)) {
+            $url = PMKSEARCHREPOSITORYURL.$action.'?'.http_build_query($parameters, '', '&');
+        } else {
             $url = trim($pmksearchrepositoryurl);
             // Add the final slash if needed
-            $url .= (substr($url, -1) == '/') ? '' : '/';
-            $url .=  $action . '?' . http_build_query($parameters, '', '&');
+            $url .= ('/' == substr($url, -1)) ? '' : '/';
+            $url .= $action.'?'.http_build_query($parameters, '', '&');
         }
         // Debug - uncomment the next line to view the query sent to pmksearch.
         //error_log('Debug - sending petition:  '.$url);
-        $ch   = curl_init($url);
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']); // needed for html5 player capability detection
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        $sal["var"]    = curl_exec($ch);
-        $sal["error"]  = curl_error($ch);
-        $sal["status"] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $sal["url"] = $url;
+        $sal['var'] = curl_exec($ch);
+        $sal['error'] = curl_error($ch);
+        $sal['status'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $sal['url'] = $url;
         curl_close($ch);
-        if ($sal["status"] !== 200  && !isset($sal['var'])){
+        if (200 !== $sal['status'] && !isset($sal['var'])) {
             var_dump($sal);
-            die ("\nError - review http status\n"); // to do excepcion
-
+            die("\nError - review http status\n"); // to do excepcion
         }
-        return $sal["var"];
+
+        return $sal['var'];
     }
 
     /**
      * Queries a pmksearch server and processes the result in the moodle list format
      * The authentication is done with a ticket with current user's email.
-     *
      */
-    private function retrieve_pmksearchs_and_create_list($text = '') {
+    private function retrieve_pmksearchs_and_create_list($text = '')
+    {
         global $USER;       // To get email for authentication
         global $SESSION;    // To get page language
         // If the teacher does not change the course language, session->lang is not set.
         if (isset($SESSION->lang)) {
             $lang = $SESSION->lang;
-        } else if (isset($USER->lang)) {
+        } elseif (isset($USER->lang)) {
             $lang = $USER->lang;
         } else {
             $lang = 'en';
@@ -295,38 +305,34 @@ class repository_pmksearch extends repository {
 
         // There is more real state avaliable in the new file picker (moodle 2.3 onwards)
         // and thumbnails are resized.
-        $width  = 140;
+        $width = 140;
         $height = 105;
 
         // TO DO: implement some kind of ldap authentication with user (teacher) instead of email check.
         $curlParameters = array(
-            'lang' => $lang ,
-            'search' => $text
+            'lang' => $lang,
+            'search' => $text,
         );
 
         $ticketValueType = $this->options['pmksearch_ticket_field'];
-        if($ticketValueType == 'username') {
+        if ('username' == $ticketValueType) {
             $ticketValue = $USER->username;
             $curlParameters['professor_username'] = $ticketValue;
-        }
-        else if($ticketValueType == 'email'){
+        } elseif ('email' == $ticketValueType) {
             $ticketValue = $USER->email;
             $curlParameters['professor_email'] = $ticketValue;
-        }
-        else {
+        } else {
             //TODO: Sanity check failed. Log error.
         }
         $curlParameters['ticket'] = $this->pmksearch_create_ticket($ticketValue);
 
-        $pmksearch_out = json_decode ($this->pmksearch_curl_action_parameters('search_repository', $curlParameters), true);
+        $pmksearch_out = json_decode($this->pmksearch_curl_action_parameters('search_repository', $curlParameters), true);
         if (!$pmksearch_out) {
             // get_string('error_no_pmksearch_output', 'pmksearch'); has a descriptive error status
             return array(array('title' => 'Unknown error.'));
-
-        } else if ($pmksearch_out['status'] == "ERROR"){
+        } elseif ('ERROR' == $pmksearch_out['status']) {
             // $pmksearch_out['status_txt'] has a descriptive error status
             return array(array('title' => $pmksearch_out['status_txt']));
-
         } else {
             $pmksearch_list = $pmksearch_out['out'];
         }
@@ -339,7 +345,8 @@ class repository_pmksearch extends repository {
      *
      * @return bool
      */
-    public function contains_private_data() {
+    public function contains_private_data()
+    {
         return false;
     }
 }

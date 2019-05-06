@@ -16,12 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $capabilities = array(
-
     'repository/pumukit:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
-            'user' => CAP_ALLOW
-        )
-    )
+            'user' => CAP_ALLOW,
+        ),
+    ),
 );

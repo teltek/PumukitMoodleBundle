@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for the pmkurlvideos module
+ * Capability definitions for the pmkurlvideos module.
  *
  * The capabilities are loaded into the database table when the module is
  * installed or updated. Whenever the capability definitions are updated,
@@ -40,16 +40,12 @@
  *
  * The variable name for the capability definitions array is $capabilities
  *
- * @package    mod
- * @subpackage pmkurlvideos
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-
     'mod/pmkurlvideos:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
@@ -58,8 +54,8 @@ $capabilities = array(
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW // former admin is now manager
-        )
+            'manager' => CAP_ALLOW, // former admin is now manager
+        ),
     ),
 
     'mod/pmkurlvideos:addinstance' => array(
@@ -69,9 +65,9 @@ $capabilities = array(
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW // former admin is now manager
-        )
-/*        
+            'manager' => CAP_ALLOW, // former admin is now manager
+        ),
+/*
     'mod/pmkurlvideos:submit' => array(
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
@@ -81,6 +77,5 @@ $capabilities = array(
         )
     )
     */
-    )
+    ),
 );
-

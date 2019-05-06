@@ -5,7 +5,6 @@ namespace Pumukit\MoodleBundle\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Pumukit\SchemaBundle\Document\Tag;
 use Pumukit\SchemaBundle\Document\MultimediaObject;
 
 class PubAllOnMoodleCommand extends ContainerAwareCommand
@@ -63,11 +62,11 @@ EOT
                         ->getQuery()->execute();
         $counter = 0;
         foreach ($allMmobjs as $mmobj) {
-            $counter++;
+            ++$counter;
             $logLine = sprintf('Added PUCHMOODLE tag to %s ', $mmobj->getId());
             $this->tagService->addTagToMultimediaObject($mmobj, $moodlePubTag->getId(), false);
-            if ($mmobj->getStatus() != MultimediaObject::STATUS_PUBLISHED) {
-                $logLine .= sprintf('| Changed status from %s to STATUS_PUBLISHED ', ($mmobj->getStatus() == 1) ? 'STATUS_BLOQ' : 'STATUS_HIDE');
+            if (MultimediaObject::STATUS_PUBLISHED != $mmobj->getStatus()) {
+                $logLine .= sprintf('| Changed status from %s to STATUS_PUBLISHED ', (1 == $mmobj->getStatus()) ? 'STATUS_BLOQ' : 'STATUS_HIDE');
                 $mmobj->setStatus(MultimediaObject::STATUS_PUBLISHED);
                 $this->tagService->removeTagFromMultimediaObject($mmobj, $webTVPubTag->getId(), false);
                 $logLine .= sprintf('| Removed %s channel from Multimedia Object', $webTVPubTag->getCod());
