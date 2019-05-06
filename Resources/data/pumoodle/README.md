@@ -17,8 +17,8 @@ create the new zip files following these instructions:
 
 ```bash
 $ cd mod
-$ zip -r ../install/pmkpersonalvideos.zip pmkpersonalvideos
-$ zip -r ../install/pmkurlvideos.zip pmkurlvideos
+$ zip -r ../install/modpersonal.zip pmkpersonalvideos
+$ zip -r ../install/modurl.zip pmkurlvideos
 $ cd ../repository
 $ zip -r ../install/pmksearch.zip pmksearch
 $ zip -r ../install/repository.zip pumukit/

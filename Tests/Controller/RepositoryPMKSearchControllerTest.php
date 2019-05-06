@@ -291,7 +291,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
                 array(
                     'id' => $multimediaObject->getId(),
                     'lang' => $locale,
-                    'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
+                    'multistream' => ($multimediaObject->isMultistream() ? '1' : '0'),
                     'autostart' => false,
                 ),
                 true

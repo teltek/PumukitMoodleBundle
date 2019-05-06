@@ -14,6 +14,8 @@ use Pumukit\SchemaBundle\Document\Series;
  */
 class RepositoryPMKSearchController extends Controller
 {
+    const LIMIT_PUBLIC_OBJ_MM = 500;
+
     /**
      * @Route("/search_repository", defaults={"filter":false})
      */
@@ -31,10 +33,10 @@ class RepositoryPMKSearchController extends Controller
         $ticketValue = '';
         if ($username) {
             $ticketValue = $username;
-            $professor = $this->findProfessorUsername($username, $ticket, $roleCode);
+            $professor = $this->findProfessorUsername($username);
         } elseif ($email) {
             $ticketValue = $email;
-            $professor = $this->findProfessorEmail($email, $ticket, $roleCode);
+            $professor = $this->findProfessorEmail($email);
         }
 
         if (!$this->checkFieldTicket($ticketValue, $ticket)) {
@@ -83,6 +85,7 @@ class RepositoryPMKSearchController extends Controller
         $mySeriesResult = array();
         $publicSeriesResult = array();
         $numberMultimediaObjects = 0;
+        $numberPublicMultimediaObjects = 0;
         foreach ($multimediaObjects as $multimediaObject) {
             $seriesId = $multimediaObject->getSeries()->getId();
             $mmobjResult = $this->mmobjToArray($multimediaObject, $locale);
@@ -93,16 +96,18 @@ class RepositoryPMKSearchController extends Controller
                     $mySeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
                 }
                 $mySeriesResult[$seriesId]['children'][] = $mmobjResult;
+                ++$numberMultimediaObjects;
             }
             //If video is public, add to public list.
-            if ($mmobjService->canBeDisplayed($multimediaObject, 'PUCHWEBTV')) {
+            if ($numberPublicMultimediaObjects < self::LIMIT_PUBLIC_OBJ_MM && $mmobjService->canBeDisplayed($multimediaObject, 'PUCHWEBTV')) {
                 if (!isset($publicSeriesResult[$seriesId])) {
                     $series = $multimediaObject->getSeries();
                     $publicSeriesResult[$seriesId] = $this->seriesToArray($series, $locale);
                 }
                 $publicSeriesResult[$seriesId]['children'][] = $mmobjResult;
+                ++$numberMultimediaObjects;
+                ++$numberPublicMultimediaObjects;
             }
-            ++$numberMultimediaObjects;
         }
 
         $myPlaylistsResult = array();
@@ -166,17 +171,20 @@ class RepositoryPMKSearchController extends Controller
         return $check === $ticket;
     }
 
-    private function findProfessorEmail($email, $ticket, $roleCode)
+    private function findProfessorEmail($email)
     {
-        $repo = $this->get('doctrine_mongodb.odm.document_manager')
-                     ->getRepository('PumukitSchemaBundle:Person');
+        $userRepo = $this->get('doctrine_mongodb.odm.document_manager')
+                     ->getRepository('PumukitSchemaBundle:User');
+        $user = $userRepo->findOneByEmail($email);
 
-        $professor = $repo->findByRoleCodAndEmail($roleCode, $email);
+        if (!$user && !$user->getPerson()) {
+            return $this->findProfessorByRoleCodAndEmail($email);
+        }
 
-        return $professor;
+        return $user->getPerson();
     }
 
-    private function findProfessorUsername($username, $ticket, $roleCode)
+    private function findProfessorUsername($username)
     {
         //Because we need a 'person', but the 'username' is part of the user
         $userRepo = $this->get('doctrine_mongodb.odm.document_manager')
@@ -188,10 +196,25 @@ class RepositoryPMKSearchController extends Controller
         }
 
         $professor = $user->getPerson();
-        //Instead of directly using the person, we call the original function with its email to keep the functionality exactly the same.
-        $email = $professor ? $professor->getEmail() : '';
+        if (!$professor) {
+            return null;
+        }
 
-        return $this->findProfessorEmail($email, $ticket, $roleCode);
+        return $professor;
+    }
+
+    private function findProfessorByRoleCodAndEmail($email)
+    {
+        $roleCode = $this->container->getParameter('pumukit_moodle.role');
+        $repo = $this->get('doctrine_mongodb.odm.document_manager')
+                     ->getRepository('PumukitSchemaBundle:Person');
+
+        $professor = $repo->findByRoleCodAndEmail($roleCode, $email);
+        if (!$professor) {
+            return null;
+        }
+
+        return $professor;
     }
 
     private function getLocale($queryLocale)
@@ -229,7 +252,7 @@ class RepositoryPMKSearchController extends Controller
                 array(
                     'id' => $multimediaObject->getId(),
                     'lang' => $locale,
-                    'opencast' => ($multimediaObject->getProperty('opencast') ? '1' : '0'),
+                    'multistream' => ($multimediaObject->isMultistream() ? '1' : '0'),
                     'autostart' => false,
                 ),
                 true
@@ -350,7 +373,16 @@ class RepositoryPMKSearchController extends Controller
         //   - Owner of video.
         //   - Belongs to the video group (to edit? to view? both?)
         if ($searchText) {
-            $qb = $qb->field('$text')->equals(array('$search' => $searchText));
+            if (class_exists('Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils')) {
+                $request = $this->get('request_stack')->getMasterRequest();
+
+                $qb = $qb->field('$text')->equals(array(
+                    '$search' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils::cleanTextIndex($searchText),
+                    '$language' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils::getCloseLanguage($request->getLocale()),
+                ));
+            } else {
+                $qb = $qb->field('$text')->equals(array('$search' => $searchText));
+            }
         }
         $qb->addOr(
             $qb->expr()
@@ -397,7 +429,17 @@ class RepositoryPMKSearchController extends Controller
                $qb->addOr($qb->expr()->field('$text')->equals(array('$search' => $searchText)));
              */
             //First we take the ids of the $text search and then we add an 'or' to the original query.
-            $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array('$search' => $searchText))->distinct('_id')->getQuery()->execute()->toArray();
+            if (class_exists('Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils')) {
+                $request = $this->get('request_stack')->getMasterRequest();
+
+                $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array(
+                    '$search' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils::cleanTextIndex($searchText),
+                    '$language' => \Pumukit\SchemaBundle\Utils\Mongo\TextIndexUtils::getCloseLanguage($request->getLocale()),
+                ))->distinct('_id')->getQuery()->execute()->toArray();
+            } else {
+                $playlistSearchIds = $seriesRepo->createQueryBuilder()->field('$text')->equals(array('$search' => $searchText))->distinct('_id')->getQuery()->execute()->toArray();
+            }
+
             $qb->addOr($qb->expr()->field('id')->in($playlistSearchIds));
         }
 
