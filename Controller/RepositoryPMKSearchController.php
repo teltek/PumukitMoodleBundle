@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Pumukit\SchemaBundle\Document\MultimediaObject;
 use Pumukit\SchemaBundle\Document\Series;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @Route("/pumoodle")
@@ -237,7 +238,7 @@ class RepositoryPMKSearchController extends Controller
         $picService = $this->get('pumukitschema.pic');
         $width = 140;
         $height = 105;
-        $url = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
+        $url = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
         $thumbnail = $picService->getFirstUrlPic($multimediaObject, true, false);
         $mmArray = array(
             'title' => $multimediaObject->getTitle($locale).'.mp4',
@@ -255,7 +256,7 @@ class RepositoryPMKSearchController extends Controller
                     'multistream' => ($multimediaObject->isMultistream() ? '1' : '0'),
                     'autostart' => false,
                 ),
-                true
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
         );
 
@@ -267,7 +268,7 @@ class RepositoryPMKSearchController extends Controller
         $picService = $this->get('pumukitschema.pic');
         $seriesArray = array();
         $seriesArray['title'] = $series->getTitle($locale);
-        $seriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $series->getId()), true);
+        $seriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $series->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
         $seriesArray['thumbnail'] = $picService->getDefaultUrlPicForObject($series, true, false);
         $seriesArray['icon'] = $picService->getDefaultUrlPicForObject($series, true, false);
         $seriesArray['children'] = array();
@@ -281,7 +282,7 @@ class RepositoryPMKSearchController extends Controller
         $width = 140;
         $height = 105;
         $thumbnail = $picService->getDefaultUrlPicForObject($playlist, true, false);
-        $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true);
+        $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
 
         return array(
             'title' => $playlist->getTitle(),
@@ -301,7 +302,7 @@ class RepositoryPMKSearchController extends Controller
         $width = 140;
         $height = 105;
         $thumbnail = $picService->getDefaultUrlPicForObject($playlist, true, false);
-        $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true);
+        $source = $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), UrlGeneratorInterface::ABSOLUTE_URLl);
 
         return array(
             'title' => $playlist->getTitle().'.mp4',
@@ -343,7 +344,7 @@ class RepositoryPMKSearchController extends Controller
                 'shorttitle' => 'Insert playlist "'.$playlist->getTitle().'".',
                 'thumbnail' => $playlistThumbnail,
                 'icon' => $playlistThumbnail,
-                'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), true),
+                'source' => $this->generateUrl('pumukit_moodle_embed_playlist', array('id' => $playlist->getId()), UrlGeneratorInterface::ABSOLUTE_URL),
             ),
             array(
                 'title' => 'Description: '.$playlist->getDescription(),

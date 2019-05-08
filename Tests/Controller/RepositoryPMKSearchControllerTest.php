@@ -9,6 +9,7 @@ use Pumukit\SchemaBundle\Document\Role;
 use Pumukit\SchemaBundle\Document\Tag;
 use Pumukit\SchemaBundle\Document\Track;
 use Pumukit\SchemaBundle\Document\Series;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RepositoryPMKSearchControllerTest extends WebTestCase
 {
@@ -264,7 +265,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
 
         return array(
             'title' => $series->getTitle(),
-            'url' => $this->router->generate('pumukit_webtv_series_index', array('id' => $series->getId()), true),
+            'url' => $this->router->generate('pumukit_webtv_series_index', array('id' => $series->getId()), UrlGeneratorInterface::ABSOLUTE_URL),
             'pic' => $this->picService->getFirstUrlPic($series, true, false),
             'mms' => $mmobjs,
             'id' => $series->getId(),
@@ -276,7 +277,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
         $picService = $this->picService;
         $width = 140;
         $height = 105;
-        $url = $this->router->generate('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
+        $url = $this->router->generate('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
         $thumbnail = $picService->getFirstUrlPic($multimediaObject, true, false);
         $mmArray = array(
             'title' => $multimediaObject->getTitle($locale).'.mp4',
@@ -294,7 +295,7 @@ class RepositoryPMKSearchControllerTest extends WebTestCase
                     'multistream' => ($multimediaObject->isMultistream() ? '1' : '0'),
                     'autostart' => false,
                 ),
-                true
+                UrlGeneratorInterface::ABSOLUTE_URL
             ),
         );
 

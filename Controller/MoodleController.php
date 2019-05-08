@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Pumukit\SchemaBundle\Document\MultimediaObject;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @Route("/pumoodle")
@@ -44,7 +45,7 @@ class MoodleController extends Controller
                         $multimediaObjectTitle .= ' - '.$multimediaObject->getSubtitle($locale);
                     }
                     $multistream = ($multimediaObject->isMultistream() ? '1' : '0');
-                    $multimediaObjectsArray[$seriesTitle][$multimediaObjectTitle] = $this->generateUrl('pumukit_moodle_moodle_embed', array('id' => $multimediaObject->getId(), 'lang' => $locale, 'multistream' => $multistream), true);
+                    $multimediaObjectsArray[$seriesTitle][$multimediaObjectTitle] = $this->generateUrl('pumukit_moodle_moodle_embed', array('id' => $multimediaObject->getId(), 'lang' => $locale, 'multistream' => $multistream), UrlGeneratorInterface::ABSOLUTE_URL);
                     ++$numberMultimediaObjects;
                 }
             }
@@ -87,7 +88,7 @@ class MoodleController extends Controller
             foreach ($series as $oneseries) {
                 $oneSeriesArray = array();
                 $oneSeriesArray['title'] = $oneseries->getTitle($locale);
-                $oneSeriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $oneseries->getId()), true);
+                $oneSeriesArray['url'] = $this->generateUrl('pumukit_webtv_series_index', array('id' => $oneseries->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
                 $oneSeriesArray['pic'] = $picService->getFirstUrlPic($oneseries, true, false);
                 $oneSeriesArray['mms'] = array();
                 $multimediaObjects = $mmobjRepo->findBySeriesAndPersonIdWithRoleCod($oneseries, $professor->getId(), $roleCode);
@@ -278,7 +279,7 @@ class MoodleController extends Controller
         $mmArray['title'] = $multimediaObject->getTitle($locale);
         $mmArray['description'] = $multimediaObject->getDescription($locale);
         $mmArray['date'] = $multimediaObject->getRecordDate()->format('Y-m-d');
-        $mmArray['url'] = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), true);
+        $mmArray['url'] = $this->generateUrl('pumukit_webtv_multimediaobject_index', array('id' => $multimediaObject->getId()), UrlGeneratorInterface::ABSOLUTE_URL);
         $mmArray['pic'] = $picService->getFirstUrlPic($multimediaObject, true, false);
         $mmArray['embed'] = $this->generateUrl('pumukit_moodle_moodle_embed',
                                                array(
