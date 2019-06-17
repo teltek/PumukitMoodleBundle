@@ -185,7 +185,9 @@ class MoodleController extends Controller
      */
     private function renderIframe(MultimediaObject $multimediaObject, Request $request)
     {
-        return $this->forward('PumukitBasePlayerBundle:BasePlayer:index', array('request' => $request, 'multimediaObject' => $multimediaObject));
+        $playerController = $this->get('pumukit_baseplayer.player_service')->getPublicControllerPlayer($multimediaObject);
+
+        return $this->forward($playerController, ['request' => $request, 'multimediaObject' => $multimediaObject]);
     }
 
     private function checkFieldTicket($email, $ticket, $id = '')
